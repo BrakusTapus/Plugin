@@ -1,0 +1,304 @@
+﻿Analyzing solution...
+
+Analyzing project 'Plugin'
+
+[Classname: PluginCommands]
+Found class: PluginCommands in PluginCommands.cs
+Base Type: object
+Interfaces: 
+Member Variables: Plugin, Command, AltCommand
+
+    [Method: Enable]
+    Found in PluginCommands.cs
+        Return Type: void
+        Parameters: Plugin.Plugin plugin
+        Accessibility: Internal
+        Warning: Method 'Enable' does not contain proper exception handling.
+        Performance: Method 'Enable' executed in 13 ms.
+
+    [Method: Disable]
+    Found in PluginCommands.cs
+        Return Type: void
+        Parameters: 
+        Accessibility: Internal
+        Warning: Method 'Disable' does not contain proper exception handling.
+        Performance: Method 'Disable' executed in 13 ms.
+
+    [Method: OnCommand]
+    Found in PluginCommands.cs
+        Return Type: void
+        Parameters: string command, string args
+        Accessibility: Private
+        Warning: Method 'OnCommand' does not contain proper exception handling.
+        Performance: Method 'OnCommand' executed in 13 ms.
+
+[Classname: Configs]
+Found class: Configs in Configs.cs
+Base Type: object
+Interfaces: Dalamud.Configuration.IPluginConfiguration
+Member Variables: 
+
+    [Method: Save]
+    Found in Configs.cs
+        Return Type: void
+        Parameters: 
+        Accessibility: Public
+        Warning: Method 'Save' does not contain proper exception handling.
+        Performance: Method 'Save' executed in 48 ms.
+
+[Classname: Plugin]
+Found class: Plugin in Plugin.cs
+Base Type: object
+Interfaces: Dalamud.Plugin.IDalamudPlugin
+Member Variables: WindowSystem
+
+        Warning: Variable 'localImagesPath' is declared but never used.
+
+        Warning: Variable 'hitpointsImagePath' is declared but never used.
+
+        Warning: Variable 'pluginImagePath' is declared but never used.
+
+    [Method: Dispose]
+    Found in Plugin.cs
+        Return Type: void
+        Parameters: 
+        Accessibility: Public
+        Warning: Method 'Dispose' does not contain proper exception handling.
+        Performance: Method 'Dispose' executed in 62 ms.
+
+    [Method: DrawUI]
+    Found in Plugin.cs
+        Return Type: void
+        Parameters: 
+        Accessibility: Private
+        Warning: Method 'DrawUI' does not contain proper exception handling.
+        Performance: Method 'DrawUI' executed in 62 ms.
+
+    [Method: ToggleConfigUI]
+    Found in Plugin.cs
+        Return Type: void
+        Parameters: 
+        Accessibility: Public
+        Warning: Method 'ToggleConfigUI' does not contain proper exception handling.
+        Performance: Method 'ToggleConfigUI' executed in 62 ms.
+
+    [Method: ToggleMainUI]
+    Found in Plugin.cs
+        Return Type: void
+        Parameters: 
+        Accessibility: Public
+        Warning: Method 'ToggleMainUI' does not contain proper exception handling.
+        Performance: Method 'ToggleMainUI' executed in 62 ms.
+
+[Classname: Services]
+Found class: Services in Services.cs
+Base Type: object
+Interfaces: 
+Member Variables: IsInitialized
+
+    [Method: Init]
+    Found in Services.cs
+        Return Type: void
+        Parameters: Dalamud.Plugin.IDalamudPluginInterface pluginInterface
+        Accessibility: Public
+        Performance: Method 'Init' executed in 81 ms.
+
+[Classname: GenericHelpers]
+Found class: GenericHelpers in GenericHelpers.cs
+Base Type: object
+Interfaces: 
+Member Variables: 
+
+    [Method: Log]
+    Found in GenericHelpers.cs
+        Return Type: void
+        Parameters: System.Exception e
+        Accessibility: Public
+        Warning: Method 'Log' does not contain proper exception handling.
+        Performance: Method 'Log' executed in 23 ms.
+
+    [Method: Safe]
+    Found in GenericHelpers.cs
+        Return Type: void
+        Parameters: System.Action a, bool suppressErrors
+        Accessibility: Public
+        Performance: Method 'Safe' executed in 23 ms.
+
+    [Method: Safe]
+    Found in GenericHelpers.cs
+        Return Type: void
+        Parameters: System.Action a, System.Action<string, object[]> logAction
+        Accessibility: Public
+        Performance: Method 'Safe' executed in 59 ms.
+
+    [Method: Safe]
+    Found in GenericHelpers.cs
+        Return Type: void
+        Parameters: System.Action a, System.Action<string> fail, bool suppressErrors
+        Accessibility: Public
+        Performance: Method 'Safe' executed in 59 ms.
+
+    [Method: TryGetFirst]
+    Found in GenericHelpers.cs
+        Return Type: bool
+        Parameters: System.Collections.Generic.IDictionary<K, V> dictionary, System.Func<System.Collections.Generic.KeyValuePair<K, V>, bool> predicate, System.Collections.Generic.KeyValuePair<K, V> keyValuePair
+        Accessibility: Public
+        Performance: Method 'TryGetFirst' executed in 59 ms.
+
+    [Method: TryGetFirst]
+    Found in GenericHelpers.cs
+        Return Type: bool
+        Parameters: System.Collections.Generic.IEnumerable<TSource> source, TSource value
+        Accessibility: Public
+        Warning: Method 'TryGetFirst' does not contain proper exception handling.
+        Performance: Method 'TryGetFirst' executed in 59 ms.
+
+    [Method: TryGetFirst]
+    Found in GenericHelpers.cs
+        Return Type: bool
+        Parameters: System.Collections.Generic.IEnumerable<TSource> source, System.Func<TSource, bool> predicate, TSource value
+        Accessibility: Public
+        Warning: Method 'TryGetFirst' does not contain proper exception handling.
+        Performance: Method 'TryGetFirst' executed in 59 ms.
+
+[Classname: Colours]
+Found class: Colours in Colours.cs
+Base Type: object
+Interfaces: 
+Member Variables: GhostType
+
+    [Method: Vector4FromRGB]
+    Found in Colours.cs
+        Return Type: System.Numerics.Vector4
+        Parameters: uint col, float alpha
+        Accessibility: Public
+        Warning: Method 'Vector4FromRGB' does not contain proper exception handling.
+        Performance: Method 'Vector4FromRGB' executed in 15 ms.
+
+[Classname: ImageLoader]
+Found class: ImageLoader in ImageLoader.cs
+Base Type: object
+Interfaces: 
+Member Variables: 
+
+        Warning: Variable 'windowPaddingWidth' is declared but never used.
+
+        Warning: Variable 'windowPaddingHeight' is declared but never used.
+
+        Warning: Variable 'windowHeight' is declared but never used.
+
+        Warning: Variable 'windowWidth' is declared but never used.
+
+        Warning: Variable 'backgroundImageSize' is declared but never used.
+
+    [Method: LoadImageFromStream]
+    Found in ImageLoader.cs
+        Return Type: void
+        Parameters: string url
+        Accessibility: Public
+        Warning: Method 'LoadImageFromStream' does not contain proper exception handling.
+        Performance: Method 'LoadImageFromStream' executed in 34 ms.
+
+[Classname: ImageLoaderHandler]
+Found class: ImageLoaderHandler in ImageLoaderHandler.cs
+Base Type: object
+Interfaces: 
+Member Variables: CachedTextures, CachedIcons, _conversionsToBitmap, ThreadRunning, httpClient
+
+        Warning: Variable '_conversionsToBitmap' is declared but never used.
+
+        Warning: Variable 'content' is declared but never used.
+
+    [Method: TryGetTextureWrap]
+    Found in ImageLoaderHandler.cs
+        Return Type: bool
+        Parameters: string url, Dalamud.Interface.Textures.TextureWraps.IDalamudTextureWrap textureWrap
+        Accessibility: Public
+        Warning: Method 'TryGetTextureWrap' does not contain proper exception handling.
+        Performance: Method 'TryGetTextureWrap' executed in 30 ms.
+
+    [Method: BeginThreadIfNotRunning]
+    Found in ImageLoaderHandler.cs
+        Return Type: void
+        Parameters: 
+        Accessibility: Internal
+        Performance: Method 'BeginThreadIfNotRunning' executed in 30 ms.
+
+[Classname: ImageLoadingResult]
+Found class: ImageLoadingResult in ImageLoadingResult.cs
+Base Type: object
+Interfaces: 
+Member Variables: ImmediateTexture, TextureWrap, IsCompleted
+
+[Classname: ImGuiExt]
+Found class: ImGuiExt in ImGuiExt.cs
+Base Type: object
+Interfaces: 
+Member Variables: 
+
+    [Method: HelpMarker]
+    Found in ImGuiExt.cs
+        Return Type: void
+        Parameters: string helpText
+        Accessibility: Public
+        Warning: Method 'HelpMarker' does not contain proper exception handling.
+        Performance: Method 'HelpMarker' executed in 30 ms.
+
+[Classname: ConfigWindow]
+Found class: ConfigWindow in ConfigWindow.cs
+Base Type: Dalamud.Interface.Windowing.Window
+Interfaces: System.IDisposable
+Member Variables: configuration, plugin
+
+    [Method: Dispose]
+    Found in ConfigWindow.cs
+        Return Type: void
+        Parameters: 
+        Accessibility: Public
+        Warning: Method 'Dispose' does not contain proper exception handling.
+        Performance: Method 'Dispose' executed in 50 ms.
+
+    [Method: PreDraw]
+    Found in ConfigWindow.cs
+        Return Type: void
+        Parameters: 
+        Accessibility: Public
+        Warning: Method 'PreDraw' does not contain proper exception handling.
+        Performance: Method 'PreDraw' executed in 50 ms.
+
+    [Method: Draw]
+    Found in ConfigWindow.cs
+        Return Type: void
+        Parameters: 
+        Accessibility: Public
+        Warning: Method 'Draw' does not contain proper exception handling.
+        Performance: Method 'Draw' executed in 50 ms.
+
+[Classname: MainWindow]
+Found class: MainWindow in MainWindow.cs
+Base Type: Dalamud.Interface.Windowing.Window
+Interfaces: System.IDisposable
+Member Variables: HitpointsImagePath, PluginImagePath, plugin
+
+        Warning: Variable 'image3' is declared but never used.
+
+        Warning: Variable 'image4' is declared but never used.
+
+    [Method: Dispose]
+    Found in MainWindow.cs
+        Return Type: void
+        Parameters: 
+        Accessibility: Public
+        Warning: Method 'Dispose' does not contain proper exception handling.
+        Performance: Method 'Dispose' executed in 34 ms.
+
+    [Method: Draw]
+    Found in MainWindow.cs
+        Return Type: void
+        Parameters: 
+        Accessibility: Public
+        Warning: Method 'Draw' is too complex with 13 statements.
+
+        Warning: Method 'Draw' does not contain proper exception handling.
+        Performance: Method 'Draw' executed in 34 ms.
+
