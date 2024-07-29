@@ -11,7 +11,7 @@ using ECommons.ImGuiMethods;
 using ImGuiNET;
 using Plugin.Utility.UI;
 
-namespace Plugin.OtherServices;
+namespace Plugin.Utility.OtherServices;
 
 public class TextureService
 {
@@ -62,6 +62,7 @@ public class TextureService
         }
 
         Vector2 size = drawInfo.DrawSize ?? textureWrap.Size;
+        size *= drawInfo.Scale; // Apply scaling
 
         if (!ImGuiExt.IsInViewport(size))
         {
@@ -87,6 +88,7 @@ public class TextureService
             drawInfo.BorderColor ?? Vector4.Zero);
     }
 
+    #region From File
     /// <summary>
     /// Retrieves a texture using a file path and draws it using the provided DrawInfo.
     /// </summary>
@@ -94,7 +96,7 @@ public class TextureService
     /// <param name="drawInfo"></param>
     public void DrawImage(string path, DrawInfo drawInfo)
     {
-        IDalamudTextureWrap? textureWrap = textureProvider.GetFromGame(path).GetWrapOrEmpty();
+        IDalamudTextureWrap? textureWrap = textureProvider.GetFromFile(path).GetWrapOrEmpty();
         Draw(textureWrap, drawInfo);
     }
 
@@ -107,10 +109,10 @@ public class TextureService
     public void DrawImage(string path, Vector2 drawSize, DrawInfo drawInfo)
         => DrawImage(path, new DrawInfo { DrawSize = drawSize });
 
-    public void DrawImage(string path, Vector2 drawSize, DrawInfo drawInfo, Vector4 tintColor)
+    public void DrawImage(string path, Vector2 drawSize, Vector4 tintColor)
         => DrawImage(path, new DrawInfo { DrawSize = drawSize, TintColor = tintColor });
 
-    public void DrawImage(string path, Vector2 drawSize, DrawInfo drawInfo, Vector4 tintColor, Vector4 borderColor)
+    public void DrawImage(string path, Vector2 drawSize, Vector4 tintColor, Vector4 borderColor)
         => DrawImage(path, new DrawInfo { DrawSize = drawSize, TintColor = tintColor, BorderColor = borderColor });
 
     public void DrawImage(string path, float size)
@@ -131,6 +133,17 @@ public class TextureService
     public void DrawImage(string path, float width, float height, Vector4 tintColor, Vector4 borderColor)
         => DrawImage(path, new DrawInfo { DrawSize = new Vector2(width, height), TintColor = tintColor, BorderColor = borderColor });
 
+    public void DrawImage(string path, float width, float height, DrawInfo drawInfo)
+        => DrawImage(path, new DrawInfo { DrawSize = new Vector2(width, height) });
+
+    public void DrawImage(string path, float width, float height, DrawInfo drawInfo, Vector4 tintColor)
+        => DrawImage(path, new DrawInfo { DrawSize = new Vector2(width, height), TintColor = tintColor });
+
+    public void DrawImage(string path, float width, float height, DrawInfo drawInfo, Vector4 tintColor, Vector4 borderColor)
+        => DrawImage(path, new DrawInfo { DrawSize = new Vector2(width, height), TintColor = tintColor, BorderColor = borderColor });
+    #endregion
+
+    #region From Game
     /// <summary>
     ///  Retrieves a texture using a GameIconLookup and draws it using the provided DrawInfo.
     /// </summary>
@@ -164,7 +177,7 @@ public class TextureService
         => DrawIcon(iconId, new DrawInfo { DrawSize = drawSize, TintColor = tintColor });
 
     public void DrawIcon(int iconId, Vector2 drawSize, Vector4 tintColor, Vector4 borderColor)
-        => DrawIcon(iconId, new DrawInfo { DrawSize = drawSize, TintColor = tintColor, BorderColor = borderColor }); //
+        => DrawIcon(iconId, new DrawInfo { DrawSize = drawSize, TintColor = tintColor, BorderColor = borderColor });
 
     public void DrawIcon(int iconId)
         => DrawIcon(iconId, new DrawInfo());
@@ -195,6 +208,7 @@ public class TextureService
 
     public void DrawIcon(int iconId, bool isHq, float width, float height, Vector4 tintColor, Vector4 borderColor)
         => DrawIcon(iconId, isHq, new DrawInfo { DrawSize = new Vector2(width, height), TintColor = tintColor, BorderColor = borderColor });
+    #endregion
 
 }
 
@@ -202,6 +216,13 @@ public struct DrawInfo
 {
     public DrawInfo()
     {
+        DrawSize = null;
+        Uv0 = null;
+        Uv1 = null;
+        TintColor = null;
+        BorderColor = null;
+        TransformUv = false;
+        Scale = Vector2.One;
     }
 
     public DrawInfo(Vector2 size)
@@ -212,25 +233,21 @@ public struct DrawInfo
         TintColor = null;
         BorderColor = null;
         TransformUv = false;
+        Scale = Vector2.One;
     }
 
-    //public DrawInfo(float size)
-    //{
-    //    DrawSize = new(size);
-    //}
+    public DrawInfo(Vector2 size, Vector4 tintColor)
+    {
+        DrawSize = size;
+        Uv0 = null;
+        Uv1 = null;
+        TintColor = tintColor;
+        BorderColor = null;
+        TransformUv = false;
+        Scale = Vector2.One;
+    }
 
-    //public DrawInfo(float width, float height)
-    //{
-    //    DrawSize = new(width, height);
-    //}
-
-    public DrawInfo(float size)
-        : this(new Vector2(size)) { }
-
-    public DrawInfo(float width, float height)
-        : this(new Vector2(width, height)) { }
-
-    public DrawInfo(Vector2 size, Vector4? tintColor = null, Vector4? borderColor = null)
+    public DrawInfo(Vector2 size, Vector4 tintColor, Vector4 borderColor)
     {
         DrawSize = size;
         Uv0 = null;
@@ -238,10 +255,43 @@ public struct DrawInfo
         TintColor = tintColor;
         BorderColor = borderColor;
         TransformUv = false;
+        Scale = Vector2.One;
     }
 
-    public DrawInfo(float width, float height, Vector4? tintColor = null, Vector4? borderColor = null)
+    public DrawInfo(Vector2 size, Vector4 tintColor, Vector4 borderColor, Vector2 scale)
+    {
+        DrawSize = size;
+        Uv0 = null;
+        Uv1 = null;
+        TintColor = tintColor;
+        BorderColor = borderColor;
+        TransformUv = false;
+        Scale = scale;
+    }
+
+    public DrawInfo(float size)
+        : this(new Vector2(size)) { }
+
+    public DrawInfo(float width, float height)
+        : this(new Vector2(width, height)) { }
+
+    public DrawInfo(float size, Vector4 tintColor)
+        : this(new Vector2(size), tintColor) { }
+
+    public DrawInfo(float width, float height, Vector4 tintColor)
+        : this(new Vector2(width, height), tintColor) { }
+
+    public DrawInfo(float size, Vector4 tintColor, Vector4 borderColor)
+        : this(new Vector2(size), tintColor, borderColor) { }
+
+    public DrawInfo(float width, float height, Vector4 tintColor, Vector4 borderColor)
         : this(new Vector2(width, height), tintColor, borderColor) { }
+
+    public DrawInfo(float size, Vector4 tintColor, Vector4 borderColor, Vector2 scale)
+        : this(new Vector2(size), tintColor, borderColor, scale) { }
+
+    public DrawInfo(float width, float height, Vector4 tintColor, Vector4 borderColor, Vector2 scale)
+        : this(new Vector2(width, height), tintColor, borderColor, scale) { }
 
     public Vector2? DrawSize { get; set; }
     public Vector2? Uv0 { get; set; }
@@ -249,6 +299,7 @@ public struct DrawInfo
     public Vector4? TintColor { get; set; }
     public Vector4? BorderColor { get; set; }
     public bool TransformUv { get; set; }
+    public Vector2 Scale { get; set; }
 
     public static implicit operator DrawInfo(Vector2 size) => new(size);
     public static implicit operator DrawInfo(float size) => new(size);

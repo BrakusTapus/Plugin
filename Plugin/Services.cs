@@ -5,8 +5,8 @@ using Dalamud.IoC;
 using Dalamud.Plugin;
 using Dalamud.Plugin.Services;
 using Microsoft.Extensions.DependencyInjection;
-using Plugin.OtherServices;
-using Plugin.Utility;
+using Plugin.Utility.OtherServices;
+using Plugin.Utility.UI;
 
 namespace Plugin;
 

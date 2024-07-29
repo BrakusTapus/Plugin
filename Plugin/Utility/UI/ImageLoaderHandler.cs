@@ -6,6 +6,7 @@ using System.Linq;
 using System.Net.Http;
 using System.Threading;
 using Dalamud.Interface.Textures.TextureWraps;
+using Plugin.Utility.Helpers;
 
 namespace Plugin.Utility.UI;
 

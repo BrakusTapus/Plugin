@@ -32,6 +32,7 @@ public static class ImGuiExt
         }
     }
 
+    #region ToolTips
     /// <summary>
     ///
     /// </summary>
@@ -103,6 +104,32 @@ public static class ImGuiExt
             ImGui.End();
         }
     }
+    #endregion
+
+
+    #region Sliders
+    public static bool SliderIntAsFloat(string id, ref int value, int min, int max, float divider = 1)
+    {
+        float f = (float)value / divider;
+        bool ret = ImGui.SliderFloat(id, ref f, (float)min / divider, (float)max / divider);
+        if (ret)
+        {
+            value = (int)(f * divider);
+        }
+        return ret;
+    }
+
+    public static bool SliderFloatAsInt(string id, ref float value, float min, float max, int divider = 1)
+    {
+        int i = (int)value / divider;
+        bool ret = ImGui.SliderInt(id, ref i, (int)min / divider, (int)max / divider);
+        if (ret)
+        {
+            value = (float)(i * divider);
+        }
+        return ret;
+    }
+    #endregion
 
     /// <summary>
     /// TODO: Add description
@@ -111,7 +138,7 @@ public static class ImGuiExt
     /// <returns></returns>
     public static bool IsInViewport(Vector2 size)
     {
-        var distanceY = ImGui.GetCursorPosY() - ImGui.GetScrollY();
+        float distanceY = ImGui.GetCursorPosY() - ImGui.GetScrollY();
         return distanceY >= -size.Y && distanceY <= ImGui.GetWindowHeight();
     }
 }

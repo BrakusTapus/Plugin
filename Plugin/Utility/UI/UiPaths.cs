@@ -1,7 +1,6 @@
-﻿using System;
-using System.IO;
+﻿using System.IO;
 
-namespace Plugin.Utility;
+namespace Plugin.Utility.UI;
 
 public class UiPaths
 {
@@ -12,37 +11,37 @@ public class UiPaths
     }
 
     public string BasePath { get; }
-    public static string AccountManagementPath { get; private set; }
-    public static string AdvancedOptionsPath { get; private set; }
-    public static string AncientSpellPath { get; private set; }
-    public static string ArceuusSpellPath { get; private set; }
-    public static string BankPath { get; private set; }
-    public static string BondsPouchPath { get; private set; }
-    public static string ButtonPath { get; private set; }
-    public static string ChatboxPath { get; private set; }
-    public static string ClansTabPath { get; private set; }
-    public static string CombatPath { get; private set; }
-    public static string CombatAchievementsPath { get; private set; }
-    public static string CrossSpritesPath { get; private set; }
-    public static string DialogPath { get; private set; }
-    public static string EmotePath { get; private set; }
-    public static string EquipmentPath { get; private set; }
-    public static string FixedModePath { get; private set; }
-    public static string GePath { get; private set; }
-    public static string ImplingPath { get; private set; }
-    public static string LoginScreenPath { get; private set; }
-    public static string LunarSpellPath { get; private set; }
-    public static string NormalSpellPath { get; private set; }
-    public static string OptionsPath { get; private set; }
-    public static string OtherPath { get; private set; }
-    public static string PrayerPath { get; private set; }
-    public static string QuestsTabPath { get; private set; }
-    public static string ResizeableModePath { get; private set; }
-    public static string ScrollbarPath { get; private set; }
-    public static string SkillPath { get; private set; }
-    public static string StatsPath { get; private set; }
-    public static string TabPath { get; private set; }
-    public static string WelcomeScreenPath { get; private set; }
+    public static string? AccountManagementPath { get; private set; }
+    public static string? AdvancedOptionsPath { get; private set; }
+    public static string? AncientSpellPath { get; private set; }
+    public static string? ArceuusSpellPath { get; private set; }
+    public static string? BankPath { get; private set; }
+    public static string? BondsPouchPath { get; private set; }
+    public static string? ButtonPath { get; private set; }
+    public static string? ChatboxPath { get; private set; }
+    public static string? ClansTabPath { get; private set; }
+    public static string? CombatPath { get; private set; }
+    public static string? CombatAchievementsPath { get; private set; }
+    public static string? CrossSpritesPath { get; private set; }
+    public static string? DialogPath { get; private set; }
+    public static string? EmotePath { get; private set; }
+    public static string? EquipmentPath { get; private set; }
+    public static string? FixedModePath { get; private set; }
+    public static string? GePath { get; private set; }
+    public static string? ImplingPath { get; private set; }
+    public static string? LoginScreenPath { get; private set; }
+    public static string? LunarSpellPath { get; private set; }
+    public static string? NormalSpellPath { get; private set; }
+    public static string? OptionsPath { get; private set; }
+    public static string? OtherPath { get; private set; }
+    public static string? PrayerPath { get; private set; }
+    public static string? QuestsTabPath { get; private set; }
+    public static string? ResizeableModePath { get; private set; }
+    public static string? ScrollbarPath { get; private set; }
+    public static string? SkillPath { get; private set; }
+    public static string? StatsPath { get; private set; }
+    public static string? TabPath { get; private set; }
+    public static string? WelcomeScreenPath { get; private set; }
 
 
 

@@ -9,6 +9,7 @@ using Plugin.Configurations;
 using Plugin.Commands;
 using ECommons;
 using Plugin.Utility;
+using System.Collections.Generic;
 
 namespace Plugin;
 
@@ -70,4 +71,5 @@ public sealed class Plugin : IDalamudPlugin
             Configuration.Save();
         }
     }
+
 }

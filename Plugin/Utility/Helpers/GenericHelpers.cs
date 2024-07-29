@@ -4,7 +4,7 @@ using System.Linq;
 using System.Runtime.CompilerServices;
 
 #nullable disable
-namespace Plugin.Utility;
+namespace Plugin.Utility.Helpers;
 
 public static unsafe partial class GenericHelpers
 {
@@ -14,7 +14,7 @@ public static unsafe partial class GenericHelpers
     }
 
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public static void Safe(System.Action a, bool suppressErrors = false)
+    public static void Safe(Action a, bool suppressErrors = false)
     {
         try
         {
@@ -30,7 +30,7 @@ public static unsafe partial class GenericHelpers
     }
 
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public static void Safe(System.Action a, Action<string, object[]> logAction)
+    public static void Safe(Action a, Action<string, object[]> logAction)
     {
         try
         {
@@ -43,7 +43,7 @@ public static unsafe partial class GenericHelpers
     }
 
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public static void Safe(System.Action a, Action<string> fail, bool suppressErrors = false)
+    public static void Safe(Action a, Action<string> fail, bool suppressErrors = false)
     {
         try
         {
