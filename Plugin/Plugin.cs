@@ -7,6 +7,7 @@ using Dalamud.Plugin.Services;
 using Plugin.Windows;
 using Plugin.Configurations;
 using Plugin.Commands;
+using ECommons;
 
 namespace Plugin;
 
@@ -26,12 +27,13 @@ public sealed class Plugin : IDalamudPlugin
         PluginCommands.Enable(this);
         Configuration = Services.PluginInterface.GetPluginConfig() as Configs ?? new Configs();
 
+        ECommonsMain.Init(pluginInterface, this, Module.ObjectFunctions);
 
-        var uiImagesPath = Path.Combine(Services.PluginInterface.AssemblyLocation.Directory?.FullName!, "UI");
-        var localImagesPath = uiImagesPath;
+        string? uiImagesPath = Path.Combine(Services.PluginInterface.AssemblyLocation.Directory?.FullName!, "UI");
+        string? localImagesPath = uiImagesPath;
         LocalImagesPath = localImagesPath;
-        var hitpointsImagePath = Path.Combine(uiImagesPath, "skill", "hitpoints.png");
-        var pluginImagePath = Path.Combine(uiImagesPath, "plugin.png");
+        string? hitpointsImagePath = Path.Combine(uiImagesPath, "skill", "hitpoints.png");
+        string? pluginImagePath = Path.Combine(uiImagesPath, "plugin.png");
 
         ConfigWindow = new ConfigWindow(this);
         MainWindow = new MainWindow(this, hitpointsImagePath, pluginImagePath);
@@ -54,6 +56,8 @@ public sealed class Plugin : IDalamudPlugin
 
         PluginCommands.Disable();
         Configuration.Save();
+
+        ECommonsMain.Dispose();
     }
 
     private void DrawUI() => WindowSystem.Draw();

@@ -42,11 +42,11 @@ public class ImageLoaderHandler
         new Thread(() =>
         {
             int idleTicks = 0;
-            GenericHelpers.Safe(delegate
+            GenericHelpers.Safe((Action)delegate
             {
                 while (idleTicks < 100)
                 {
-                    GenericHelpers.Safe(delegate
+                    GenericHelpers.Safe((Action)delegate
                     {
                         {
                             if (CachedTextures.TryGetFirst(x => x.Value.IsCompleted == false, out var keyValuePair))

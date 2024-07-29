@@ -1,20 +1,23 @@
 using System;
 using System.IO;
 using System.Numerics;
+using Dalamud.Interface.Components;
 using Dalamud.Interface.Internal;
+using Dalamud.Interface.Textures.TextureWraps;
 using Dalamud.Interface.Utility;
 using Dalamud.Interface.Windowing;
 using Dalamud.Plugin.Services;
 using ImGuiNET;
+using Plugin.OtherServices;
 using Plugin.Utility.UI;
 
 namespace Plugin.Windows;
 
 public class MainWindow : Window, IDisposable
 {
-    private string HitpointsImagePath;
-    private string PluginImagePath;
-    private Plugin plugin;
+    private readonly string HitpointsImagePath;
+    private readonly string PluginImagePath;
+    private readonly Plugin plugin;
 
     // We give this window a hidden ID using ##
     // So that the user will see "My Amazing Window" as window title,
@@ -32,33 +35,43 @@ public class MainWindow : Window, IDisposable
         this.plugin = plugin;
     }
 
-    public void Dispose() { }
+
+    public void Dispose()
+    {
+        Dispose(true);
+        GC.SuppressFinalize(this);
+    }
+
+    protected virtual void Dispose(bool disposing)
+    {
+        // Cleanup
+    }
 
     public override void Draw()
     {
         ImGui.Text($"The random config bool is {plugin.Configuration.SomePropertyToBeSavedAndWithADefault}");
-
-        if (ImGui.Button("Show Settings##ToggleUIWindow"))
+        if (ImGuiComponents.IconButtonWithText(Dalamud.Interface.FontAwesomeIcon.Cog, "Settings", Colours.Transparent, Colours.ButtonActive, Colours.TextHovered))
         {
             plugin.ToggleConfigUI();
         }
-        ImGuiExt.HelpMarker("Toggles the config window.");
+        ImGuiExt.NewTooltip("Toggles the config window.");
 
         ImGui.Spacing();
 
-        ImGui.Text("Have some love:");
-        var hitpointsImage = Services.TextureProvider.GetFromFile(HitpointsImagePath).GetWrapOrDefault();
+        IDalamudTextureWrap? hitpointsImage = Services.TextureProvider.GetFromFile(HitpointsImagePath).GetWrapOrDefault();
         if (hitpointsImage != null)
         {
             ImGuiHelpers.ScaledIndent(55f);
             ImGui.Image(hitpointsImage.ImGuiHandle, new Vector2(hitpointsImage.Width, hitpointsImage.Height));
             ImGuiHelpers.ScaledIndent(-55f);
+            ImGuiExt.NewTooltip("Have some love:");
         }
         else
         {
             ImGui.Text("HP image not found.");
         }
-        var pluginImage = Services.TextureProvider.GetFromFile(PluginImagePath).GetWrapOrDefault();
+
+        IDalamudTextureWrap? pluginImage = Services.TextureProvider.GetFromFile(PluginImagePath).GetWrapOrDefault();
         if (pluginImage != null)
         {
             ImGui.Image(pluginImage.ImGuiHandle, new Vector2(pluginImage.Width, pluginImage.Height));
@@ -68,10 +81,22 @@ public class MainWindow : Window, IDisposable
             ImGui.Text("Plugin image not found.");
         }
 
-        //ImageLoader.LoadImageFromStream(HitpointsImagePath);
-        var image3 = Path.Combine(plugin.LocalImagesPath, "button", "equipment_items_lost_on_death.png");
+        string? image3 = Path.Combine(plugin.LocalImagesPath, "button", "equipment_items_lost_on_death.png");
         ImageLoader.LoadImageFromStream(image3);
-        var image4 = "https://upload.wikimedia.org/wikipedia/commons/thumb/a/ae/Github-desktop-logo-symbol.svg/2048px-Github-desktop-logo-symbol.svg.png";
-        ImageLoader.LoadImageFromStream(image4);
     }
+
+    public void DrawIcons()
+    {
+        // Using overloaded methods for simplicity
+        Services.TextureService.DrawIcon(60073, true); // Uses default DrawInfo
+        Services.TextureService.DrawIcon(60074, true, new Vector2(24, 24)); // Specifies only the size
+        Services.TextureService.DrawIcon(60001, true, new Vector2(24, 24), new Vector4(1, 1, 1, 1)); // Specifies size and tint color
+        Services.TextureService.DrawIcon(60002, true, new Vector2(24, 24), new Vector4(1, 1, 1, 1), new Vector4(0, 0, 0, 1)); // Specifies size, tint color, and border color
+        Services.TextureService.DrawIcon(60003, true, 48); // Specifies size as float
+        Services.TextureService.DrawIcon(60004, true, 24, 24); // Specifies width and height
+        Services.TextureService.DrawIcon(60011, true, 24, 24, new Vector4(1, 1, 1, 1)); // Specifies width, height, and tint color
+        Services.TextureService.DrawIcon(60012, true, 24, 24, new Vector4(1, 1, 1, 1), new Vector4(0, 0, 0, 1)); // Specifies width, height, tint color, and border color
+        Services.TextureService.DrawIcon(60025, true, 24, 24, new Vector4(1, 1, 1, 1), new Vector4(0, 0, 0, 1)); // Specifies width, height, tint color, and border color    
+    }
+
 }

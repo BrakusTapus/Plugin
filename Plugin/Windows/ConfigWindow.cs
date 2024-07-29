@@ -14,7 +14,7 @@ public class ConfigWindow : Window, IDisposable
     // We give this window a constant ID using ###
     // This allows for labels being dynamic, like "{FPS Counter}fps###XYZ counter window",
     // and the window ID will always be "###XYZ counter window" for ImGui
-    public ConfigWindow(Plugin plugin) : base("A Wonderful configuration Window{FPS Counter}fps###With a constant ID")
+    public ConfigWindow(Plugin plugin) : base("Configuration Window###With a constant ID")
     {
         Flags = ImGuiWindowFlags.NoResize | ImGuiWindowFlags.NoCollapse | ImGuiWindowFlags.NoScrollbar | ImGuiWindowFlags.NoScrollWithMouse;
 
@@ -95,8 +95,14 @@ public class ConfigWindow : Window, IDisposable
 
     public override void Draw()
     {
-        // can't ref a property, so use a local copy
-        var configValue = configuration.SomePropertyToBeSavedAndWithADefault;
+        DrawImGuiWindowOptions();
+        ImGui.SameLine();
+
+    }
+
+    private void DrawImGuiWindowOptions()
+    {
+        bool configValue = configuration.SomePropertyToBeSavedAndWithADefault;
         if (ImGui.Checkbox("Random Config Bool", ref configValue))
         {
             configuration.SomePropertyToBeSavedAndWithADefault = configValue;
@@ -104,55 +110,53 @@ public class ConfigWindow : Window, IDisposable
             configuration.Save();
         }
 
-        var movable = configuration.IsConfigWindowMovable;
+        bool movable = configuration.IsConfigWindowMovable;
         if (ImGui.Checkbox("Movable Config Window", ref movable))
         {
             configuration.IsConfigWindowMovable = movable;
             configuration.Save();
         }
 
-        var resizeable = configuration.IsConfigWindowResizeable;
+        bool resizeable = configuration.IsConfigWindowResizeable;
         if (ImGui.Checkbox("Resizeable Config Window", ref resizeable))
         {
             configuration.IsConfigWindowResizeable = resizeable;
             configuration.Save();
         }
 
-
-        var titleBar = configuration.IsConfigWindowNoTitleBar;
+        bool titleBar = configuration.IsConfigWindowNoTitleBar;
         if (ImGui.Checkbox("Title bar", ref titleBar))
         {
             configuration.IsConfigWindowNoTitleBar = titleBar;
             configuration.Save();
         }
 
-        var scrollbar = configuration.IsConfigNoWindowScrollbar;
+        bool scrollbar = configuration.IsConfigNoWindowScrollbar;
         if (ImGui.Checkbox("Scrollbar", ref scrollbar))
         {
             configuration.IsConfigNoWindowScrollbar = scrollbar;
             configuration.Save();
         }
 
-        var scrollWithMouse = configuration.IsConfigWindowNoScrollWithMouse;
+        bool scrollWithMouse = configuration.IsConfigWindowNoScrollWithMouse;
         if (ImGui.Checkbox("Scroll With Mouse", ref scrollWithMouse))
         {
             configuration.IsConfigWindowNoScrollWithMouse = scrollWithMouse;
             configuration.Save();
         }
 
-        var collapseable = configuration.IsConfigWindowNoCollapseable;
+        bool collapseable = configuration.IsConfigWindowNoCollapseable;
         if (ImGui.Checkbox("Collapseable", ref collapseable))
         {
             configuration.IsConfigWindowNoCollapseable = collapseable;
             configuration.Save();
         }
 
-        var background = configuration.IsConfigWindowNoBackground;
+        bool background = configuration.IsConfigWindowNoBackground;
         if (ImGui.Checkbox("No background", ref background))
         {
             configuration.IsConfigWindowNoBackground = background;
             configuration.Save();
         }
-
     }
 }
