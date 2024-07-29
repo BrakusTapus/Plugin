@@ -1,7 +1,4 @@
-﻿
-
-using System.Numerics;
-using Dalamud.Interface.Textures.TextureWraps;
+﻿using System.Numerics;
 using ImGuiNET;
 
 namespace Plugin.Utility.UI;

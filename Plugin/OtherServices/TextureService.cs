@@ -16,37 +16,43 @@ namespace Plugin.OtherServices;
 public class TextureService
 {
     private readonly ITextureProvider textureProvider;
+
     private readonly IDataManager dataManager;
+    public IDataManager DataManager
+    {
+        get
+        {
+            return dataManager;
+        }
+    }
+
     private readonly string uiBasePath;
-
-    public TextureService(ITextureProvider textureProvider, IDataManager dataManager)
+    public string UiBasePath
     {
-        this.textureProvider = textureProvider;
-        this.dataManager = dataManager;
-        this.uiBasePath = uiBasePath;
+        get
+        {
+            return uiBasePath;
+        }
     }
 
-    public void Draw(string path, DrawInfo drawInfo)
+    /// <summary>
+    /// The class depends on ITextureProvider, IDataManager, and a base path string (uiBasePath).
+    /// These dependencies are injected through the constructor, ensuring that the necessary services are available when the class is instantiated. 
+    /// It also performs null checks to ensure that none of the dependencies are null.
+    /// </summary>
+    /// <param name="textureProvider"></param>
+    /// <param name="dataManager"></param>
+    /// <param name="uiBasePath"></param>
+    /// <exception cref="ArgumentNullException"></exception>
+    public TextureService(ITextureProvider textureProvider, IDataManager dataManager, string uiBasePath)
     {
-        var textureWrap = textureProvider.GetFromGame(path).GetWrapOrEmpty();
-        Draw(textureWrap, drawInfo);
+        this.textureProvider = textureProvider ?? throw new ArgumentNullException(nameof(textureProvider));
+        this.dataManager = dataManager ?? throw new ArgumentNullException(nameof(dataManager));
+        this.uiBasePath = uiBasePath ?? throw new ArgumentNullException(nameof(uiBasePath));
     }
 
-    public void DrawIcon(GameIconLookup gameIconLookup, DrawInfo drawInfo)
-    {
-        var textureWrap = textureProvider.GetFromGameIcon(gameIconLookup).GetWrapOrEmpty();
-        Draw(textureWrap, drawInfo);
-    }
-
-    public void DrawIcon(int iconId, bool isHq, DrawInfo drawInfo)
-        => DrawIcon(new GameIconLookup((uint)iconId, isHq), drawInfo);
-
-    public void DrawIcon(uint iconId, DrawInfo drawInfo)
-        => DrawIcon(new GameIconLookup(iconId), drawInfo);
-
-    public void DrawIcon(int iconId, DrawInfo drawInfo)
-        => DrawIcon(new GameIconLookup((uint)iconId), drawInfo);
-
+    // This method handles the actual drawing logic. If the texture is null, it draws a dummy.
+    // It calculates the size, UV coordinates, and then uses ImGui to draw the image with the specified tint and border colors.
     public static void Draw(IDalamudTextureWrap? textureWrap, DrawInfo drawInfo)
     {
         if (textureWrap == null)
@@ -55,7 +61,7 @@ public class TextureService
             return;
         }
 
-        var size = drawInfo.DrawSize ?? textureWrap.Size;
+        Vector2 size = drawInfo.DrawSize ?? textureWrap.Size;
 
         if (!ImGuiExt.IsInViewport(size))
         {
@@ -63,8 +69,8 @@ public class TextureService
             return;
         }
 
-        var uv0 = drawInfo.Uv0 ?? Vector2.Zero;
-        var uv1 = drawInfo.Uv1 ?? Vector2.One;
+        Vector2 uv0 = drawInfo.Uv0 ?? Vector2.Zero;
+        Vector2 uv1 = drawInfo.Uv1 ?? Vector2.One;
 
         if (drawInfo.TransformUv)
         {
@@ -81,8 +87,76 @@ public class TextureService
             drawInfo.BorderColor ?? Vector4.Zero);
     }
 
+    /// <summary>
+    /// Retrieves a texture using a file path and draws it using the provided DrawInfo.
+    /// </summary>
+    /// <param name="path"></param>
+    /// <param name="drawInfo"></param>
+    public void DrawImage(string path, DrawInfo drawInfo)
+    {
+        IDalamudTextureWrap? textureWrap = textureProvider.GetFromGame(path).GetWrapOrEmpty();
+        Draw(textureWrap, drawInfo);
+    }
 
-    // Overloaded methods for convenience
+    public void DrawImage(string path)
+        => DrawImage(path, new DrawInfo());
+
+    public void DrawImage(string path, Vector2 drawSize)
+        => DrawImage(path, new DrawInfo { DrawSize = drawSize });
+
+    public void DrawImage(string path, Vector2 drawSize, DrawInfo drawInfo)
+        => DrawImage(path, new DrawInfo { DrawSize = drawSize });
+
+    public void DrawImage(string path, Vector2 drawSize, DrawInfo drawInfo, Vector4 tintColor)
+        => DrawImage(path, new DrawInfo { DrawSize = drawSize, TintColor = tintColor });
+
+    public void DrawImage(string path, Vector2 drawSize, DrawInfo drawInfo, Vector4 tintColor, Vector4 borderColor)
+        => DrawImage(path, new DrawInfo { DrawSize = drawSize, TintColor = tintColor, BorderColor = borderColor });
+
+    public void DrawImage(string path, float size)
+        => DrawImage(path, new DrawInfo { DrawSize = new Vector2(size) });
+
+    public void DrawImage(string path, float size, Vector4 tintColor)
+        => DrawImage(path, new DrawInfo { DrawSize = new Vector2(size), TintColor = tintColor });
+
+    public void DrawImage(string path, float size, Vector4 tintColor, Vector4 borderColor)
+        => DrawImage(path, new DrawInfo { DrawSize = new Vector2(size), TintColor = tintColor, BorderColor = borderColor });
+
+    public void DrawImage(string path, float width, float height)
+        => DrawImage(path, new DrawInfo { DrawSize = new Vector2(width, height) });
+
+    public void DrawImage(string path, float width, float height, Vector4 tintColor)
+        => DrawImage(path, new DrawInfo { DrawSize = new Vector2(width, height), TintColor = tintColor });
+
+    public void DrawImage(string path, float width, float height, Vector4 tintColor, Vector4 borderColor)
+        => DrawImage(path, new DrawInfo { DrawSize = new Vector2(width, height), TintColor = tintColor, BorderColor = borderColor });
+
+    /// <summary>
+    ///  Retrieves a texture using a GameIconLookup and draws it using the provided DrawInfo.
+    /// </summary>
+    /// <param name="gameIconLookup"></param>
+    /// <param name="drawInfo"></param>
+    //public void DrawIcon(GameIconLookup gameIconLookup, DrawInfo drawInfo)
+    //{
+    //    var textureWrap = textureProvider.GetFromGameIcon(gameIconLookup).GetWrapOrEmpty();
+    //    Draw(textureWrap, drawInfo);
+    //}
+    public void DrawIcon(GameIconLookup gameIconLookup, DrawInfo drawInfo)
+    {
+        IDalamudTextureWrap? textureWrap = textureProvider.GetFromGameIcon(gameIconLookup).GetWrapOrEmpty();
+        Draw(textureWrap, drawInfo);
+    }
+
+    // These overloads simplify the drawing of icons by providing multiple ways to specify the icon (e.g., by integer ID, whether it's HQ or not, etc.).
+    public void DrawIcon(int iconId, bool isHq, DrawInfo drawInfo)
+        => DrawIcon(new GameIconLookup((uint)iconId, isHq), drawInfo);
+
+    public void DrawIcon(uint iconId, DrawInfo drawInfo)
+        => DrawIcon(new GameIconLookup(iconId), drawInfo);
+
+    public void DrawIcon(int iconId, DrawInfo drawInfo)
+        => DrawIcon(new GameIconLookup((uint)iconId), drawInfo);
+
     public void DrawIcon(int iconId, Vector2 drawSize)
         => DrawIcon(iconId, new DrawInfo { DrawSize = drawSize });
 
@@ -90,7 +164,7 @@ public class TextureService
         => DrawIcon(iconId, new DrawInfo { DrawSize = drawSize, TintColor = tintColor });
 
     public void DrawIcon(int iconId, Vector2 drawSize, Vector4 tintColor, Vector4 borderColor)
-        => DrawIcon(iconId, new DrawInfo { DrawSize = drawSize, TintColor = tintColor, BorderColor = borderColor });
+        => DrawIcon(iconId, new DrawInfo { DrawSize = drawSize, TintColor = tintColor, BorderColor = borderColor }); //
 
     public void DrawIcon(int iconId)
         => DrawIcon(iconId, new DrawInfo());
@@ -133,17 +207,41 @@ public struct DrawInfo
     public DrawInfo(Vector2 size)
     {
         DrawSize = size;
+        Uv0 = null;
+        Uv1 = null;
+        TintColor = null;
+        BorderColor = null;
+        TransformUv = false;
     }
+
+    //public DrawInfo(float size)
+    //{
+    //    DrawSize = new(size);
+    //}
+
+    //public DrawInfo(float width, float height)
+    //{
+    //    DrawSize = new(width, height);
+    //}
 
     public DrawInfo(float size)
-    {
-        DrawSize = new(size);
-    }
+        : this(new Vector2(size)) { }
 
     public DrawInfo(float width, float height)
+        : this(new Vector2(width, height)) { }
+
+    public DrawInfo(Vector2 size, Vector4? tintColor = null, Vector4? borderColor = null)
     {
-        DrawSize = new(width, height);
+        DrawSize = size;
+        Uv0 = null;
+        Uv1 = null;
+        TintColor = tintColor;
+        BorderColor = borderColor;
+        TransformUv = false;
     }
+
+    public DrawInfo(float width, float height, Vector4? tintColor = null, Vector4? borderColor = null)
+        : this(new Vector2(width, height), tintColor, borderColor) { }
 
     public Vector2? DrawSize { get; set; }
     public Vector2? Uv0 { get; set; }

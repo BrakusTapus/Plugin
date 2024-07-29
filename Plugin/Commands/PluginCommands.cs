@@ -21,14 +21,14 @@ public static partial class PluginCommands
             HelpMessage = "Also Opens Menu.",
             ShowInHelp = true,
         });
-        Services.PluginLog.Debug($"Enabled commands!\n{Command}\n{AltCommand}");
+        Services.PluginLog.Debug($"Enabled commands: {Command} {AltCommand}");
     }
 
     internal static void Disable()
     {
         Services.CommandManager.RemoveHandler(Command);
         Services.CommandManager.RemoveHandler(AltCommand);
-        Services.PluginLog.Debug($"Disabled commands!\n{Command}\n{AltCommand}");
+        Services.PluginLog.Debug($"Disabled commands: {Command} {AltCommand}");
     }
 
     private static void OnCommand(string command, string args)

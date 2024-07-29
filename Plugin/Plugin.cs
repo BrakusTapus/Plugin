@@ -8,35 +8,28 @@ using Plugin.Windows;
 using Plugin.Configurations;
 using Plugin.Commands;
 using ECommons;
+using Plugin.Utility;
 
 namespace Plugin;
 
 public sealed class Plugin : IDalamudPlugin
 {
-    public string LocalImagesPath { get; }
-
     public Configs Configuration { get; init; }
-
     public readonly WindowSystem WindowSystem = new("plugin");
     private ConfigWindow ConfigWindow { get; init; }
     private MainWindow MainWindow { get; init; }
 
     public Plugin(IDalamudPluginInterface pluginInterface)
     {
-        Services.Init(pluginInterface);
+        Services.Initialize(pluginInterface);
+
         PluginCommands.Enable(this);
         Configuration = Services.PluginInterface.GetPluginConfig() as Configs ?? new Configs();
 
         ECommonsMain.Init(pluginInterface, this, Module.ObjectFunctions);
 
-        string? uiImagesPath = Path.Combine(Services.PluginInterface.AssemblyLocation.Directory?.FullName!, "UI");
-        string? localImagesPath = uiImagesPath;
-        LocalImagesPath = localImagesPath;
-        string? hitpointsImagePath = Path.Combine(uiImagesPath, "skill", "hitpoints.png");
-        string? pluginImagePath = Path.Combine(uiImagesPath, "plugin.png");
-
         ConfigWindow = new ConfigWindow(this);
-        MainWindow = new MainWindow(this, hitpointsImagePath, pluginImagePath);
+        MainWindow = new MainWindow(this, Services.UiPaths);
 
         WindowSystem.AddWindow(ConfigWindow);
         WindowSystem.AddWindow(MainWindow);
