@@ -2,3 +2,7 @@
 obj/
 bin/
 *.user
+/.gitattributes
+/Data/**/**/*.*
+/Data/UI
+/Plugin.log
