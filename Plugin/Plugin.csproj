@@ -19,29 +19,40 @@
             <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
             <Visible>false</Visible>
         </Content>
+        
         <Content Include="Dalamud.Plugin.Bootstrap.targets">
             <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
             <Visible>false</Visible>
         </Content>
+        
         <Content Include="packages.lock.json">
             <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
             <Visible>false</Visible>
         </Content>
+        
         <Content Include="Plugin.json">
             <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
             <Visible>false</Visible>
         </Content>
+        
+        <Reference Include="PInvoke.User32">
+            <HintPath>$(DalamudLibPath)PInvoke.User32.dll</HintPath>
+            <Private>False</Private>
+        </Reference>
+
+        <Compile Remove="Features\BaseFeature.cs" />
+        <Compile Remove="Features\Feature.cs" />
+        <!--<Compile Remove="Features\RefreshMarketPrices.cs" />-->
+
     </ItemGroup>
 
     <ItemGroup>
-        <Folder Include="Features\" />
+        <PackageReference Include="Microsoft.Extensions.DependencyInjection.Abstractions" Version="8.0.1">          
+        </PackageReference>
     </ItemGroup>
 
     <ItemGroup>
-      <PackageReference Include="Microsoft.Extensions.DependencyInjection.Abstractions" Version="8.0.1" />
-    </ItemGroup>
-
-    <ItemGroup>
-        <ProjectReference Include="..\ECommons\ECommons\ECommons.csproj" />
+        <ProjectReference Include="..\ECommons\ECommons\ECommons.csproj">  
+        </ProjectReference>
     </ItemGroup>
 </Project>

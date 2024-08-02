@@ -8,7 +8,7 @@ using Microsoft.Extensions.DependencyInjection;
 using Plugin.Utility.OtherServices;
 using Plugin.Utility.UI;
 
-namespace Plugin;
+namespace Plugin.MyServices;
 
 public class Services
 {
@@ -20,6 +20,8 @@ public class Services
     [PluginService] public static ICommandManager CommandManager { get; private set; } = null!;
     [PluginService] public static IPluginLog PluginLog { get; private set; } = null!;
     [PluginService] public static IDataManager DataManager { get; private set; } = null!;
+    [PluginService] public static IFramework Framework { get; private set; } = null!;
+    [PluginService] public static IGameGui GameGui { get; private set; } = null!;
 
     internal static bool IsInitialized = false;
 

@@ -3,6 +3,7 @@ using Dalamud.Interface.Textures.TextureWraps;
 
 namespace Plugin.Utility.UI;
 
+//TODO: Add this to the ImGuiEx namespace (ImGui folder) 
 public class ImageLoadingResult
 {
     internal ISharedImmediateTexture? ImmediateTexture;

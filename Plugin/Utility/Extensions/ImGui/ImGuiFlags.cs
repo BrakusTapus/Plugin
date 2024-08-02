@@ -1,8 +1,9 @@
 ﻿using ImGuiNET;
 
-namespace Plugin.Utility.UI;
+namespace ImGuiExtensions;
 
-public static class ImGuiFlags
+//TODO: Add this to the ImGuiEx namespace (ImGui folder) 
+public static partial class ImGuiExt
 {
     public const string TOOLTIP_ID = "##ToolTip_ID";
 

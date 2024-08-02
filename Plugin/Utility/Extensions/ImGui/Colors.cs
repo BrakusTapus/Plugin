@@ -1,11 +1,12 @@
 using System.Numerics;
+using Lumina.Excel.GeneratedSheets;
 
-namespace Plugin.Utility.UI;
+namespace ImGuiExtensions;
 
 /// <summary>
 /// A set of fancy color for use in plugins.
 /// </summary>
-public static class Colours
+public static class ColorEx
 {
     /// <summary>
     /// Converts RGB color to <see cref="Vector4"/> for ImGui
@@ -66,6 +67,9 @@ public static class Colours
     public readonly static Vector4 Transparent = Vector4FromRGB(0xFFFFFF, 0.0f);
     public readonly static Vector4 SelectableSelected = Vector4FromRGB(0x333333, 0.9f);
     public readonly static Vector4 ButtonActive = Vector4FromRGB(0x4D4D4D, 0.3f);
+    public readonly static Vector4 ButtonDefault = Vector4FromRGB(0xB5B5B5, 1.0f);
+
+    // #B5B5B566
 
     // Dalamud UI Colors
     public readonly static Vector4 DalamudRed = new(1f, 0f, 0f, 1f);

@@ -8,6 +8,7 @@ using Dalamud.Interface.Textures;
 using Dalamud.Interface.Textures.TextureWraps;
 using Dalamud.Plugin.Services;
 using ECommons.ImGuiMethods;
+using ImGuiExtensions;
 using ImGuiNET;
 using Plugin.Utility.UI;
 

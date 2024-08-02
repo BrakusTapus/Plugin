@@ -6,10 +6,12 @@ using System.Linq;
 using System.Net.Http;
 using System.Threading;
 using Dalamud.Interface.Textures.TextureWraps;
+using Plugin.MyServices;
 using Plugin.Utility.Helpers;
 
 namespace Plugin.Utility.UI;
 
+//TODO: Add this to the ImGuiEx namespace (ImGui folder) 
 public class ImageLoaderHandler
 {
     internal static ConcurrentDictionary<string, ImageLoadingResult> CachedTextures = new();
@@ -38,23 +40,23 @@ public class ImageLoaderHandler
         httpClient ??= new() {
             Timeout = TimeSpan.FromSeconds(10),
         };
-        Services.PluginLog.Verbose("Starting ThreadLoadImageHandler");
+        MyServices.Services.PluginLog.Verbose("Starting ThreadLoadImageHandler");
         ThreadRunning = true;
         new Thread(() =>
         {
             int idleTicks = 0;
-            GenericHelpers.Safe((Action)delegate
+            GenericHelpersEx.Safe((Action)delegate
             {
                 while (idleTicks < 100)
                 {
-                    GenericHelpers.Safe((Action)delegate
+                    GenericHelpersEx.Safe((Action)delegate
                     {
                         {
                             if (CachedTextures.TryGetFirst(x => x.Value.IsCompleted == false, out var keyValuePair))
                             {
                                 idleTicks = 0;
                                 keyValuePair.Value.IsCompleted = true;
-                                Services.PluginLog.Verbose("Loading image " + keyValuePair.Key);
+                                MyServices.Services.PluginLog.Verbose("Loading image " + keyValuePair.Key);
                                 if (keyValuePair.Key.StartsWith("http:", StringComparison.OrdinalIgnoreCase) || keyValuePair.Key.StartsWith("https:", StringComparison.OrdinalIgnoreCase))
                                 {
                                     var result = httpClient.GetAsync(keyValuePair.Key).Result;
@@ -68,7 +70,7 @@ public class ImageLoaderHandler
 
                                         try
                                         {
-                                            texture = Services.TextureProvider.CreateFromImageAsync(conversion(content)).Result;
+                                            texture = MyServices.Services.TextureProvider.CreateFromImageAsync(conversion(content)).Result;
                                             if (texture != null) break;
                                         }
                                         catch (Exception ex)
@@ -82,11 +84,11 @@ public class ImageLoaderHandler
                                 {
                                     if (File.Exists(keyValuePair.Key))
                                     {
-                                        keyValuePair.Value.ImmediateTexture = Services.TextureProvider.GetFromFile(keyValuePair.Key);
+                                        keyValuePair.Value.ImmediateTexture = MyServices.Services.TextureProvider.GetFromFile(keyValuePair.Key);
                                     }
                                     else
                                     {
-                                        keyValuePair.Value.ImmediateTexture = Services.TextureProvider.GetFromGame(keyValuePair.Key);
+                                        keyValuePair.Value.ImmediateTexture = MyServices.Services.TextureProvider.GetFromGame(keyValuePair.Key);
                                     }
                                 }
                             }
@@ -96,8 +98,8 @@ public class ImageLoaderHandler
                             {
                                 idleTicks = 0;
                                 keyValuePair.Value.IsCompleted = true;
-                                Services.PluginLog.Verbose($"Loading icon {keyValuePair.Key.ID}, hq={keyValuePair.Key.HQ}");
-                                keyValuePair.Value.ImmediateTexture = Services.TextureProvider.GetFromGameIcon(new(keyValuePair.Key.ID, hiRes: keyValuePair.Key.HQ));
+                                MyServices.Services.PluginLog.Verbose($"Loading icon {keyValuePair.Key.ID}, hq={keyValuePair.Key.HQ}");
+                                keyValuePair.Value.ImmediateTexture = MyServices.Services.TextureProvider.GetFromGameIcon(new(keyValuePair.Key.ID, hiRes: keyValuePair.Key.HQ));
                             }
                         }
                     });
@@ -105,7 +107,7 @@ public class ImageLoaderHandler
                     if (!CachedTextures.Any(x => x.Value.IsCompleted) && !CachedIcons.Any(x => x.Value.IsCompleted)) Thread.Sleep(100);
                 }
             });
-            Services.PluginLog.Verbose($"Stopping ThreadLoadImageHandler, ticks={idleTicks}");
+            MyServices.Services.PluginLog.Verbose($"Stopping ThreadLoadImageHandler, ticks={idleTicks}");
             ThreadRunning = false;
         }).Start();
     }

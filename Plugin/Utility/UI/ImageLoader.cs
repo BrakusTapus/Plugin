@@ -1,10 +1,13 @@
 ﻿using System.IO;
 using System.Numerics;
 using Dalamud.Interface.Textures.TextureWraps;
+using ImGuiExtensions;
 using ImGuiNET;
+using Plugin.MyServices;
 
 namespace Plugin.Utility.UI;
 
+//TODO: Add this to the ImGuiEx namespace (ImGui folder) 
 public static class ImageLoader
 {
     /// <summary>
@@ -53,7 +56,7 @@ public static class ImageLoader
     {
         if (catagoryUiPaths != null && fileName != null)
         {
-            Services.TextureService.DrawImage(
+            MyServices.Services.TextureService.DrawImage(
                 Path.Combine(catagoryUiPaths, fileName),
                 size,
                 tintColor ?? Vector4.One,
@@ -61,7 +64,7 @@ public static class ImageLoader
         }
         else
         {
-            Services.PluginLog.Error($"Paths are null!");
+            MyServices.Services.PluginLog.Error($"Paths are null!");
         }
     }
     #endregion
@@ -93,7 +96,7 @@ public static class ImageLoader
     {
         if (iconID != 0)
         {
-            Services.TextureService.DrawIcon(
+            MyServices.Services.TextureService.DrawIcon(
                 iconID,
                 isHQ,
                 size,
@@ -102,7 +105,7 @@ public static class ImageLoader
         }
         else
         {
-            Services.PluginLog.Error("iconID is 0!");
+            MyServices.Services.PluginLog.Error("iconID is 0!");
         }
     }
     #endregion
@@ -118,15 +121,15 @@ public static class ImageLoader
         ImGui.SameLine();
         ImageLoader.DrawImage(UiPaths.OtherPath, "compass.png", 64);
         ImGui.SameLine();
-        ImageLoader.DrawImage(UiPaths.OtherPath, "compass.png", 64, Colours.DarkType);
+        ImageLoader.DrawImage(UiPaths.OtherPath, "compass.png", 64, ColorEx.DarkType);
         ImGui.SameLine();
-        ImageLoader.DrawImage(UiPaths.OtherPath, "compass.png", 64, Colours.DarkType, Colours.Silver);
+        ImageLoader.DrawImage(UiPaths.OtherPath, "compass.png", 64, ColorEx.DarkType, ColorEx.Silver);
         ImGui.SameLine();
         ImageLoader.DrawImage(UiPaths.OtherPath, "compass.png", new Vector2(64, 64));
         ImGui.SameLine();
-        ImageLoader.DrawImage(UiPaths.OtherPath, "compass.png", new Vector2(64, 64), Colours.DarkType);
+        ImageLoader.DrawImage(UiPaths.OtherPath, "compass.png", new Vector2(64, 64), ColorEx.DarkType);
         ImGui.SameLine();
-        ImageLoader.DrawImage(UiPaths.OtherPath, "compass.png", new Vector2(64, 64), Colours.DarkType, Colours.Silver);
+        ImageLoader.DrawImage(UiPaths.OtherPath, "compass.png", new Vector2(64, 64), ColorEx.DarkType, ColorEx.Silver);
     }
 
     /// <summary>
@@ -134,23 +137,23 @@ public static class ImageLoader
     /// </summary>
     internal static void DrawIconsForTesting()
     {
-        Services.TextureService.DrawIcon(60073, true); // Uses default DrawInfo
+        MyServices.Services.TextureService.DrawIcon(60073, true); // Uses default DrawInfo
         ImGui.SameLine();
-        Services.TextureService.DrawIcon(60074, true, new Vector2(64, 64)); // Specifies only the size
+        MyServices.Services.TextureService.DrawIcon(60074, true, new Vector2(64, 64)); // Specifies only the size
         ImGui.SameLine();
-        Services.TextureService.DrawIcon(60001, true, new Vector2(64, 64), new Vector4(1, 1, 1, 1)); // Specifies size and tint color
+        MyServices.Services.TextureService.DrawIcon(60001, true, new Vector2(64, 64), new Vector4(1, 1, 1, 1)); // Specifies size and tint color
         ImGui.SameLine();
-        Services.TextureService.DrawIcon(60002, true, new Vector2(24, 64), new Vector4(1, 1, 1, 1), new Vector4(0, 0, 0, 1)); // Specifies size, tint color, and border color
+        MyServices.Services.TextureService.DrawIcon(60002, true, new Vector2(24, 64), new Vector4(1, 1, 1, 1), new Vector4(0, 0, 0, 1)); // Specifies size, tint color, and border color
         ImGui.SameLine();
-        Services.TextureService.DrawIcon(60003, true, 64); // Specifies size as float
+        MyServices.Services.TextureService.DrawIcon(60003, true, 64); // Specifies size as float
         ImGui.SameLine();
-        Services.TextureService.DrawIcon(60004, true, 64, 64); // Specifies width and height
+        MyServices.Services.TextureService.DrawIcon(60004, true, 64, 64); // Specifies width and height
         ImGui.SameLine();
-        Services.TextureService.DrawIcon(60011, true, 64, 64, new Vector4(1, 1, 1, 1)); // Specifies width, height, and tint color
+        MyServices.Services.TextureService.DrawIcon(60011, true, 64, 64, new Vector4(1, 1, 1, 1)); // Specifies width, height, and tint color
         ImGui.SameLine();
-        Services.TextureService.DrawIcon(60012, true, 64, 64, new Vector4(1, 1, 1, 1), new Vector4(0, 0, 0, 1)); // Specifies width, height, tint color, and border color
+        MyServices.Services.TextureService.DrawIcon(60012, true, 64, 64, new Vector4(1, 1, 1, 1), new Vector4(0, 0, 0, 1)); // Specifies width, height, tint color, and border color
         ImGui.SameLine();
-        Services.TextureService.DrawIcon(60025, true, 64, 64, new Vector4(1, 1, 1, 1), new Vector4(0, 0, 0, 1)); // Specifies width, height, tint color, and border color    
+        MyServices.Services.TextureService.DrawIcon(60025, true, 64, 64, new Vector4(1, 1, 1, 1), new Vector4(0, 0, 0, 1)); // Specifies width, height, tint color, and border color    
     }
 #endif
 

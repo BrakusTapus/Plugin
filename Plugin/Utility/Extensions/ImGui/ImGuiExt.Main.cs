@@ -5,31 +5,24 @@ using Dalamud.Interface.Components;
 using Dalamud.Interface.Utility;
 using Dalamud.Interface.Utility.Raii;
 using ImGuiNET;
-using Plugin.Configurations;
+// using Plugin.Configurations; //TODO: If migrating to Ecommons EzConfig is succesfol then this can be removed
 
-namespace Plugin.Utility.UI;
+namespace ImGuiExtensions;
 
-public static class ImGuiExt
+//TODO: Add this to the ImGuiEx namespace (ImGui folder) 
+public static partial class ImGuiExt
 {
+    public static float Scale => ImGuiHelpers.GlobalScale;
+
     /// <summary>
-    /// <br>HelpMarker component to add a help icon with text on hover.</br>
-    /// <br>helpText: The text to display on hover.</br>
+    /// TODO: Add description
     /// </summary>
-    /// <param name="helpText"></param>
-    public static void HelpMarker(string helpText)
+    /// <param name="size"></param>
+    /// <returns></returns>
+    public static bool IsInViewport(Vector2 size)
     {
-        ImGui.SameLine();
-        ImGui.PushFont(UiBuilder.IconFont);
-        ImGui.TextDisabled(FontAwesomeIcon.InfoCircle.ToIconString());
-        ImGui.PopFont();
-        if (ImGui.IsItemHovered())
-        {
-            ImGui.BeginTooltip();
-            ImGui.PushTextWrapPos(ImGui.GetFontSize() * 40f);
-            ImGui.TextColored(Colours.GhostType, helpText);
-            ImGui.PopTextWrapPos();
-            ImGui.EndTooltip();
-        }
+        float distanceY = ImGui.GetCursorPosY() - ImGui.GetScrollY();
+        return distanceY >= -size.Y && distanceY <= ImGui.GetWindowHeight();
     }
 
     #region ToolTips
@@ -93,12 +86,12 @@ public static class ImGuiExt
 
         ImGui.SetNextWindowBgAlpha(1);
 
-        using var color = ImRaii.PushColor(ImGuiCol.BorderShadow, Colours.DalamudWhite);
+        using var color = ImRaii.PushColor(ImGuiCol.BorderShadow, ColorEx.DalamudWhite);
 
         ImGui.SetNextWindowSizeConstraints(new Vector2(150, 0) * ImGuiHelpers.GlobalScale, new Vector2(1200, 1500) * ImGuiHelpers.GlobalScale);
-        ImGui.SetWindowPos(ImGuiFlags.TOOLTIP_ID, ImGui.GetIO().MousePos);
+        ImGui.SetWindowPos(ImGuiExt.TOOLTIP_ID, ImGui.GetIO().MousePos);
 
-        if (ImGui.Begin(ImGuiFlags.TOOLTIP_ID, ImGuiFlags.TOOLTIP_FLAG))
+        if (ImGui.Begin(ImGuiExt.TOOLTIP_ID, ImGuiExt.TOOLTIP_FLAG))
         {
             act();
             ImGui.End();
@@ -130,15 +123,6 @@ public static class ImGuiExt
         return ret;
     }
     #endregion
-
-    /// <summary>
-    /// TODO: Add description
-    /// </summary>
-    /// <param name="size"></param>
-    /// <returns></returns>
-    public static bool IsInViewport(Vector2 size)
-    {
-        float distanceY = ImGui.GetCursorPosY() - ImGui.GetScrollY();
-        return distanceY >= -size.Y && distanceY <= ImGui.GetWindowHeight();
-    }
 }
+
+
