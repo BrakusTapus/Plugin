@@ -15,10 +15,10 @@
     </PropertyGroup>
 
     <ItemGroup>
-        <Content Include="..\Data\**\**\*.*">
+        <!--<Content Include="..\Data\**\**\*.*">
             <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
             <Visible>false</Visible>
-        </Content>
+        </Content>-->
         
         <Content Include="Dalamud.Plugin.Bootstrap.targets">
             <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
@@ -42,7 +42,8 @@
 
         <Compile Remove="Features\BaseFeature.cs" />
         <Compile Remove="Features\Feature.cs" />
-        <!--<Compile Remove="Features\RefreshMarketPrices.cs" />-->
+        <Compile Remove="Features\RefreshMarketPrices.cs" />
+        <Compile Remove="..\Data\**\**\*.*" />
 
     </ItemGroup>
 

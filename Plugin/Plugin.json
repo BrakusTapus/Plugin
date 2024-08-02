@@ -1,15 +1,15 @@
 {
     "Author": "Kirbo",
     "Name": "Plugin",
-    "Punchline": "A one-liner for /xlplugins.",
-    "AssemblyVersion": "0.0.0.1",
-    "Description": "List slash-command(s).",
+    "Punchline": "_",
+    "Description": "_",
+    "InternalName": "Plugin",
     "ApplicableVersion": "any",
-    "RepoUrl": "https://github.com/BrakusTapus/TBD",
+    "RepoUrl": "https://github.com/BrakusTapus/Plugin",
     "Tags": [
-        "Menu",
         "plugin",
-        "OSRS"
+        "",
+        ""
     ],
     "DalamudApiLevel": 10,
     "LoadRequiredState": 0,
@@ -17,5 +17,5 @@
     "CanUnloadAsync": false,
     "LoadPriority": 0,
     "IconUrl": "https://i.imgur.com/dgtq4PI.png",
-    "AcceptsFeedback": true
+    "AcceptsFeedback": false
 }
