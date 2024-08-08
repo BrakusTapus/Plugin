@@ -1,9 +1,4 @@
-using Dalamud.Interface.Components;
-using ECommons.Configuration;
-using ImGuiExtensions;
-using ImGuiNET;
 using Plugin.Utility.Extensions;
-// using Plugin.Configurations; //TODO: If migrating to Ecommons EzConfig is succesfol then this can be removed
 
 namespace Plugin.Windows;
 
@@ -21,7 +16,7 @@ public class MainWindow : Window, IDisposable
         float mainViewPortWidth = ImGuiHelpers.MainViewport.Size.X - ImGui.GetStyle().DisplaySafeAreaPadding.X;
         float mainViewPortHeight = ImGuiHelpers.MainViewport.Size.Y - ImGui.GetStyle().DisplaySafeAreaPadding.Y;
         SizeConstraints = new WindowSizeConstraints {
-            MinimumSize = new Vector2(830, 570),
+            MinimumSize = new Vector2(600, 350),
             MaximumSize = new Vector2(mainViewPortWidth, mainViewPortHeight)
         };
         RespectCloseHotkey = true;
@@ -140,52 +135,4 @@ public class MainWindow : Window, IDisposable
         ChildWindow.DrawFooter();
     }
 
-    //private void DrawHeader()
-    //{
-    //    ImDrawListPtr windowDrawList = ImGui.GetWindowDrawList();
-    //    Vector2 cursorScreenPos = ImGui.GetCursorScreenPos();
-
-    //    var right = ImGui.GetContentRegionMax().X;
-    //    ImGui.PushStyleColor(ImGuiCol.ChildBg, new Vector4(0.1f, 0.1f, 0.1f, 1.0f)); // Dark footer color
-    //    ImGui.BeginChild("Header", new Vector2(0, _headerFooterHeight - ImGui.GetStyle().WindowPadding.Y), true, ImGuiWindowFlags.NoScrollbar | ImGuiWindowFlags.NoScrollWithMouse);
-    //    ImGui.SetCursorPosX(right - 35);
-    //    if (Buttons.IconButton(FontAwesomeIcon.Times, ColorEx.Transparent, ColorEx.ButtonActive, ColorEx.TextHovered, ColorEx.RedBright, ColorEx.ParsedOrange, 1))
-    //    {
-    //        Plugin.ToggleMainWindow();
-    //    }
-    //    ImGui.EndChild();
-    //    ImGui.Separator();
-    //    ImGui.PopStyleColor(1);
-    //}
-
-
-    //private void DrawBody()
-    //{
-    //    ImGui.SetCursorPos(new Vector2(ImGui.GetStyle().WindowPadding.X , _headerFooterHeight));
-    //    float x = ImGui.GetStyle().WindowPadding.X * 2f;
-    //    float windowX = ImGui.GetContentRegionAvail().X - x;
-    //    ImGui.BeginChild("MainContent", new Vector2(windowX, -(_headerFooterHeight + 5)), true);
-    //    ImGui.Text("Welcome to the Main Window!");
-    //    ImGui.Spacing();
-    //    ImGui.Text($"The random config bool is {plugin.EzConfigs.SomePropertyToBeSavedAndWithADefault}");
-    //    ImGui.Spacing();
-
-    //    ImGui.EndChild();
-    //}
-
-
-    //private void DrawFooter()
-    //{
-
-    //    //ImGui.SetCursorPosY(-ImGui.GetContentRegionAvail().Y - _headerFooterHeight - ImGui.GetStyle().FramePadding.X);
-    //    ImGui.Separator();
-    //    ImGui.PushStyleColor(ImGuiCol.ChildBg, new Vector4(0.1f, 0.1f, 0.1f, 1.0f)); // Dark footer color
-    //    ImGui.BeginChild("Footer", new Vector2(0, _headerFooterHeight), true, ImGuiWindowFlags.NoScrollbar | ImGuiWindowFlags.NoScrollWithMouse);
-    //    if (ImGuiComponents.IconButtonWithText(Dalamud.Interface.FontAwesomeIcon.Cog, "Settings", ColorEx.Transparent, ColorEx.ButtonActive, ColorEx.TextHovered))
-    //    {
-    //        Plugin.ToggleConfigWindow();
-    //    }
-    //    ImGui.EndChild();
-    //    ImGui.PopStyleColor(1);
-    //}
 }
