@@ -1,5 +1,3 @@
-using Plugin.Utility.Extensions;
-
 namespace Plugin.Windows;
 
 public class MainWindow : Window, IDisposable
@@ -16,7 +14,7 @@ public class MainWindow : Window, IDisposable
         float mainViewPortWidth = ImGuiHelpers.MainViewport.Size.X - ImGui.GetStyle().DisplaySafeAreaPadding.X;
         float mainViewPortHeight = ImGuiHelpers.MainViewport.Size.Y - ImGui.GetStyle().DisplaySafeAreaPadding.Y;
         SizeConstraints = new WindowSizeConstraints {
-            MinimumSize = new Vector2(600, 350),
+            MinimumSize = new Vector2(656, 386),
             MaximumSize = new Vector2(mainViewPortWidth, mainViewPortHeight)
         };
         RespectCloseHotkey = true;
@@ -105,6 +103,9 @@ public class MainWindow : Window, IDisposable
 
         //ImGui.PushStyleVar(ImGuiStyleVar.WindowBorderSize, 0.5f);
         ImGui.PushStyleVar(ImGuiStyleVar.ChildBorderSize, 1f);
+        ImGui.PushStyleVar(ImGuiStyleVar.ChildRounding, 6f);
+        //ImGui.PushStyleColor(ImGuiCol.ChildBg, ImGuiExtensions.ColorEx.TransParentDarkType);
+
         //ImGui.PushStyleVar(ImGuiStyleVar.FrameBorderSize, 0.5f);
         //ImGui.PushStyleVar(ImGuiStyleVar.WindowRounding, 0f);
         //ImGui.PushStyleVar(ImGuiStyleVar.ChildRounding, 3f);
@@ -122,8 +123,8 @@ public class MainWindow : Window, IDisposable
 
     public override void PostDraw()
     {
-        ImGui.PopStyleVar(1);
-        //ImGui.PopStyleColor(2);
+        ImGui.PopStyleVar(2);
+        //ImGui.PopStyleColor(1);
         base.PostDraw();
     }
 
@@ -131,8 +132,16 @@ public class MainWindow : Window, IDisposable
     {
         ChildWindow.DrawHeader();
         ChildWindow.DrawSideBar();
+        ImGui.SameLine();
         ChildWindow.DrawContent();
         ChildWindow.DrawFooter();
     }
+
+
+
+
+
+
+
 
 }

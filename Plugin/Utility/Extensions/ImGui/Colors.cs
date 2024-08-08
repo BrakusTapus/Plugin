@@ -30,6 +30,7 @@ public static class ColorEx
     public readonly static Vector4 Bronze = Vector4FromRGB(0xCD7F32);
     public readonly static Vector4 Indigo = Vector4FromRGB(0x4B0082);
     public readonly static Vector4 DarkType = Vector4FromRGB(0x5e1196);
+    public readonly static Vector4 TransParentDarkType = Vector4FromRGB(0x5e1196, 0.10f);
     public readonly static Vector4 GhostType = Vector4FromRGB(0xFF6E59FF);
     public readonly static Vector4 BrightGhostType = Vector4FromRGB(0xab57ff);
     public readonly static Vector4 Puurple = Vector4FromRGB(0x9E35FF, 1);
