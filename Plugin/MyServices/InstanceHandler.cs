@@ -1,18 +1,17 @@
 ﻿using Dalamud.Game.Addon.Lifecycle;
 using Dalamud.Game.Addon.Lifecycle.AddonArgTypes;
-using Dalamud.Game.ClientState.Conditions;
 using Dalamud.Game.ClientState.Objects.Enums;
-using ECommons;
 using ECommons.Configuration;
-using ECommons.DalamudServices;
 using ECommons.GameHelpers;
 using ECommons.Throttlers;
 using ECommons.UIHelpers.AddonMasterImplementations;
 using FFXIVClientStructs.FFXIV.Client.Game.UI;
+using Lumina.Excel.GeneratedSheets;
+using Plugin;
 using Plugin.Tasks.SameWorld;
 using Plugin.Utility.Helpers;
 
-namespace Plugin.MyServices;
+namespace MyServices;
 
 public unsafe class InstanceHandler
 {
@@ -41,7 +40,7 @@ public unsafe class InstanceHandler
             && Svc.Condition[ConditionFlag.OccupiedInQuestEvent]
             && GenericHelpers.TryGetAddonMaster<AddonMaster.SelectString>(out var m)
             && m.IsAddonReady
-            && (m.Entries.Any(x => x.Text.ContainsAny(Lang.TravelToInstancedArea)) || m.Text == Lang.ToReduceCongestion)
+            && (m.Entries.Any(x => x.Text.ContainsAny("Travel to Instanced Area.")) || m.Text == Svc.Data.GetExcelSheet<Addon>().GetRow(2090).Text.ExtractText())
             )
         {
             var inst = *P.Memory.MaxInstances;

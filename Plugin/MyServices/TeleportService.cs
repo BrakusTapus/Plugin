@@ -7,7 +7,8 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Plugin.Services;
+namespace MyServices;
+
 public unsafe class TeleportService
 {
     private TeleportService() { }

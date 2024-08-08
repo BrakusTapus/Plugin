@@ -1,12 +1,8 @@
-﻿using System;
-using System.Collections.Concurrent;
-using System.Collections.Generic;
+﻿using System.Collections.Concurrent;
 using System.IO;
-using System.Linq;
 using System.Net.Http;
 using System.Threading;
 using Dalamud.Interface.Textures.TextureWraps;
-using Plugin.MyServices;
 using Plugin.Utility.Helpers;
 
 namespace Plugin.Utility.UI;

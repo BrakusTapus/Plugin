@@ -1,5 +1,4 @@
 using Dalamud.Game.Command;
-using Plugin.MyServices;
 using Plugin.Tasks.SameWorld;
 using ECommons.MathHelpers;
 
@@ -65,7 +64,7 @@ public static partial class PluginCommands
             //followPath?.Stop();
         }
 
-        else if (arguments.Length == 1 && int.TryParse(arguments, out var val) && val.InRange(1, 9))
+        else if (arguments.Length == 1 && int.TryParse(arguments, out int val) && val.InRange(1, 9))
         {
             if (S.InstanceHandler.GetInstance() == val)
             {

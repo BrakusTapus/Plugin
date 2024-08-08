@@ -13,7 +13,7 @@ public struct ImGuiWindow
     [FieldOffset(0x130)] public Vector2 CursorMaxPos;
 }
 
-public static partial class ImGuiExt
+public static partial class Native
 {
     [LibraryImport("cimgui")]
     [UnmanagedCallConv(CallConvs = [ typeof(System.Runtime.CompilerServices.CallConvCdecl) ])]

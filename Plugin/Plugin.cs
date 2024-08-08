@@ -1,28 +1,19 @@
-using Dalamud.Game.Command;
-using Dalamud.IoC;
-using Dalamud.Plugin;
-using System.IO;
-using Dalamud.Interface.Windowing;
-using Dalamud.Plugin.Services;
 using Plugin.Windows;
-//using Plugin.Configurations; //TODO: If migrating to Ecommons EzConfig is succesfol then this can be removed
 using Plugin.Commands;
-using ECommons;
-using Plugin.Utility;
-using System.Collections.Generic;
-using Plugin.MyServices;
 using ECommons.Configuration;
 using Plugin.Utility.Data;
 using ECommons.Automation.NeoTaskManager;
 using ECommons.Singletons;
+using Plugin.Configuration;
+using Plugin.Windows.AlphaMainWindow;
+using MyServices;
 
 namespace Plugin;
 
 public sealed class Plugin : IDalamudPlugin
 {
     internal static Plugin P;
-    //public Configs Config { get; init; } //TODO: If migrating to Ecommons EzConfig is succesfol then this can be removed
-    internal EzConfigs EzConfigs;
+    internal Configs EzConfigs;
     internal Game.Memory Memory;
 
 
@@ -41,32 +32,31 @@ public sealed class Plugin : IDalamudPlugin
     private static MainWindow MainWindow; //{ get; init; }
     private static AlphaMainWindow AlphaMainWindow;
 
-    public Plugin(IDalamudPluginInterface pluginInterface)
+    public Plugin(IDalamudPluginInterface pluginInterface/*, Configs configs*/)
     {
         P = this;
-        MyServices.Services.Initialize(pluginInterface);
+        Services.Initialize(pluginInterface);
         pluginInterface.Create<SimpleLog>();
         ECommonsMain.Init(pluginInterface, this, Module.ObjectFunctions);
 
         PluginCommands.Enable(this);
 
-        //Config = MyServices.Services.PluginInterface.GetPluginConfig() as Configs ?? new Configs(P); //TODO: If migrating to Ecommons EzConfig is succesfol then this can be removed
-        EzConfigs = EzConfig.Init<EzConfigs>();
+        EzConfigs = EzConfig.Init<Configs>();
         TaskManager = new();
 
         ConfigWindow = new ConfigWindow(this);
-        MainWindow = new MainWindow(this/*, this.Config //TODO: If migrating to Ecommons EzConfig is succesfol then this can be removed */);
-        AlphaMainWindow = new(this);
+        MainWindow = new MainWindow(this);
+        AlphaMainWindow = new(this, EzConfigs);
         WindowSystem.AddWindow(ConfigWindow);
         WindowSystem.AddWindow(MainWindow);
         WindowSystem.AddWindow(AlphaMainWindow);
 
         //Svc.Framework.Update += Framework_Update;
         Memory = new();
-        MyServices.Services.PluginInterface.UiBuilder.Draw += DrawWindows;
-        MyServices.Services.PluginInterface.UiBuilder.OpenConfigUi += ToggleConfigWindow;
-        MyServices.Services.PluginInterface.UiBuilder.OpenMainUi += ToggleMainWindow;
-        MyServices.Services.PluginLog.Debug("plugin was loaded!");
+        Services.PluginInterface.UiBuilder.Draw += DrawWindows;
+        Services.PluginInterface.UiBuilder.OpenConfigUi += ToggleConfigWindow;
+        Services.PluginInterface.UiBuilder.OpenMainUi += ToggleMainWindow;
+        Services.PluginLog.Debug("plugin was loaded!");
 
         SingletonServiceManager.Initialize(typeof(ServiceStatic));
     }
@@ -83,47 +73,40 @@ public sealed class Plugin : IDalamudPlugin
         MainWindow.Dispose();
 
         PluginCommands.Disable();
-        //Config.Save(); //TODO: If migrating to Ecommons EzConfig is succesfol then this can be removed
 
         ECommonsMain.Dispose();
     }
 
     private void DrawWindows() => WindowSystem.Draw();
-    public static void ToggleConfigWindow()
-    {
-        AlphaMainWindow.Toggle();
-
-        if (!AlphaMainWindow.IsOpen)
-        {
-            EzConfig.Save();
-            //this.Config.Save(); //TODO: If migrating to Ecommons EzConfig is succesfol then this can be removed
-        }
-
-        //ConfigWindow.Toggle();
-
-        //if (!ConfigWindow.IsOpen)
-        //{
-        //    EzConfig.Save();
-        //    //this.Config.Save(); //TODO: If migrating to Ecommons EzConfig is succesfol then this can be removed
-        //}
-    }
 
     public static void ToggleMainWindow()
     {
+        MainWindow.Toggle();
+
+        if (!MainWindow.IsOpen)
+        {
+            EzConfig.Save();
+        }
+    }
+
+    public static void ToggleConfigWindow()
+    {
+        ConfigWindow.Toggle();
+
+        if (!ConfigWindow.IsOpen)
+        {
+            EzConfig.Save();
+        }
+    }
+
+    public static void ToggleTestWindow()
+    {
         AlphaMainWindow.Toggle();
 
         if (!AlphaMainWindow.IsOpen)
         {
             EzConfig.Save();
-            //this.Config.Save(); //TODO: If migrating to Ecommons EzConfig is succesfol then this can be removed
         }
-        //MainWindow.Toggle();
-
-        //if (!MainWindow.IsOpen)
-        //{
-        //    EzConfig.Save();
-        //    //this.Config.Save(); //TODO: If migrating to Ecommons EzConfig is succesfol then this can be removed
-        //}
     }
 
 }

@@ -83,20 +83,20 @@ internal class DataStore
     //internal void BuildWorlds()
     //{
     //    BuildWorlds(Svc.ClientState.LocalPlayer.CurrentWorld.GameData.DataCenter.Value.RowId);
-    //    if(Player.Available)
+    //    if(Player.Settings)
     //    {
     //        bool AutoRetainerApi = false;
-    //        if(P.AutoRetainerApi?.Ready == true && P.EzConfigs.UseAutoRetainerAccounts)
+    //        if(P.AutoRetainerApi?.Ready == true && P.Configs.UseAutoRetainerAccounts)
     //        {
     //            var data = P.AutoRetainerApi.GetOfflineCharacterData(Player.CID);
     //            if(data != null)
     //            {
-    //                P.EzConfigs.ServiceAccounts[Player.NameWithWorld] = data.ServiceAccount;
+    //                P.Configs.ServiceAccounts[Player.NameWithWorld] = data.ServiceAccount;
     //            }
     //        }
-    //        else if(!P.EzConfigs.ServiceAccounts.ContainsKey(Player.NameWithWorld))
+    //        else if(!P.Configs.ServiceAccounts.ContainsKey(Player.NameWithWorld))
     //        {
-    //            P.EzConfigs.ServiceAccounts[Player.NameWithWorld] = -1;
+    //            P.Configs.ServiceAccounts[Player.NameWithWorld] = -1;
     //        }
     //    }
     //}

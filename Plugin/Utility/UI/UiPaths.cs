@@ -1,5 +1,5 @@
 ﻿using System.IO;
-using Plugin.MyServices;
+using MyServices;
 
 namespace Plugin.Utility.UI;
 
@@ -80,6 +80,6 @@ public class UiPaths
         TabPath = Path.Combine(BasePath, "tab");
         WelcomeScreenPath = Path.Combine(BasePath, "welcome_screen");
 
-        MyServices.Services.PluginLog.Debug("UI paths successfully initialized!");
+        Services.PluginLog.Debug("UI paths successfully initialized!");
     }
 }

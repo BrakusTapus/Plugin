@@ -16,7 +16,7 @@ public static unsafe class TaskSetHomePoint
         {
             foreach (var x in m.Entries)
             {
-                if (x.Text.ContainsAny(Lang.SetHomePoint))
+                if (x.Text.ContainsAny("Set Home Point."))
                 {
                     if (EzThrottler.Throttle("SetHomePoint"))
                     {

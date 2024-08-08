@@ -58,19 +58,19 @@ internal static unsafe class WorldChange
     internal static bool? SelectAethernet()
     {
         if(!Player.Available) return false;
-        return Utils.TrySelectSpecificEntry(Lang.Aethernet, () => EzThrottler.Throttle("SelectString"));
+        return Utils.TrySelectSpecificEntry("Aethernet.", () => EzThrottler.Throttle("SelectString"));
     }
 
     internal static bool? SelectVisitAnotherWorld()
     {
         if(!Player.Available) return false;
-        return Utils.TrySelectSpecificEntry(Lang.VisitAnotherWorld, () => EzThrottler.Throttle("SelectString"));
+        return Utils.TrySelectSpecificEntry("Visit Another World Server.", () => EzThrottler.Throttle("SelectString"));
     }
 
     internal static bool? ConfirmWorldVisit(string s)
     {
         if(!Player.Available) return false;
-        var x = (AddonSelectYesno*)Utils.GetSpecificYesno(true, Lang.ConfirmWorldVisit);
+        var x = (AddonSelectYesno*)Utils.GetSpecificYesno(true, "Travel to");
         if(x != null)
         {
             if(x->YesButton->IsEnabled && EzThrottler.Throttle("ConfirmWorldVisit"))
@@ -103,7 +103,7 @@ internal static unsafe class WorldChange
 
     /*internal static bool? TeleportToAethernetDestination(TinyAetheryte t)
     {
-        if (!Player.Available) return false;
+        if (!Player.Settings) return false;
         if (TryGetAddonByName<AtkUnitBase>("TelepotTown", out var telep) && IsAddonReady(telep))
         {
             if (P.DataStore.StaticData.Callback.TryGetValue(t.ID, out var callback))

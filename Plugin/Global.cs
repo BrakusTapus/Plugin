@@ -23,5 +23,5 @@ global using System.Numerics;
 global using static Plugin.Plugin;
 //global using AddressBookFS = OtterGui.Filesystem.FileSystem<Lifestream.Data.AddressBookFolder>; // TODO: Check later and see if needed
 global using CSFramework = FFXIVClientStructs.FFXIV.Client.System.Framework.Framework;
-global using S = Plugin.MyServices.ServiceStatic;
+global using S = MyServices.ServiceStatic;
 #pragma warning restore S1135 // Track uses of "TODO" tags
