@@ -22,7 +22,7 @@
         
         <Content Include="Dalamud.Plugin.Bootstrap.targets">
             <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-            <Visible>true</Visible>
+            <Visible>false</Visible>
         </Content>
         
         <Content Include="packages.lock.json">

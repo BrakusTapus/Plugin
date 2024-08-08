@@ -6,7 +6,7 @@
 //using ECommons.Throttlers;
 //using FFXIVClientStructs.FFXIV.Component.GUI;
 
-//namespace Plugin.Tasks 
+//namespace Plugin.AutoMation 
 //{
 //    internal static class AutoMarketHelper
 //    {
