@@ -1,7 +1,10 @@
-﻿namespace Plugin.Utility.Extensions;
+﻿using Plugin.Windows;
+
+namespace Plugin.Utility.Extensions;
 
 internal static class ChildWindow
 {
+    #region WindowSizes
     private static float HeaderFooterHeight => 40;
     private static float WindowPaddingX => ImGui.GetStyle().WindowPadding.X;
     private static float WindowPaddingY => ImGui.GetStyle().WindowPadding.Y;
@@ -9,10 +12,11 @@ internal static class ChildWindow
     private static float WindowHeight => ImGui.GetWindowHeight() - ImGui.GetStyle().WindowPadding.Y;
     private static float WindowContentWidth => ImGui.GetWindowContentRegionMax().X - ImGui.GetWindowContentRegionMin().X;
     private static float WindowContentHeight => ImGui.GetWindowContentRegionMax().Y - ImGui.GetWindowContentRegionMin().Y;
+    private static float WindowContentRegionWidth => ImGui.GetContentRegionAvail().X;
+    private static float WindowContentRegionHeight => ImGui.GetContentRegionAvail().Y;
+    #endregion
 
-    private static float WindowContentRegionWidth => ImGui.GetContentRegionAvail().X; //- ImGui.GetStyle().WindowPadding.X;
-    private static float WindowContentRegionHeight => ImGui.GetContentRegionAvail().Y; //- ImGui.GetStyle().WindowPadding.Y;
-
+    #region Padded Child Window
     public static bool BeginPaddedChild(string str_id, bool border = false, ImGuiWindowFlags flags = 0)
     {
         float padding = ImGui.GetStyle().WindowPadding.X;
@@ -34,8 +38,9 @@ internal static class ChildWindow
     {
         ImGui.EndChild();
     }
+    #endregion
 
-
+    #region Header
     public static void DrawHeader()
     {
         ImGui.SetCursorPosX(WindowPaddingX);
@@ -49,9 +54,65 @@ internal static class ChildWindow
         ImGui.EndChild();
         ImGui.Separator();
     }
+    #endregion
 
+
+    public static TabHeaders? selectedHeader = null;
     public static void DrawSideBar()
     {
+        ImGui.PushID("Categories");
+        float sidebarW = WindowContentRegionWidth / 4;
+        float sidebarH = WindowContentRegionHeight - HeaderFooterHeight;
+        ImGui.SetCursorPosX(WindowPaddingX);
+
+        if (ImGui.BeginChild("SideBarMainWindow", new Vector2(sidebarW, sidebarH), true, ImGuiWindowFlags.NoScrollbar))
+        {
+            foreach (TabHeaders header in Enum.GetValues(typeof(TabHeaders)))
+            {
+                bool isOpen = selectedHeader == header;
+                if (ImGui.CollapsingHeader(header.ToString(), ref isOpen))
+                {
+                    if (isOpen && selectedHeader != header)
+                    {
+                        selectedHeader = header;
+                    }
+                    else if (!isOpen && selectedHeader == header)
+                    {
+                        selectedHeader = null;
+                    }
+                    if (isOpen)
+                    {
+                        Svc.Log.Warning("isOpen = " + isOpen);
+                            
+                        // Get the categories for the selected header
+                        IEnumerable<string> categories = GetCategoriesByHeader(header);
+
+                        foreach (string category in categories)
+                        {
+                            if (ImGui.Selectable(category))
+                            {
+                                // Handle the selected category
+                                ShowChildWindowForCategory(header, category);
+                            }
+                        }
+                    }
+
+                }
+            }
+        }
+        ImGui.EndChild();
+        ImGui.PopID();
+        ImGui.SameLine();
+
+        float curserCurrentPos = ImGui.GetCursorPos().X;
+        ImGui.SetCursorPosX(curserCurrentPos + 10);
+        ImGui.SameLine();
+    }
+
+/* Old method for drawing categories
+    public static void DrawSideBar()
+    {
+        ImGui.PushID("Categories");
         float sidebarW = WindowContentRegionWidth / 4;
         float sidebarH = WindowContentRegionHeight - HeaderFooterHeight;
         ImGui.SetCursorPosX(WindowPaddingX);
@@ -83,34 +144,42 @@ internal static class ChildWindow
             }
         }
         ImGui.EndChild();
-
+        ImGui.PopID();
         ImGui.SameLine();
 
         float curserCurrentPos = ImGui.GetCursorPos().X;
         ImGui.SetCursorPosX(curserCurrentPos + 10);
         ImGui.SameLine();
     }
+*/
 
 
-    private static IEnumerable<string> GetCategoriesByHeader(Headers header)
+    private static IEnumerable<string> GetCategoriesByHeader(TabHeaders header)
     {
         switch (header)
         {
-            case Headers.About:
+            case TabHeaders.About:
                 return Enum.GetNames(typeof(AboutCategories));
-            case Headers.Features:
+            case TabHeaders.Features:
                 return Enum.GetNames(typeof(FeatureCategories));
-            case Headers.Automation:
+            case TabHeaders.Automation:
                 return Enum.GetNames(typeof(AutomationCategories));
-            case Headers.Commands:
+            case TabHeaders.Commands:
                 return Enum.GetNames(typeof(CommandCategories));
-            case Headers.Links:
+            case TabHeaders.Links:
                 return Enum.GetNames(typeof(LinksCategories));
             default:
                 throw new Exception("Header not found");
         }
     }
 
+    public static (TabHeaders header, string category)? selectedCategory = null;
+    private static void ShowChildWindowForCategory(TabHeaders header, string category)
+    {
+        selectedCategory = (header, category);
+    }
+
+/*
     // Define a method to handle category selection.
     private static void ShowChildWindowForCategory(string category)
     {
@@ -134,7 +203,7 @@ internal static class ChildWindow
                 break;
         }
     }
-
+*/
 
     public static void DrawContent()
     {
@@ -142,65 +211,76 @@ internal static class ChildWindow
         float contentH = WindowContentRegionHeight - HeaderFooterHeight;
         if (ImGui.BeginChild("ContentMainWindow", new Vector2(contentW, contentH), true, ImGuiWindowFlags.NoScrollbar))
         {
-            ImGui.SetCursorPosX(WindowContentRegionWidth / 2);
-            float textwidth = ImGui.CalcTextSize("This is the Content!!").X;
-            ImGui.SetCursorPosX((WindowWidth / 2) - (textwidth / 2));
-            ImGui.TextDisabled("This is the Header!");
 
+            if (selectedCategory.HasValue)
+            {
+                var (header, category) = selectedCategory.Value;
+                // You can add your rendering logic here based on header and category
+                ImGuiHelpers.CenteredText($"Currently viewing {category} under {header} header.");
+            }
+            else
+            {
+                string defaultText = "Select a category from the sidebar.";
+                ImGuiHelpers.CenteredText(defaultText);
+                
+            }
         }
         ImGui.EndChild();
     }
+
+
+    #region Footer
     public static void DrawFooter()
     {
         ImGui.Separator();
         if (ImGui.BeginChild("FooterMainWindow", new Vector2(WindowContentRegionWidth, HeaderFooterHeight), false, ImGuiWindowFlags.NoScrollbar | ImGuiWindowFlags.NoScrollWithMouse))
         {
-            ImGui.SetCursorPosX(WindowWidth / 2);
-            ImGui.TextDisabled("This is the Footer!");
+            ImGuiHelpers.CenteredText("This is the Footer!");
         }
         ImGui.EndChild();
     }
-
-}
-
-public enum Headers
-{
-    About,
-    Features,
-    Automation,
-    Commands,
-    Links
-}
-
-public enum AboutCategories
-{
-    About,
-    Info,
-}
+    #endregion
 
 
-public enum FeatureCategories
-{
-    General,
-    QoL,
-    Combat
-}
+    internal enum TabHeaders
+    {
+        About,
+        Features,
+        Automation,
+        Commands,
+        Links
+    }
 
-public enum AutomationCategories
-{
-    Hunts,
-    Retainers,
-    Misc
-}
+    internal enum AboutCategories
+    {
+        About,
+        Info,
+    }
 
-public enum CommandCategories
-{
-    Teleports,
-}
 
-public enum LinksCategories
-{
-    General,
-    Savage,
-    Ultimates
+    internal enum FeatureCategories
+    {
+        General,
+        QoL,
+        Combat
+    }
+
+    internal enum AutomationCategories
+    {
+        Hunts,
+        Retainers,
+        Misc
+    }
+
+    internal enum CommandCategories
+    {
+        Teleports,
+    }
+
+    internal enum LinksCategories
+    {
+        General,
+        Savage,
+        Ultimates
+    }
 }
