@@ -1,6 +1,6 @@
 ﻿namespace ImGuiExtensions;
 
-public static partial class ImGuiExt
+public static class Header
 {
     public record HeaderOptions
     {
@@ -18,12 +18,12 @@ public static partial class ImGuiExt
 
     private static readonly Stack<HeaderOptions> headerOptionsStack = new();
 
-    public unsafe static bool BeginHeader(string id = null, float minimumWindowPercent = 1.0f, HeaderOptions options = null)
+    public unsafe static bool BeginHeader(string? id = null, float minimumWindowPercent = 1.0f, HeaderOptions? options = null)
     {
         options ??= new HeaderOptions();
         ImGui.BeginGroup();
 
-        var open = true;
+        bool open = true;
         if (!string.IsNullOrEmpty(id))
         {
             if (!options.Collapsible)
@@ -43,10 +43,10 @@ public static partial class ImGuiExt
             ImGui.Unindent();
         }
 
-        var style = ImGui.GetStyle();
-        var spacing = style.ItemSpacing.X * (1 - minimumWindowPercent);
-        var contentRegionWidth = headerOptionsStack.TryPeek(out var parent) ? parent.Width - parent.BorderPadding.X * 2 : ImGui.GetWindowContentRegionMax().X - style.WindowPadding.X;
-        var width = Math.Max(contentRegionWidth * minimumWindowPercent - spacing, 1);
+        ImGuiStylePtr style = ImGui.GetStyle();
+        float spacing = style.ItemSpacing.X * (1 - minimumWindowPercent);
+        float contentRegionWidth = headerOptionsStack.TryPeek(out var parent) ? parent.Width - parent.BorderPadding.X * 2 : ImGui.GetWindowContentRegionMax().X - style.WindowPadding.X;
+        float width = Math.Max((contentRegionWidth * minimumWindowPercent) - spacing, 1);
         options.Width = minimumWindowPercent > 0 ? width : 0;
 
         ImGui.BeginGroup();
@@ -54,50 +54,57 @@ public static partial class ImGuiExt
         ImGui.Dummy(options.BorderPadding with { X = width });
         ImGui.PopStyleVar();
 
-        var max = ImGui.GetItemRectMax();
+        Vector2 max = ImGui.GetItemRectMax();
         options.MaxX = max.X;
 
         if (options.Width > 0)
+        {
             ImGui.PushClipRect(ImGui.GetItemRectMin(), max with { Y = 10000 }, true);
+        }
 
         ImGui.Indent(Math.Max(options.BorderPadding.X, 0.01f));
-        ImGui.PushItemWidth(MathF.Floor((width - options.BorderPadding.X * 2) * 0.65f));
+        ImGui.PushItemWidth(MathF.Floor((width - (options.BorderPadding.X * 2)) * 0.65f));
 
         headerOptionsStack.Push(options);
-        if (open) return true;
+        if (open)
+        {
+            return true;
+        }
 
         ImGui.TextDisabled(". . .");
         EndHeader();
         return false;
     }
 
-    public static bool BeginHeader(string text, HeaderOptions options) => BeginHeader(text, 1.0f, options);
+    public static bool BeginHeader(string? text, HeaderOptions? options) => BeginHeader(text, 1.0f, options);
 
     public static bool BeginHeader(uint borderColor, float minimumWindowPercent = 1.0f) => BeginHeader(null, minimumWindowPercent, new HeaderOptions { BorderColor = borderColor });
 
     public unsafe static void EndHeader()
     {
-        var options = headerOptionsStack.Pop();
-        var autoAdjust = options.Width <= 0;
+        HeaderOptions options = headerOptionsStack.Pop();
+        bool autoAdjust = options.Width <= 0;
         ImGui.PopItemWidth();
         ImGui.Unindent(Math.Max(options.BorderPadding.X, 0.01f));
 
         if (!autoAdjust)
+        {
             ImGui.PopClipRect();
+        }
 
         ImGui.SetCursorPosY(ImGui.GetCursorPosY() - ImGui.GetStyle().ItemSpacing.Y);
         ImGui.Dummy(options.BorderPadding with { X = 0 });
 
         if (!autoAdjust)
         {
-            ImGuiWindow* window = GetCurrentWindow();
+            ImGuiWindow* window = Native.GetCurrentWindow();
             window->CursorMaxPos = window->CursorMaxPos with { X = options.MaxX };
         }
 
         ImGui.EndGroup();
 
-        var min = ImGui.GetItemRectMin();
-        var max = autoAdjust ? ImGui.GetItemRectMax() : ImGui.GetItemRectMax() with { X = options.MaxX };
+        Vector2 min = ImGui.GetItemRectMin();
+        Vector2 max = autoAdjust ? ImGui.GetItemRectMax() : ImGui.GetItemRectMax() with { X = options.MaxX };
 
         ImGui.GetWindowDrawList().AddRect(min, max, options.BorderColor, options.BorderRounding, options.DrawFlags, options.BorderThickness);
 

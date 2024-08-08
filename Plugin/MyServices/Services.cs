@@ -1,14 +1,10 @@
-using System;
 using System.IO;
-using Dalamud.Game.Command;
 using Dalamud.IoC;
-using Dalamud.Plugin;
 using Dalamud.Plugin.Services;
-using Microsoft.Extensions.DependencyInjection;
 using Plugin.Utility.OtherServices;
 using Plugin.Utility.UI;
 
-namespace Plugin.MyServices;
+namespace MyServices;
 
 public class Services
 {

@@ -1,21 +1,15 @@
-using System;
-using System.Numerics;
-using Dalamud.Interface;
-using Dalamud.Interface.Components;
-using Dalamud.Interface.Utility;
 using Dalamud.Interface.Utility.Raii;
-using ImGuiNET;
-// using Plugin.Configurations; //TODO: If migrating to Ecommons EzConfig is succesfol then this can be removed
 
 namespace ImGuiExtensions;
 
-//TODO: Add this to the ImGuiEx namespace (ImGui folder) 
-public static partial class ImGuiExt
+public static class ImGuiExt
 {
     public static float Scale => ImGuiHelpers.GlobalScale;
 
+    public const string TOOLTIP_ID = "##ToolTip_ID";
+
     /// <summary>
-    /// TODO: Add description
+    /// Wether or not the item is in the viewport
     /// </summary>
     /// <param name="size"></param>
     /// <returns></returns>
@@ -81,24 +75,25 @@ public static partial class ImGuiExt
     /// </summary>
     public static void ShowTooltip(Action act)
     {
-        if (act == null) return;
-        //if (!Configs.ShowToolTips) return;
+        if (act == null)
+        {
+            return;
+        }
 
         ImGui.SetNextWindowBgAlpha(1);
 
         using var color = ImRaii.PushColor(ImGuiCol.BorderShadow, ColorEx.DalamudWhite);
 
         ImGui.SetNextWindowSizeConstraints(new Vector2(150, 0) * ImGuiHelpers.GlobalScale, new Vector2(1200, 1500) * ImGuiHelpers.GlobalScale);
-        ImGui.SetWindowPos(ImGuiExt.TOOLTIP_ID, ImGui.GetIO().MousePos);
+        ImGui.SetWindowPos(TOOLTIP_ID, ImGui.GetIO().MousePos);
 
-        if (ImGui.Begin(ImGuiExt.TOOLTIP_ID, ImGuiExt.TOOLTIP_FLAG))
+        if (ImGui.Begin(TOOLTIP_ID, TOOLTIP_FLAG))
         {
             act();
             ImGui.End();
         }
     }
     #endregion
-
 
     #region Sliders
     public static bool SliderIntAsFloat(string id, ref int value, int min, int max, float divider = 1)
@@ -122,6 +117,71 @@ public static partial class ImGuiExt
         }
         return ret;
     }
+    #endregion
+
+    #region ImGuiWindowFlags
+
+    public static readonly ImGuiWindowFlags TOOLTIP_FLAG =
+          ImGuiWindowFlags.Tooltip |
+          ImGuiWindowFlags.NoMove |
+          ImGuiWindowFlags.NoSavedSettings |
+          ImGuiWindowFlags.NoBringToFrontOnFocus |
+          ImGuiWindowFlags.NoDecoration |
+          ImGuiWindowFlags.NoInputs |
+          ImGuiWindowFlags.AlwaysAutoResize;
+    #endregion
+
+    #region Seperators
+
+    static unsafe Vector4 GetSeparatorCol()
+    {
+        // Access the current style
+        var style = ImGui.GetStyle();
+
+        // Retrieve the color value for the Separator from the Colors array
+        Vector4 separatorCol = style.Colors[(int)ImGuiCol.Separator];
+
+        return separatorCol;
+    }
+
+    /// <summary>
+    /// Example of a method to create a horizontal line
+    /// </summary>
+    /// <param name="thickness">The thickness of the line.</param>
+    /// <param name="color">The color of the line.</param>
+    public static void HorizontalLine(float thickness = 1.0f, uint? color = null)
+    {
+        // Get the default separator color if no color is provided
+        if (!color.HasValue)
+        {
+            Vector4 separatorColorVec4 = GetSeparatorCol();
+            color = ImGui.ColorConvertFloat4ToU32(separatorColorVec4);
+        }
+
+        ImGui.PushStyleColor(ImGuiCol.Border, color.Value);
+        ImGui.GetWindowDrawList().AddLine(
+            new Vector2(ImGui.GetWindowPos().X, ImGui.GetWindowPos().Y + ImGui.GetCursorPos().Y),
+            new Vector2(ImGui.GetWindowPos().X + ImGui.GetContentRegionMax().X, ImGui.GetWindowPos().Y + ImGui.GetCursorPos().Y),
+            color.Value,
+            thickness
+        );
+        ImGui.PopStyleColor();
+    }
+
+
+    public static void CustomSeparator(float thickness = 1.0f)
+    {
+        var style = ImGui.GetStyle();
+        var originalThickness = style.ItemSpacing.Y;
+
+        ImGui.PushStyleVar(ImGuiStyleVar.ItemSpacing, new Vector2(0, thickness));
+        ImGui.Separator();
+        ImGui.PopStyleVar();
+
+        // Restore original spacing
+        style.ItemSpacing = new Vector2(style.ItemSpacing.X, originalThickness);
+    }
+
     #endregion
 }
 

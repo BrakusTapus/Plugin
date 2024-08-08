@@ -3,7 +3,7 @@
     <Import Project="Dalamud.Plugin.Bootstrap.targets" />
 
     <PropertyGroup>
-        <Version>0.0.0.1</Version>
+        <Version>0.0.0.2</Version>
         <Description>A plugin.</Description>
         <PackageProjectUrl>https://github.com/BrakusTapus/Plugin</PackageProjectUrl>
         <PackageLicenseExpression>AGPL-3.0-or-later</PackageLicenseExpression>
@@ -22,7 +22,7 @@
         
         <Content Include="Dalamud.Plugin.Bootstrap.targets">
             <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-            <Visible>false</Visible>
+            <Visible>true</Visible>
         </Content>
         
         <Content Include="packages.lock.json">
@@ -48,6 +48,7 @@
     </ItemGroup>
 
     <ItemGroup>
+        <PackageReference Include="CheapLoc" Version="1.1.8" />
         <PackageReference Include="Microsoft.Extensions.DependencyInjection.Abstractions" Version="8.0.1">          
         </PackageReference>
     </ItemGroup>

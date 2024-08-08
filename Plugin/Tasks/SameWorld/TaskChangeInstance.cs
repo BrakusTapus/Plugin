@@ -37,7 +37,7 @@ public static unsafe class TaskChangeInstance
 
     public static void Enqueue(int number) //TODO: Add a check for when chosen instance number is higher then available!
     {
-        var tasks = new TaskManagerTask[]
+        TaskManagerTask[]? tasks = new TaskManagerTask[]
         {
             new(InteractWithAetheryte),
             new(SelectTravel),
@@ -96,7 +96,7 @@ public static unsafe class TaskChangeInstance
         {
             foreach (var x in m.Entries)
             {
-                if (x.Text.ContainsAny(Lang.TravelToInstancedArea))
+                if (x.Text.ContainsAny("Travel to Instanced Area."))
                 {
                     if (EzThrottler.Throttle("SelectTravelToInstancedArea"))
                     {

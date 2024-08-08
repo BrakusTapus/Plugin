@@ -145,16 +145,6 @@ public class TextureService
     #endregion
 
     #region From Game
-    /// <summary>
-    ///  Retrieves a texture using a GameIconLookup and draws it using the provided DrawInfo.
-    /// </summary>
-    /// <param name="gameIconLookup"></param>
-    /// <param name="drawInfo"></param>
-    //public void DrawIcon(GameIconLookup gameIconLookup, DrawInfo drawInfo)
-    //{
-    //    var textureWrap = textureProvider.GetFromGameIcon(gameIconLookup).GetWrapOrEmpty();
-    //    Draw(textureWrap, drawInfo);
-    //}
     public void DrawIcon(GameIconLookup gameIconLookup, DrawInfo drawInfo)
     {
         IDalamudTextureWrap? textureWrap = textureProvider.GetFromGameIcon(gameIconLookup).GetWrapOrEmpty();

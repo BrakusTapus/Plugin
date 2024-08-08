@@ -1,12 +1,13 @@
 ﻿using ECommons.Configuration;
+using Plugin.Utility.Data;
 using Plugin.Utility.Enums;
 using Plugin.Utility.Helpers;
 
-namespace Plugin.Utility.Data;
+namespace Plugin.Configuration;
 
-public class EzConfigs : IEzConfig
+public class Configs : IEzConfig
 {
-    public int Version { get; set; } = 2;
+    public int Version { get; set; } = 3;
 
     public bool Enable = true;
     internal bool AllowClosingESC2 = false;
@@ -68,7 +69,7 @@ public class EzConfigs : IEzConfig
     public bool IsMainWindowNoCollapseable { get; set; } = false;
     public bool IsMainWindowNoBackground { get; set; } = false;
 
-    // EzConfigs window options
+    // Configs window options
     public bool IsConfigWindowMovable { get; set; } = true;
     public bool IsConfigWindowResizeable { get; set; } = true;
     public bool IsConfigWindowNoTitleBar { get; set; } = true;

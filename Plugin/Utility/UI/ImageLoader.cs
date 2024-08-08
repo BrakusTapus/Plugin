@@ -3,7 +3,6 @@ using System.Numerics;
 using Dalamud.Interface.Textures.TextureWraps;
 using ImGuiExtensions;
 using ImGuiNET;
-using Plugin.MyServices;
 
 namespace Plugin.Utility.UI;
 

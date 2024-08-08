@@ -3,8 +3,6 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Runtime.CompilerServices;
 using ECommons.Throttlers;
-// using Plugin.Configurations; //TODO: If migrating to Ecommons EzConfig is succesfol then this can be removed
-using Plugin.MyServices;
 
 #nullable disable
 namespace Plugin.Utility.Helpers;
