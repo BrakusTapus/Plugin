@@ -4,7 +4,7 @@
 //using System.Text;
 //using System.Threading.Tasks;
 
-//namespace Plugin.Windows.AlphaMainWindow;
+//namespace Plugin.Windows.TestWindow;
 
 ///// <summary>
 ///// Enum describing pages the plugin can be opened to.

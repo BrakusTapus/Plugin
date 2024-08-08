@@ -30,7 +30,7 @@ public sealed class Plugin : IDalamudPlugin
     private readonly WindowSystem WindowSystem = new("plugin");
     private static ConfigWindow ConfigWindow; // { get; init; }
     private static MainWindow MainWindow; //{ get; init; }
-    private static AlphaMainWindow AlphaMainWindow;
+    private static TestWindow AlphaMainWindow;
 
     public Plugin(IDalamudPluginInterface pluginInterface/*, Configs configs*/)
     {

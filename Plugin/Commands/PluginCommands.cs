@@ -19,11 +19,11 @@ public static partial class PluginCommands
             ShowInHelp = true,
         });
         MyServices.Services.CommandManager.AddHandler(AltCommand, new CommandInfo(OnCommand) {
-            HelpMessage = "Also Opens Menu.",
+            HelpMessage = "Alias for " + Command + ".",
             ShowInHelp = true,
         });
         MyServices.Services.CommandManager.AddHandler(InstanceCommand, new CommandInfo(ProcessCommand) {
-            HelpMessage = "Change instance",
+            HelpMessage = "<1 - 4>\n    <stop> or <clear> clears enqued tasks!",
             ShowInHelp = true,
         });
         MyServices.Services.PluginLog.Debug($"Enabled commands: {Command} {AltCommand} {InstanceCommand}");
@@ -46,12 +46,20 @@ public static partial class PluginCommands
         else if (args.Equals("c", StringComparison.OrdinalIgnoreCase) || args.Equals("config", StringComparison.OrdinalIgnoreCase))
         {
             Plugin.ToggleConfigWindow();
-            MyServices.Services.PluginLog.Debug($"Config command: {command} executed with args: {args}");
+            MyServices.Services.PluginLog.Debug($"Command: {command} executed with args: {args}");
+            Notify.Info($"Command: {command} executed with args: {args}");
+        }
+        else if (args.Equals("t", StringComparison.OrdinalIgnoreCase) || args.Equals("test", StringComparison.OrdinalIgnoreCase))
+        {
+            Plugin.ToggleTestWindow();
+            MyServices.Services.PluginLog.Debug($"Command: {command} executed with args: {args}");
+            Notify.Info($"Command: {command} executed with args: {args}");
         }
         else
         {
             // Handle other cases or arguments if needed
             MyServices.Services.PluginLog.Debug($"Command received with unrecognized args: {args}");
+            Notify.Info($"Command received with unrecognized args: {args}");
         }
     }
 

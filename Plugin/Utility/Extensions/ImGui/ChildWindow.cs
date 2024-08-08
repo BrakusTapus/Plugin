@@ -69,34 +69,48 @@ internal static class ChildWindow
         {
             foreach (TabHeaders header in Enum.GetValues(typeof(TabHeaders)))
             {
+                Svc.Log.Warning($"Attempting to render header: {header}");
+
                 bool isOpen = selectedHeader == header;
-                if (ImGui.CollapsingHeader(header.ToString(), ref isOpen))
+
+                // Pass isOpen by reference to ImGui.CollapsingHeader
+                if (ImGui.CollapsingHeader(header.ToString(), ImGuiTreeNodeFlags.Framed))
                 {
-                    if (isOpen && selectedHeader != header)
+                    Svc.Log.Warning($"{header} header is {(isOpen ? "open" : "closed")}");
+
+                    // Only change selectedHeader if the header is being opened
+                    if (isOpen)
                     {
-                        selectedHeader = header;
+                        if (selectedHeader != header)
+                        {
+                            Svc.Log.Warning($"Switching selected header from {selectedHeader} to {header}");
+                            selectedHeader = header;
+                        }
                     }
                     else if (!isOpen && selectedHeader == header)
                     {
+                        Svc.Log.Warning($"{header} header collapsed, clearing selectedHeader");
                         selectedHeader = null;
                     }
-                    if (isOpen)
+                    if (!isOpen)
                     {
-                        Svc.Log.Warning("isOpen = " + isOpen);
-                            
-                        // Get the categories for the selected header
                         IEnumerable<string> categories = GetCategoriesByHeader(header);
+                        Svc.Log.Warning($"Categories found for {header}: {string.Join(", ", categories)}");
 
                         foreach (string category in categories)
                         {
                             if (ImGui.Selectable(category))
                             {
-                                // Handle the selected category
+                                Svc.Log.Warning($"Category selected: {category}");
                                 ShowChildWindowForCategory(header, category);
                             }
                         }
                     }
-
+                }
+                else
+                {
+                    Svc.Log.Warning($"{header} header did not collapse/expand");
+                    Svc.Log.Error($" isOpen value is: '{isOpen}'");
                 }
             }
         }
@@ -109,53 +123,55 @@ internal static class ChildWindow
         ImGui.SameLine();
     }
 
-/* Old method for drawing categories
-    public static void DrawSideBar()
-    {
-        ImGui.PushID("Categories");
-        float sidebarW = WindowContentRegionWidth / 4;
-        float sidebarH = WindowContentRegionHeight - HeaderFooterHeight;
-        ImGui.SetCursorPosX(WindowPaddingX);
-
-        if (ImGui.BeginChild("SideBarMainWindow", new Vector2(sidebarW, sidebarH), true,
-            ImGuiWindowFlags.NoScrollbar | ImGuiWindowFlags.NoScrollWithMouse))
+    /* Old method for drawing categories
+        public static void DrawSideBar()
         {
-            ImGui.SetCursorPosX(WindowContentRegionWidth / 2);
-            float textwidth = ImGui.CalcTextSize("This is the Sidebar!").X;
-            ImGui.SetCursorPosX((WindowWidth / 2) - (textwidth / 2));
-            ImGui.TextDisabled("This is the Sidebar!");
+            ImGui.PushID("Categories");
+            float sidebarW = WindowContentRegionWidth / 4;
+            float sidebarH = WindowContentRegionHeight - HeaderFooterHeight;
+            ImGui.SetCursorPosX(WindowPaddingX);
 
-            foreach (Headers header in Enum.GetValues(typeof(Headers)))
+            if (ImGui.BeginChild("SideBarMainWindow", new Vector2(sidebarW, sidebarH), true,
+                ImGuiWindowFlags.NoScrollbar | ImGuiWindowFlags.NoScrollWithMouse))
             {
-                if (ImGui.CollapsingHeader(header.ToString()))
-                {
-                    // Add or remove categories here.
-                    IEnumerable<string> categories = GetCategoriesByHeader(header);
+                ImGui.SetCursorPosX(WindowContentRegionWidth / 2);
+                float textwidth = ImGui.CalcTextSize("This is the Sidebar!").X;
+                ImGui.SetCursorPosX((WindowWidth / 2) - (textwidth / 2));
+                ImGui.TextDisabled("This is the Sidebar!");
 
-                    foreach (var category in categories)
+                foreach (Headers header in Enum.GetValues(typeof(Headers)))
+                {
+                    if (ImGui.CollapsingHeader(header.ToString()))
                     {
-                        if (ImGui.Selectable(category))
+                        // Add or remove categories here.
+                        IEnumerable<string> categories = GetCategoriesByHeader(header);
+
+                        foreach (var category in categories)
                         {
-                            // Handle the selected category.
-                            ShowChildWindowForCategory(category);
+                            if (ImGui.Selectable(category))
+                            {
+                                // Handle the selected category.
+                                ShowChildWindowForCategory(category);
+                            }
                         }
                     }
                 }
             }
-        }
-        ImGui.EndChild();
-        ImGui.PopID();
-        ImGui.SameLine();
+            ImGui.EndChild();
+            ImGui.PopID();
+            ImGui.SameLine();
 
-        float curserCurrentPos = ImGui.GetCursorPos().X;
-        ImGui.SetCursorPosX(curserCurrentPos + 10);
-        ImGui.SameLine();
-    }
-*/
+            float curserCurrentPos = ImGui.GetCursorPos().X;
+            ImGui.SetCursorPosX(curserCurrentPos + 10);
+            ImGui.SameLine();
+        }
+    */
 
 
     private static IEnumerable<string> GetCategoriesByHeader(TabHeaders header)
     {
+        Svc.Log.Warning($"GetCategoriesByHeader called for: {header}");
+
         switch (header)
         {
             case TabHeaders.About:
@@ -179,31 +195,31 @@ internal static class ChildWindow
         selectedCategory = (header, category);
     }
 
-/*
-    // Define a method to handle category selection.
-    private static void ShowChildWindowForCategory(string category)
-    {
-        // Implement window show logic here based on the selected category.
-        switch (category)
+    /*
+        // Define a method to handle category selection.
+        private static void ShowChildWindowForCategory(string category)
         {
-            case "Category 1":
-                //Console.WriteLine("You have selected Category 1");
-                // Further processing for Category 1 
-                break;
-            case "Category 2":
-                //Console.WriteLine("You have selected Category 2");
-                // Further processing for Category 2
-                break;
-            case "Category 3":
-                //Console.WriteLine("You have selected Category 3");
-                // Further processing for Category 3
-                break;
-            default:
-                //Console.WriteLine("Unknown category");
-                break;
+            // Implement window show logic here based on the selected category.
+            switch (category)
+            {
+                case "Category 1":
+                    //Console.WriteLine("You have selected Category 1");
+                    // Further processing for Category 1 
+                    break;
+                case "Category 2":
+                    //Console.WriteLine("You have selected Category 2");
+                    // Further processing for Category 2
+                    break;
+                case "Category 3":
+                    //Console.WriteLine("You have selected Category 3");
+                    // Further processing for Category 3
+                    break;
+                default:
+                    //Console.WriteLine("Unknown category");
+                    break;
+            }
         }
-    }
-*/
+    */
 
     public static void DrawContent()
     {
@@ -222,7 +238,7 @@ internal static class ChildWindow
             {
                 string defaultText = "Select a category from the sidebar.";
                 ImGuiHelpers.CenteredText(defaultText);
-                
+
             }
         }
         ImGui.EndChild();

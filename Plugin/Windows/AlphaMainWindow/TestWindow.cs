@@ -31,7 +31,7 @@ using Plugin.Configuration;
 
 namespace Plugin.Windows.AlphaMainWindow;
 
-public class AlphaMainWindow : Window, IDisposable
+public class TestWindow : Window, IDisposable
 {
     private readonly Plugin plugin;
     // private readonly float _headerFooterHeight = 40f;
@@ -42,10 +42,10 @@ public class AlphaMainWindow : Window, IDisposable
     // We give this window a hidden ID using ##
     // So that the user will see "Main Window" as window title,
     // but for ImGui the ID is "My Amazing Window##MainMenu"
-    public AlphaMainWindow(Plugin plugin, Configs configs)
+    public TestWindow(Plugin plugin, Configs configs)
         : base(
-            $"{nameof(MainWindow)}" + "###AlphaVersion",
-            ImGuiWindowFlags.NoScrollWithMouse | ImGuiWindowFlags.NoScrollbar)
+            $"{nameof(TestWindow)}" + "###TestVersion",
+            ImGuiWindowFlags.NoScrollbar)
     {
         this.IsOpen = true;
 
@@ -66,13 +66,6 @@ public class AlphaMainWindow : Window, IDisposable
         OnOpenSfxId = 23;
 
         Flags = ImGuiWindowFlags.NoScrollbar | ImGuiWindowFlags.NoScrollWithMouse;
-    }
-
-    private enum PluginSortKind
-    {
-        Alphabetical,
-        TurnedOff,
-        EnabledDisabled,
     }
 
     public void Dispose()
