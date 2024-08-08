@@ -10,7 +10,6 @@ namespace Plugin.Windows;
 public class MainWindow : Window, IDisposable
 {
     private readonly Plugin plugin;
-    private readonly float _headerFooterHeight = 40f;
 
     // We give this window a hidden ID using ##
     // So that the user will see "Main Window" as window title,
