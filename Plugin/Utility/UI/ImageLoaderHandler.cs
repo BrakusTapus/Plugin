@@ -3,7 +3,7 @@ using System.IO;
 using System.Net.Http;
 using System.Threading;
 using Dalamud.Interface.Textures.TextureWraps;
-using Plugin.Utilities.Helpers;
+using Plugin.Helpers;
 
 namespace Plugin.Utilities.UI;
 

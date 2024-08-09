@@ -7,7 +7,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Plugin.Utilities.Data;
+namespace Plugin.Data;
 
 [Serializable]
 public class AddressBookFolder

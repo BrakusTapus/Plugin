@@ -1,8 +1,8 @@
 ﻿using Lumina.Excel.GeneratedSheets;
+using Plugin.Helpers;
 using Plugin.Utilities.Enums;
-using Plugin.Utilities.Helpers;
 
-namespace Plugin.Utilities.Data;
+namespace Plugin.Data;
 public struct ResidentialAetheryte : IEquatable<ResidentialAetheryte>, IAetheryte
 {
     public Vector2 Position { get; set; }
@@ -20,7 +20,7 @@ public struct ResidentialAetheryte : IEquatable<ResidentialAetheryte>, IAetheryt
         ID = data.RowId;
         IsSubdivision = isSubdivision;
         Position = GetCoordinates();
-        if(isSubdivision) Position += subdivisionPositionModifier;
+        if (isSubdivision) Position += subdivisionPositionModifier;
     }
 
     public override bool Equals(object obj)
@@ -50,7 +50,7 @@ public struct ResidentialAetheryte : IEquatable<ResidentialAetheryte>, IAetheryt
             var map = Svc.Data.GetExcelSheet<Map>().FirstOrDefault(m => m.TerritoryType.Row == reference.Ref.TerritoryType.Row);
             var scale = map.SizeFactor;
             var mapMarker = Svc.Data.GetExcelSheet<MapMarker>().FirstOrDefault(m => m.DataType == 4 && m.DataKey == reference.Ref.PlaceName.Row);
-            if(mapMarker != null)
+            if (mapMarker != null)
             {
                 AethersX = Utils.ConvertMapMarkerToRawPosition(mapMarker.X, scale);
                 AethersY = Utils.ConvertMapMarkerToRawPosition(mapMarker.Y, scale);

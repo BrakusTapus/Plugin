@@ -9,8 +9,8 @@ using Plugin.Utilities.Enums;
 using Plugin.Tasks.SameWorld;
 //using PInvoke;
 using System.Windows.Forms;
-using Plugin.Utilities.Helpers;
 using PInvoke;
+using Plugin.Helpers;
 
 namespace Plugin.Game;
 

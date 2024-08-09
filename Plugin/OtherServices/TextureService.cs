@@ -12,7 +12,7 @@ using ImGuiExtensions;
 using ImGuiNET;
 using Plugin.Utilities.UI;
 
-namespace Plugin.Utilities.OtherServices;
+namespace Plugin.OtherServices;
 
 public class TextureService
 {

@@ -1,7 +1,7 @@
 ﻿using Lumina.Excel.GeneratedSheets;
 using Plugin.Utilities.Enums;
 
-namespace Plugin.Utilities.Data;
+namespace Plugin.Data;
 
 public struct TinyAetheryte : IEquatable<TinyAetheryte>, IAetheryte
 {

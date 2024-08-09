@@ -1,4 +1,4 @@
-﻿namespace Plugin.Utilities.Data;
+﻿namespace Plugin.Data;
 public class ResidentialZoneInfo
 {
     public List<ResidentialAetheryte> Aetherytes = [];

@@ -2,13 +2,12 @@
 using ECommons.Events;
 using ECommons.ExcelServices;
 using ECommons.GameHelpers;
-using Plugin.Utilities.Data;
 using Lumina.Excel.GeneratedSheets;
-using Plugin.Utilities.Helpers;
 using System.IO;
 using Path = System.IO.Path;
+using Plugin.Helpers;
 
-namespace Plugin.Utilities.Data;
+namespace Plugin.Data;
 
 internal class DataStore
 {
@@ -21,9 +20,9 @@ internal class DataStore
 
     internal TinyAetheryte GetMaster(TinyAetheryte aetheryte)
     {
-        foreach(var x in Aetherytes.Keys)
+        foreach (var x in Aetherytes.Keys)
         {
-            if(x.Group == aetheryte.Group) return x;
+            if (x.Group == aetheryte.Group) return x;
         }
         return default;
     }
@@ -34,9 +33,9 @@ internal class DataStore
         StaticData = EzConfig.LoadConfiguration<StaticData>(System.IO.Path.Combine(Svc.PluginInterface.AssemblyLocation.DirectoryName, FileName), false);
         Svc.Data.GetExcelSheet<Aetheryte>().Each(x =>
         {
-            if(x.AethernetGroup != 0)
+            if (x.AethernetGroup != 0)
             {
-                if(x.IsAetheryte)
+                if (x.IsAetheryte)
                 {
                     Aetherytes[GetTinyAetheryte(x)] = [];
                     terr.Add(x.Territory.Value.RowId);
@@ -45,9 +44,9 @@ internal class DataStore
         });
         Svc.Data.GetExcelSheet<Aetheryte>().Each(x =>
         {
-            if(x.AethernetGroup != 0)
+            if (x.AethernetGroup != 0)
             {
-                if(!x.IsAetheryte)
+                if (!x.IsAetheryte)
                 {
                     var a = GetTinyAetheryte(x);
                     Aetherytes[GetMaster(a)].Add(a);
@@ -55,12 +54,12 @@ internal class DataStore
                 }
             }
         });
-        foreach(var x in Aetherytes.Keys.ToArray())
+        foreach (var x in Aetherytes.Keys.ToArray())
         {
             Aetherytes[x] = [.. Aetherytes[x].OrderBy(x => GetAetheryteSortOrder(x.ID))];
         }
         Territories = [.. terr];
-        if(ProperOnLogin.PlayerPresent)
+        if (ProperOnLogin.PlayerPresent)
         {
             //BuildWorlds();
         }
@@ -69,11 +68,11 @@ internal class DataStore
     internal uint GetAetheryteSortOrder(uint id)
     {
         var ret = 10000u;
-        if(StaticData.SortOrder.TryGetValue(id, out var x))
+        if (StaticData.SortOrder.TryGetValue(id, out var x))
         {
             ret += x;
         }
-        if(C.Favorites.Contains(id))
+        if (C.Favorites.Contains(id))
         {
             ret -= 10000u;
         }
@@ -113,7 +112,7 @@ internal class DataStore
     {
         var AethersX = 0f;
         var AethersY = 0f;
-        if(StaticData.CustomPositions.TryGetValue(aetheryte.RowId, out var pos))
+        if (StaticData.CustomPositions.TryGetValue(aetheryte.RowId, out var pos))
         {
             AethersX = pos.X;
             AethersY = pos.Z;
@@ -123,7 +122,7 @@ internal class DataStore
             var map = Svc.Data.GetExcelSheet<Map>().FirstOrDefault(m => m.TerritoryType.Row == aetheryte.Territory.Value.RowId);
             var scale = map.SizeFactor;
             var mapMarker = Svc.Data.GetExcelSheet<MapMarker>().FirstOrDefault(m => m.DataType == (aetheryte.IsAetheryte ? 3 : 4) && m.DataKey == (aetheryte.IsAetheryte ? aetheryte.RowId : aetheryte.AethernetName.Value.RowId));
-            if(mapMarker != null)
+            if (mapMarker != null)
             {
                 AethersX = Utils.ConvertMapMarkerToRawPosition(mapMarker.X, scale);
                 AethersY = Utils.ConvertMapMarkerToRawPosition(mapMarker.Y, scale);

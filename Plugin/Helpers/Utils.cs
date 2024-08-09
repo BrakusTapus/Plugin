@@ -13,11 +13,13 @@ using ECommons.Throttlers;
 using ECommons.UIHelpers.AddonMasterImplementations;
 using FFXIVClientStructs.FFXIV.Client.UI;
 using FFXIVClientStructs.FFXIV.Component.GUI;
+using Plugin.Data;
+
+
 // using Plugin.Configurations; //TODO: If migrating to Ecommons EzConfig is succesfol then this can be removed
-using Plugin.Utilities.Data;
 using Plugin.Utilities.Enums;
 
-namespace Plugin.Utilities.Helpers;
+namespace Plugin.Helpers;
 internal static unsafe class Utils
 {
     //internal static bool GenericThrottle => Configs.UseFrameDelay ?
@@ -33,9 +35,9 @@ internal static unsafe class Utils
         return Svc.Condition[ConditionFlag.WaitingToVisitOtherWorld] || Svc.Condition[ConditionFlag.Jumping];
     }
 
-    internal static IGameObject GetReachableWorldChangeAetheryte(bool littleDistance = false) => GetReachableAetheryte(x => Utils.TryGetTinyAetheryteFromIGameObject(x, out var ae) && ae?.IsWorldChangeAetheryte() == true, littleDistance);
+    internal static IGameObject GetReachableWorldChangeAetheryte(bool littleDistance = false) => GetReachableAetheryte(x => TryGetTinyAetheryteFromIGameObject(x, out var ae) && ae?.IsWorldChangeAetheryte() == true, littleDistance);
 
-    internal static IGameObject GetReachableResidentialAetheryte(bool littleDistance = false) => GetReachableAetheryte(x => Utils.TryGetTinyAetheryteFromIGameObject(x, out var ae) && ae?.IsResidentialAetheryte() == true, littleDistance);
+    internal static IGameObject GetReachableResidentialAetheryte(bool littleDistance = false) => GetReachableAetheryte(x => TryGetTinyAetheryteFromIGameObject(x, out var ae) && ae?.IsResidentialAetheryte() == true, littleDistance);
 
     internal static IGameObject GetReachableAetheryte(Predicate<IGameObject> predicate, bool littleDistance = false)
     {
@@ -174,7 +176,7 @@ internal static unsafe class Utils
     internal static float ConvertMapMarkerToRawPosition(int pos, float scale)
     {
         var num = scale / 100f;
-        var rawPosition = ((float)(pos - 1024.0) / num);
+        var rawPosition = (float)(pos - 1024.0) / num;
         return rawPosition;
     }
 
@@ -286,7 +288,7 @@ internal static unsafe class Utils
     public static bool IsAetheryte(this IGameObject obj)
     {
         if (obj.ObjectKind == ObjectKind.Aetheryte) return true;
-        return Utils.AethernetShards.Contains(obj.DataId);
+        return AethernetShards.Contains(obj.DataId);
     }
 
     internal static bool IsVPosValid(this IGameObject x)

@@ -4,6 +4,8 @@ using ECommons;
 using ECommons.DalamudServices;
 using ECommons.Throttlers;
 using FFXIVClientStructs.FFXIV.Component.GUI;
+using Plugin.Helpers;
+using Plugin.IPC;
 
 namespace Plugin.AutoMation;
 internal static class AutoAdjustRetainerPrices
@@ -30,7 +32,7 @@ internal static class AutoAdjustRetainerPrices
         if (AutoMarketRunning)
             Svc.Log.Info("AutoMarket Finished");
         GotoInnHelper.Stop();
-        AutoDuty.Plugin.Action = "";
+        Plugin.P.Action = "";
         SchedulerHelper.DescheduleAction("AutoMarketTimeOut");
         _autoMarketStarted = false;
         if (AutoMarket_IPCSubscriber.IsRunning())
@@ -71,7 +73,7 @@ internal static class AutoAdjustRetainerPrices
             return;
         }
 
-        if (AutoDuty.Plugin.Started)
+        if (Plugin.P.Started)
         {
             Svc.Log.Debug("AutoDuty is Started, Stopping AutoMarketHelper");
             Stop();
@@ -99,7 +101,7 @@ internal static class AutoAdjustRetainerPrices
             Svc.Log.Debug("Goto Running");
             return;
         }
-        AutoDuty.Plugin.Action = "AutoMarket Running";
+        P.Action = "AutoMarket Running";
 
         if (!GotoHelper.GotoRunning && Svc.ClientState.TerritoryType != GotoInnHelper.InnTerritoryType(ObjectHelper.GrandCompany))
         {

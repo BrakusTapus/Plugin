@@ -8,8 +8,8 @@ using ECommons.UIHelpers.AddonMasterImplementations;
 using FFXIVClientStructs.FFXIV.Client.Game.UI;
 using Lumina.Excel.GeneratedSheets;
 using Plugin;
+using Plugin.Helpers;
 using Plugin.Tasks.SameWorld;
-using Plugin.Utilities.Helpers;
 
 namespace MyServices;
 
