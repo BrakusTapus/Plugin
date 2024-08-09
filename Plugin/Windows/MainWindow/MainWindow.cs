@@ -130,10 +130,10 @@ public class MainWindow : Window, IDisposable
 
     public override void Draw()
     {
-        ChildWindow.DrawHeader();
+        ChildWindow.DrawHeader();        
         ChildWindow.DrawSideBar();
         ImGui.SameLine();
-        ChildWindow.DrawContent();
-        ChildWindow.DrawFooter();
+        ChildWindow.DrawContent();       
+        ChildWindow.DrawFooter();// ChildWindow.DrawFooter();
     }
 }

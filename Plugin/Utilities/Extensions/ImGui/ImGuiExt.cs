@@ -67,6 +67,54 @@ public static class ImGuiExt
         }
     }
 
+    /// <summary>
+    /// Renders text aligned with a button on the Y-axis.
+    /// </summary>
+    /// <param name="text">Text to render.</param>
+    /// <param name="buttonLabel">Label of the button to align with.</param>
+    public static void TextAlignedWithButton(string text, string buttonLabel)
+    {
+        // Calculate the height of the button and the text
+        float buttonHeight = ImGui.GetTextLineHeightWithSpacing();
+        float textHeight = ImGui.CalcTextSize(text).Y;
+
+        // Calculate the difference in height
+        float alignmentOffset = (buttonHeight - textHeight) / 2.0f;
+
+        // Adjust cursor Y position for vertical alignment
+        ImGui.SetCursorPosY(ImGui.GetCursorPosY() + alignmentOffset);
+
+        // Render the text
+        ImGui.Text(text);
+
+        // Reset the cursor position and render the button
+        ImGui.SameLine();
+        ImGui.Button(buttonLabel);
+    }
+
+    /// <summary>
+    /// Centers an item horizontally in the current window.
+    /// </summary>
+    /// <param name="itemWidth">The width of the item to center.</param>
+    public static void CenterItemHorizontally(float itemWidth)
+    {
+        float windowWidth = ImGui.GetWindowWidth();
+        float centeredX = (windowWidth - itemWidth) / 2.0f;
+
+        ImGui.SetCursorPosX(centeredX);
+    }
+
+    /// <summary>
+    /// Centers an item vertically in the current window.
+    /// </summary>
+    /// <param name="itemHeight">The height of the item to center.</param>
+    public static void CenterItemVertically(float itemHeight)
+    {
+        float windowHeight = ImGui.GetWindowHeight();
+        float centeredY = (windowHeight - itemHeight) / 2.0f;
+
+        ImGui.SetCursorPosY(centeredY);
+    }
 
     #region ToolTips
     /// <summary>

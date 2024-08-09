@@ -57,12 +57,6 @@ public sealed class Plugin : IDalamudPlugin
     //}
 
 
-
-
-
-
-
-
     internal Game.Memory Memory;
 
     private readonly Configs EzConfigs;
@@ -123,6 +117,15 @@ public sealed class Plugin : IDalamudPlugin
         Svc.Framework.RunOnFrameworkThread(InitializeTweaks);
         C.EnabledTweaks.CollectionChanged += OnChange;
         autoAdjustRetainerListings = new AutoAdjustRetainerListings();
+
+#if DEBUG
+        if (Svc.PluginInterface.Reason == PluginLoadReason.Reload)
+        {
+            MainWindow.IsOpen = !MainWindow.IsOpen;
+            Svc.Chat.Print($"Reloaded {P.Name}", P.Name, 45);
+            Notify.Success($"{P.Name} has successfully reloaded!");
+        }
+#endif
     }
 
     public static void OnChange(object? sender, NotifyCollectionChangedEventArgs e)
@@ -192,6 +195,12 @@ public sealed class Plugin : IDalamudPlugin
         }
     }
 
+    public static void CloseMainWindow()
+    {
+        MainWindow.IsOpen = false;
+        EzConfig.Save();
+    }
+
     public static void ToggleConfigWindow()
     {
         ConfigWindow.Toggle();
@@ -202,6 +211,12 @@ public sealed class Plugin : IDalamudPlugin
         }
     }
 
+    public static void CloseConfigWindow()
+    {
+        ConfigWindow.IsOpen = false;
+        EzConfig.Save();
+    }
+
     public static void ToggleTestWindow()
     {
         TestWindow.Toggle();
@@ -210,6 +225,12 @@ public sealed class Plugin : IDalamudPlugin
         {
             EzConfig.Save();
         }
+    }
+
+    public static void CloseTestWindow()
+    {
+        TestWindow.IsOpen = false;
+        EzConfig.Save();
     }
 
     public void Run(uint territoryType = 0, int loops = 0)
