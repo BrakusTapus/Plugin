@@ -1,5 +1,6 @@
 ﻿using ImGuiScene;
 using ImGuiNET;
+using Dalamud.Interface.Utility.Raii;
 
 namespace ImGuiExtensions;
 
@@ -152,17 +153,68 @@ public static class Buttons
         windowDrawList.AddCircleFilled(new Vector2(cursorScreenPos.X + num2 + (float)(v ? 1 : 0) * (num - num2 * 2f), cursorScreenPos.Y + num2), num2 - 1.5f, ImGui.ColorConvertFloat4ToU32(new Vector4(1f, 1f, 1f, 1f) * num3));
     }
 
-    public static void ExitButton()
+    public static void SettingsButton()
     {
-        ImGui.PushStyleColor(ImGuiCol.Text, ColorEx.RedBright);
-        if (Dalamud.Interface.Components.ImGuiComponents.IconButton(FontAwesomeIcon.Times, ColorEx.Transparent, ColorEx.ButtonActive, ColorEx.TextHovered))
+        ImGui.PushStyleColor(ImGuiCol.Text, ColorEx.Silver);
+        if (Dalamud.Interface.Components.ImGuiComponents.IconButtonWithText(FontAwesomeIcon.Cog, "Settings", ColorEx.Transparent, ColorEx.ButtonActive, ColorEx.TextHovered))
         {
-
+            Plugin.Plugin.ToggleConfigWindow();
         }
         ImGui.PopStyleColor();
     }
 
-    public static void ExitButton(bool border)
+    public static void MainMenuButton()
+    {
+        ImGui.PushStyleColor(ImGuiCol.Text, ColorEx.Silver);
+        if (Dalamud.Interface.Components.ImGuiComponents.IconButtonWithText(FontAwesomeIcon.Cog, "Main Menu", ColorEx.Transparent, ColorEx.ButtonActive, ColorEx.TextHovered))
+        {
+            Plugin.Plugin.ToggleMainWindow();
+        }
+        ImGui.PopStyleColor();
+    }
+
+    public static void ExitButtonMainWindowWithText()
+    {
+        ImGui.PushStyleColor(ImGuiCol.Text, ColorEx.RedBright);
+        if (Dalamud.Interface.Components.ImGuiComponents.IconButtonWithText(FontAwesomeIcon.Times,"Close", ColorEx.Transparent, ColorEx.ButtonActive, ColorEx.TextHovered))
+        {
+            Plugin.Plugin.CloseMainWindow();
+        }
+        ImGui.PopStyleColor();
+    }
+
+    public static void ExitButtonMainWindow()
+    {
+        ImGui.PushStyleColor(ImGuiCol.Text, ColorEx.RedBright);
+        if (Dalamud.Interface.Components.ImGuiComponents.IconButton(FontAwesomeIcon.Times, ColorEx.Transparent, ColorEx.ButtonActive, ColorEx.TextHovered))
+        {
+            Plugin.Plugin.CloseMainWindow();
+        }
+        ImGui.PopStyleColor();
+    }
+
+    public static void ExitButtonConfigWindow()
+    {
+        ImGui.PushStyleColor(ImGuiCol.Text, ColorEx.RedBright);
+        if (Dalamud.Interface.Components.ImGuiComponents.IconButton(FontAwesomeIcon.Times, ColorEx.Transparent, ColorEx.ButtonActive, ColorEx.TextHovered))
+        {
+            Plugin.Plugin.CloseMainWindow();
+        }
+        ImGui.PopStyleColor();
+    }
+
+    public static void ExitButtonTestWindow()
+    {
+        ImGui.PushStyleColor(ImGuiCol.Text, ColorEx.RedBright);
+        if (Dalamud.Interface.Components.ImGuiComponents.IconButton(FontAwesomeIcon.Times, ColorEx.Transparent, ColorEx.ButtonActive, ColorEx.TextHovered))
+        {
+            Plugin.Plugin.CloseMainWindow();
+        }
+        ImGui.PopStyleColor();
+    }
+
+
+    public static void ExitButtonExitButtonMainWindow(bool border)
     {
         if (border)
         {
@@ -171,14 +223,34 @@ public static class Buttons
             ImGui.PushStyleColor(ImGuiCol.Text, ColorEx.RedBright);
             if (Dalamud.Interface.Components.ImGuiComponents.IconButton(FontAwesomeIcon.Times, ColorEx.Transparent, ColorEx.ButtonActive, ColorEx.TextHovered))
             {
-
+                Plugin.Plugin.CloseMainWindow();
             }
             ImGui.PopStyleColor(2);
             ImGui.PopStyleVar();
         }
         else
         {
-            ExitButton();
+            ExitButtonMainWindow();
+        }
+    }
+
+    public static void ExitButtonExitButtonMainWindow(bool border, string name)
+    {
+        if (border)
+        {
+            ImGui.PushStyleVar(ImGuiStyleVar.FrameBorderSize, 1);
+            ImGui.PushStyleColor(ImGuiCol.Border, ColorEx.Orange);
+            ImGui.PushStyleColor(ImGuiCol.Text, ColorEx.RedBright);
+            if (Dalamud.Interface.Components.ImGuiComponents.IconButtonWithText(FontAwesomeIcon.Times,name, ColorEx.Transparent, ColorEx.ButtonActive, ColorEx.TextHovered))
+            {
+                Plugin.Plugin.CloseMainWindow();
+            }
+            ImGui.PopStyleColor(2);
+            ImGui.PopStyleVar();
+        }
+        else
+        {
+            ExitButtonMainWindow();
         }
     }
 
