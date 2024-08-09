@@ -28,26 +28,23 @@ using Dalamud.Utility;
 
 using ImGuiNET;
 using Plugin.Configuration;
+using ECommons.Automation.NeoTaskManager;
 
 namespace Plugin.Windows.AlphaMainWindow;
 
-public class TestWindow : Window, IDisposable
+public class DebugWindow : Window, IDisposable
 {
     private readonly Plugin plugin;
-    // private readonly float _headerFooterHeight = 40f;
-
-    private string searchText = string.Empty;
-    private bool isSearchTextPrefilled = false;
 
     // We give this window a hidden ID using ##
     // So that the user will see "Main Window" as window title,
     // but for ImGui the ID is "My Amazing Window##MainMenu"
-    public TestWindow(Plugin plugin, Configs configs)
+    public DebugWindow(Plugin plugin, Configs configs)
         : base(
-            $"{nameof(TestWindow)}" + "###TestVersion",
+            $"{nameof(DebugWindow)}" + "###DebugWindow",
             ImGuiWindowFlags.NoScrollbar)
     {
-        this.IsOpen = true;
+        //this.IsOpen = true;
 
         float mainViewPortWidth = ImGuiHelpers.MainViewport.Size.X;
         float mainViewPortHeight = ImGuiHelpers.MainViewport.Size.Y;
@@ -161,9 +158,112 @@ public class TestWindow : Window, IDisposable
     }
 
 
+    void RenderTaskManagerControls()
+    {
+        // Display TaskManager properties
+        RenderTaskManagerInfo();
+
+        // Always render the "Advance Task" button
+        if (ImGui.Button("Advance Task"))
+        {
+            if (P.TaskManager.StepMode)
+            {
+                P.TaskManager.Step(); // Manually advance tasks if StepMode is enabled
+            }
+            else
+            {
+                // Optionally provide feedback if StepMode is not enabled
+                ImGui.Text("Step Mode is disabled. Enable it to manually advance tasks.");
+            }
+        }
+    }
+
+    void RenderTaskManagerInfo()
+    {
+        // Default values for TaskManager properties
+        string currentTask = P.TaskManager.CurrentTask?.ToString() ?? "No Current Task";
+        bool isBusy = P.TaskManager.IsBusy;
+        int maxTasks = P.TaskManager.MaxTasks > 0 ? P.TaskManager.MaxTasks : 0;
+        int numQueuedTasks = P.TaskManager.NumQueuedTasks > 0 ? P.TaskManager.NumQueuedTasks : 0;
+        float progress = P.TaskManager.Progress >= 0 ? P.TaskManager.Progress : 0.0f;
+        long remainingTimeMS = P.TaskManager.RemainingTimeMS >= 0 ? P.TaskManager.RemainingTimeMS : 0L;
+
+        // Render each property on a separate line
+        ImGui.Text("Current Task: " + currentTask);
+        ImGui.Text("Is Busy: " + isBusy.ToString());
+        ImGui.Text("Max Tasks: " + maxTasks.ToString());
+        ImGui.Text("Queued Tasks: " + numQueuedTasks.ToString());
+        ImGui.Text("Progress: " + progress.ToString("0.00%"));  // Display as percentage
+        ImGui.Text("Remaining Time (ms): " + remainingTimeMS.ToString());
+    }
+
     private void DrawTab1()
     {
-        ImGui.Text("Hello! welcome to my plugin!");
+        ImGuiHelpers.CenteredText("Debug Window");
+        ImGui.Spacing();
+        ImGui.Spacing();
+        {
+            ImGui.BeginGroup();
+            bool stepMode = P.TaskManager.StepMode;
+
+            if (ImGui.Checkbox($"Step Mode: {stepMode}", ref stepMode))
+            {
+                P.TaskManager.StepMode = stepMode; // Update the original property with the new value
+            }
+            RenderTaskManagerControls(); // Call the method to render TaskManager controls
+
+            ImGui.Spacing();
+            ImGui.Spacing();
+            ImGui.Spacing();
+            ImGui.Spacing();
+            ImGui.EndGroup();
+
+
+            ImGui.SameLine();
+            ImGui.BeginGroup();
+            // Create a button for each string
+            if (ImGui.Button("ClickComparePrice"))
+            {
+                // Action for ClickComparePrice button
+            }
+
+            if (ImGui.Button("GetLowestPrice"))
+            {
+                // Action for GetLowestPrice button
+            }
+
+            if (ImGui.Button("FillLowestPrice"))
+            {
+                // Action for FillLowestPrice button
+            }
+
+            if (ImGui.Button("ClickSellingItem"))
+            {
+                // Action for ClickSellingItem button
+            }
+
+            if (ImGui.Button("ClickAdjustPrice"))
+            {
+                // Action for ClickAdjustPrice button
+            }
+
+            if (ImGui.Button("ClickComparePrice"))
+            {
+                // Action for ClickComparePrice button
+            }
+
+            if (ImGui.Button("GetLowestPrice"))
+            {
+                // Action for GetLowestPrice button
+            }
+
+            if (ImGui.Button("FillLowestPrice"))
+            {
+                // Action for FillLowestPrice button
+            }
+            ImGui.EndGroup();
+
+        }
     }
 
     private void DrawTab2()
@@ -252,23 +352,4 @@ public class TestWindow : Window, IDisposable
             // Handle feature 2 intensity change
         }
     }
-
-    /// <summary>
-    /// Sets the current search text and marks it as prefilled.
-    /// </summary>
-    /// <param name="text">The search term.</param>
-    public void SetSearchText(string text)
-    {
-        if (string.IsNullOrEmpty(text))
-        {
-            this.isSearchTextPrefilled = false;
-            this.searchText = string.Empty;
-        }
-        else
-        {
-            this.isSearchTextPrefilled = true;
-            this.searchText = text;
-        }
-    }
-
 }

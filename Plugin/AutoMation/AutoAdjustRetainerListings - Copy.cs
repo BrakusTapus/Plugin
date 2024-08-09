@@ -3,6 +3,7 @@ using Dalamud.Game.Addon.Lifecycle.AddonArgTypes;
 using Dalamud.Game.Text.SeStringHandling;
 using Dalamud.Game.Text.SeStringHandling.Payloads;
 using Dalamud.Interface;
+using Dalamud.Memory;
 using ECommons;
 using ECommons.Automation;
 using ECommons.Configuration;
@@ -74,10 +75,11 @@ public partial class AutoAdjustRetainerListings : Tweak<AutoAdjustRetainerListin
 
     public override void DrawConfig()
     {
+        DrawConfigUI();
         base.DrawConfig();
         //if (ImGui.Button("cancel"))
         //    TaskManager.Abort();
-        DrawConfigUI();
+
     }
 
     private static bool IsEnAbled = false;
@@ -95,9 +97,58 @@ public partial class AutoAdjustRetainerListings : Tweak<AutoAdjustRetainerListin
                 Disable(); // Call the disable method
             }
         }
+
+        try
+        {
+            bool stepMode = TaskManager.StepMode;
+            if (ImGui.Checkbox("Step Mode", ref stepMode))
+            {
+                TaskManager.StepMode = stepMode;
+            }
+            ImGui.SameLine();
+            // Always render the "Advance Task" button
+            if (ImGui.Button("Advance Task"))
+            {
+                if (TaskManager.StepMode)
+                {
+                    TaskManager.Step(); // Manually advance tasks if StepMode is enabled
+                }
+                else
+                {
+                    // Optionally provide feedback if StepMode is not enabled
+                    ImGui.Text("Step Mode is disabled. Enable it to manually advance tasks.");
+                }
+            }
+            RenderTaskManagerInfo();
+        }
+        catch (Exception ex)
+        {
+
+            Svc.Log.Error($"{ex}");
+        }
+
     }
 
-    // Method to handle the retainer sell event
+    void RenderTaskManagerInfo()
+    {
+        // Default values for TaskManager properties
+        string currentTask = TaskManager.CurrentTask?.ToString() ?? "No Current Task";
+        bool isBusy = TaskManager.IsBusy;
+        int maxTasks = TaskManager.MaxTasks > 0 ? TaskManager.MaxTasks : 0;
+        int numQueuedTasks = TaskManager.NumQueuedTasks > 0 ? TaskManager.NumQueuedTasks : 0;
+        float progress = TaskManager.Progress >= 0 ? TaskManager.Progress : 0.0f;
+        long remainingTimeMS = TaskManager.RemainingTimeMS >= 0 ? TaskManager.RemainingTimeMS : 0L;
+
+        // Render each property on a separate line
+        ImGui.Text("Current Task: " + currentTask);
+        ImGui.Text("Is Busy: " + isBusy.ToString());
+        ImGui.Text("Max Tasks: " + maxTasks.ToString());
+        ImGui.Text("Queued Tasks: " + numQueuedTasks.ToString());
+        ImGui.Text("Progress: " + progress.ToString("0.00%"));  // Display as percentage
+        ImGui.Text("Remaining Time (ms): " + remainingTimeMS.ToString());
+    }
+
+    //Method to handle the retainer sell event
     private void OnRetainerSell(AddonEvent eventType, AddonArgs addonInfo)
     {
         switch (eventType)
@@ -261,57 +312,133 @@ public partial class AutoAdjustRetainerListings : Tweak<AutoAdjustRetainerListin
     // Fills the lowest price into the UI
     private unsafe bool? FillLowestPrice()
     {
-        if (GenericHelpers.TryGetAddonByName<AddonRetainerSell>("RetainerSell", out var addon) && GenericHelpers.IsAddonReady(&addon->AtkUnitBase))
+        try
         {
-            var ui = &addon->AtkUnitBase;
-            var priceComponent = addon->AskingPrice;
-
-            if (CurrentMarketLowestPrice - Config.PriceReduction < Config.LowestAcceptablePrice)
+            if (GenericHelpers.TryGetAddonByName<AddonRetainerSell>("RetainerSell", out var addon) && GenericHelpers.IsAddonReady(&addon->AtkUnitBase))
             {
-                var message = GetSeString("Item is listed lower than minimum price, skipping",
-                                                       SeString.CreateItemLink(
-                                                           CurrentItemSearchItemID,
-                                                           IsCurrentItemHQ
-                                                               ? ItemPayload.ItemKind.Hq
-                                                               : ItemPayload.ItemKind.Normal), CurrentMarketLowestPrice,
-                                                       CurrentItemPrice, Config.LowestAcceptablePrice);
-                ModuleMessage(message);
+                var ui = &addon->AtkUnitBase;
+                var priceComponent = addon->AskingPrice;
 
-                Callback.Fire((AtkUnitBase*)addon, true, 1);
+                // Check if the current market lowest price is below the acceptable price
+                if (CurrentMarketLowestPrice - Config.PriceReduction < Config.LowestAcceptablePrice)
+                {
+                    var message = GetSeString(
+                "Item is listed lower than minimum price, skipping",
+                SeString.CreateItemLink(
+                   CurrentItemSearchItemID,
+                    IsCurrentItemHQ  ? ItemPayload.ItemKind.Hq : ItemPayload.ItemKind.Normal),
+                CurrentMarketLowestPrice,
+                CurrentItemPrice,
+                Config.LowestAcceptablePrice);
+
+                    ModuleMessage(message);
+                    Callback.Fire((AtkUnitBase*)addon, true, 1);
+                    ui->Close(true);
+
+                    return true;
+                }
+
+                // Check if the current item price exceeds the maximum acceptable reduction
+                if (Config.MaxPriceReduction != 0 &&
+                    CurrentItemPrice - CurrentMarketLowestPrice > Config.MaxPriceReduction)
+                {
+                    var message = GetSeString(
+                    "Item has exceeded maximum acceptable reduction, skipping",
+                    SeString.CreateItemLink(
+                        CurrentItemSearchItemID,
+                        IsCurrentItemHQ ? ItemPayload.ItemKind.Hq : ItemPayload.ItemKind.Normal),
+                    CurrentMarketLowestPrice,
+                    CurrentItemPrice,
+                    Config.MaxPriceReduction);
+
+                    ModuleMessage(message);
+                    Callback.Fire((AtkUnitBase*)addon, true, 1);
+                    ui->Close(true);
+                    return true;
+                }
+
+                priceComponent->SetValue(CurrentMarketLowestPrice - Config.PriceReduction);
+                Callback.Fire((AtkUnitBase*)addon, true, 0);
                 ui->Close(true);
-
                 return true;
             }
-
-            if (Config.MaxPriceReduction != 0 && CurrentItemPrice - CurrentMarketLowestPrice > Config.LowestAcceptablePrice)
-            {
-                var message = GetSeString("Item has exceeded maximum acceptable reduction, skipping",
-                                                       SeString.CreateItemLink(
-                                                           CurrentItemSearchItemID,
-                                                           IsCurrentItemHQ
-                                                               ? ItemPayload.ItemKind.Hq
-                                                               : ItemPayload.ItemKind.Normal), CurrentMarketLowestPrice,
-                                                       CurrentItemPrice, Config.MaxPriceReduction);
-                ModuleMessage(message);
-
-                Callback.Fire((AtkUnitBase*)addon, true, 1);
-                ui->Close(true);
-
-                return true;
-            }
-
-            priceComponent->SetValue(CurrentMarketLowestPrice - Config.PriceReduction);
-            Callback.Fire((AtkUnitBase*)addon, true, 0);
-            ui->Close(true);
-
-            return true;
+        }
+        catch (Exception ex)
+        {
+            // Log the exception and skip the item
+            DuoLog.Error($"Exception in FillLowestPrice: {ex.Message}");
+            return false; // Indicate that the operation failed and should be skipped
         }
 
         return false;
     }
 
-    private readonly Dictionary<string, string>? resourceData;
-    private readonly Dictionary<string, string>? fbResourceData;
+
+    private unsafe bool HandleMarketBoardError()
+    {
+        try
+        {
+            // Check if the error message is displayed
+            if (IsMarketBoardErrorDisplayed())
+            {
+                if (GenericHelpers.TryGetAddonByName<AddonRetainerSell>("RetainerSell", out var addon) && GenericHelpers.IsAddonReady(&addon->AtkUnitBase))
+                {
+                    var ui = &addon->AtkUnitBase;
+                    var priceComponent = addon->AskingPrice;
+                    Callback.Fire((AtkUnitBase*)addon, true, 0);
+                    ui->Close(true);
+                    return true;
+                }
+            }
+            return false;
+        }
+        catch (Exception e)
+        {
+            e.Log();
+        }
+        return false;
+    }
+
+
+    private unsafe bool IsMarketBoardErrorDisplayed()
+    {
+        try
+        {
+            // Try to get the addon by name
+            var addon = (AtkUnitBase*)Svc.GameGui.GetAddonByName("ItemSearchResult", 1);
+            if (addon == null || !IsAddonReady(addon))
+            {
+                return false;
+            }
+
+            // Get the node that might contain the error message
+            var node = addon->UldManager.NodeList[26];
+            if (node == null)
+            {
+                return false;
+            }
+
+            var textNode = node->GetAsAtkTextNode();
+            if (textNode == null)
+            {
+                return false;
+            }
+
+            var text = MemoryHelper.ReadSeString(&textNode->NodeText).ExtractText();
+            return text.Contains("Please wait and try your search again.", StringComparison.OrdinalIgnoreCase);
+        }
+        catch (Exception e)
+        {
+            e.Log();
+            return false;
+        }
+    }
+
+
+
+
+    private readonly Dictionary<string, string>? resourceData = new Dictionary<string, string>();
+    private readonly Dictionary<string, string>? fbResourceData = new Dictionary<string, string>();
 
     public SeString GetSeString(string key, params object[] args)
     {
@@ -319,7 +446,7 @@ public partial class AutoAdjustRetainerListings : Tweak<AutoAdjustRetainerListin
         var ssb = new SeStringBuilder();
         var lastIndex = 0;
 
-        ssb.AddUiForeground($"[{nameof(Plugin)}]", 34);
+        ssb.AddUiForeground($"[{nameof(Plugin.Name)}]", 34);
         foreach (var match in SeStringRegex().Matches(format).Cast<Match>())
         {
             ssb.AddUiForeground(format[lastIndex..match.Index], 2);

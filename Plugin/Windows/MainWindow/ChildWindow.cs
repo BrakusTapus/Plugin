@@ -1,4 +1,6 @@
-﻿using Dalamud.Interface.Utility.Raii;
+﻿using System.Reflection;
+using Dalamud.Interface.Utility.Raii;
+using ImGuiExtensions;
 using Plugin.Windows;
 
 namespace Plugin.Windows;
@@ -44,18 +46,66 @@ internal static class ChildWindow
     #region Header
     public static void DrawHeader()
     {
-        ImGui.SetCursorPosX(WindowPaddingX);
-        if (ImGui.BeginChild("HeaderMainWindow", new Vector2(WindowContentRegionWidth, HeaderFooterHeight), false, ImGuiWindowFlags.NoScrollbar | ImGuiWindowFlags.NoScrollWithMouse))
-        {
-            float textwidth = ImGui.CalcTextSize("This is the Header!").X;
-            ImGui.SetCursorPosX(WindowWidth / 2 - textwidth / 2);
-            ImGui.TextDisabled("This is the Header!");
+        var style = ImGui.GetStyle();
+        var windowSize = ImGui.GetWindowSize();
 
+        using (var headerMainWindow = ImRaii.Child("HeaderBarMainWindow", new Vector2(windowSize.X - style.WindowPadding.X * 2, HeaderFooterHeight), false, ImGuiWindowFlags.NoScrollbar | ImGuiWindowFlags.NoScrollWithMouse))
+        {
+            if (headerMainWindow)
+            {
+
+                //var searchInputWidth = 180 * ImGuiHelpers.GlobalScale;
+                //var searchClearButtonWidth = 25 * ImGuiHelpers.GlobalScale;
+
+
+                //var headerTextLabels = "Menu's";
+
+                //var headerTextLabelWidth = ImGui.CalcTextSize(headerTextLabels).X;
+
+                //var selectableWidth = headerTextLabelWidth + (style.FramePadding.X * 2);  // This does not include the label
+                //var sortSelectWidth = selectableWidth + headerTextLabelWidth + style.ItemInnerSpacing.X;  // Item spacing between the selectable and the label
+
+                //string headerText = "v" + Plugin.P.GetType().Assembly.GetName().Version.ToString();
+                //Vector2 headerTextSize = ImGui.CalcTextSize(headerTextLabels);
+                //ImGui.SetCursorPosX(ImGui.GetCursorPosX() + style.FramePadding.X * 2);
+                //ImGui.SetCursorPosY(ImGui.GetCursorPosY() + style.FramePadding.Y * 2);
+                //ImGui.TextDisabled(headerText);
+
+                //ImGui.SameLine();
+
+                //var downShift = ImGui.GetCursorPosY() + (headerTextSize.Y / 4) - 2;
+                //ImGui.SetCursorPosY(downShift);
+
+                //ImGui.SetCursorPosX(windowSize.X - sortSelectWidth - (style.ItemSpacing.X * 2) - searchInputWidth - searchClearButtonWidth);
+                //ImGui.SameLine();
+                //ImGui.TextDisabled(ImGui.GetContentRegionAvail().ToString());
+                //ImGui.SameLine();
+                //var footerPoS = ImGui.GetContentRegionAvail().Y / 2;
+
+                //var buttonHeight = ImGuiHelpers.GetButtonSize("EXIT").Y /2;
+                //var footerPosFinal = footerPoS - buttonHeight;
+                //ImGui.SetCursorPosY(footerPosFinal); 
+                //ImGui.SameLine();
+                //ImGui.Text(ImGui.GetFrameHeight().ToString());
+                //ImGui.SameLine();
+
+                float windowWidth = ImGui.GetWindowWidth();
+                float buttonWidth = ImGui.CalcTextSize("Exit").X + ImGui.GetStyle().FramePadding.X * 2;
+                float buttonPositionX = windowWidth - buttonWidth - 25 - ImGui.GetStyle().WindowPadding.X;
+                ImGui.SetCursorPosX(buttonPositionX);
+
+                ImGuiExt.CenterItemVertically(ImGui.GetFrameHeight());
+                Buttons.ExitButtonExitButtonMainWindow(true, "Exit");
+
+                ImGui.Separator();
+
+            }
         }
-        ImGui.EndChild();
-        ImGui.Separator();
+        //ImGui.Separator();
     }
     #endregion
+
+    #region Sidebar(Category window)
 
     public static CategoryTabHeaders? selectedHeader = null;
 
@@ -105,167 +155,10 @@ internal static class ChildWindow
             }
         }
     }
-
-    //public static void DrawSideBar()
-    //{
-    //    var useContentHeight = -40f; // button height + spacing
-    //    var useMenuWidth = 180f;     // works fine as static value, table can be resized by user
-    //    var useContentWidth = ImGui.GetContentRegionAvail().X;
-
-    //    // Pick the smaller value between useMenuWidth and useContentWidth
-    //    var finalWidth = Math.Min(useMenuWidth, useContentWidth);
-
-    //    using (var sidebarChild = ImRaii.Child("SideBarMainWindow", new Vector2(finalWidth, useContentHeight * ImGuiHelpers.GlobalScale), false, ImGuiWindowFlags.NoScrollbar))
-    //        if (sidebarChild)
-    //        {
-    //            using var style = ImRaii.PushStyle(ImGuiStyleVar.CellPadding, ImGuiHelpers.ScaledVector2(5, 0));
-
-    //            try
-    //            {
-    //                foreach (CategoryTabHeaders header in Enum.GetValues(typeof(CategoryTabHeaders)))
-    //                {
-    //                    bool isOpen = selectedHeader == header;
-    //                    bool isExpanded = false;
-
-    //                    // Pass isOpen by reference to ImGui.CollapsingHeader
-    //                    if (ImGui.CollapsingHeader(header.ToString(), ImGuiTreeNodeFlags.Framed))
-    //                    {
-    //                        // Only change selectedHeader if the header is being opened
-    //                        if (isOpen)
-    //                        {
-    //                            if (selectedHeader != header)
-    //                            {
-    //                                isExpanded = true;
-    //                                selectedHeader = header;
-    //                            }
-    //                        }
-    //                        //else if (!isExpanded && selectedHeader == null)
-    //                        //{
-
-    //                        //    selectedHeader = null;
-    //                        //}
-    //                        if (!isOpen)
-    //                        {
-    //                            isExpanded = false;
-    //                            IEnumerable<Enum> categories = GetCategoriesByHeader(header);
-
-    //                            foreach (string category in categories)
-    //                            {
-    //                                ImGui.Indent();
-    //                                if (ImGui.Selectable(category))
-    //                                {
-    //                                    ShowChildWindowForCategory(header, category);
-    //                                }
-    //                                ImGui.Unindent();
-    //                            }
-    //                        }
-    //                    }
-    //                    else
-    //                    {
-
-    //                        //Svc.Log.Warning($"{header} header did not collapse/expand");
-    //                    }
-    //                }
-    //            }
-    //            catch (Exception ex)
-    //            {
-
-    //                Svc.Log.Error(ex, "Could not draw plugin categories");
-    //            }
-
-    //            //float sidebarW = WindowContentRegionWidth / 4;
-    //            //float sidebarH = WindowContentRegionHeight - HeaderFooterHeight;
-    //            //ImGui.SetCursorPosX(WindowPaddingX);
-
-    //            //if (ImGui.BeginChild("SideBarMainWindow", new Vector2(sidebarW, sidebarH), true, ImGuiWindowFlags.NoScrollbar))
-    //            //{
-    //            //foreach (TabHeaders header in Enum.GetValues(typeof(TabHeaders)))
-    //            //{
-    //            //    bool isOpen = selectedHeader == header;
-
-    //            //    // Pass isOpen by reference to ImGui.CollapsingHeader
-    //            //    if (ImGui.CollapsingHeader(header.ToString(), ImGuiTreeNodeFlags.Framed))
-    //            //    {
-    //            //        // Only change selectedHeader if the header is being opened
-    //            //        if (isOpen)
-    //            //        {
-    //            //            if (selectedHeader != header)
-    //            //            {
-    //            //                selectedHeader = header;
-    //            //            }
-    //            //        }
-    //            //        else if (!isOpen && selectedHeader == header)
-    //            //        {
-    //            //            selectedHeader = null;
-    //            //        }
-    //            //        if (!isOpen)
-    //            //        {
-    //            //            IEnumerable<string> categories = GetCategoriesByHeader(header);
-
-    //            //            foreach (string category in categories)
-    //            //            {
-    //            //                if (ImGui.Selectable(category))
-    //            //                {
-    //            //                    ShowChildWindowForCategory(header, category);
-    //            //                }
-    //            //            }
-    //            //        }
-    //            //    }
-    //            //    else
-    //            //    {
-    //            //        Svc.Log.Warning($"{header} header did not collapse/expand");
-    //            //    }
-    //            //}
-    //            //}
-    //            //ImGui.EndChild();
-    //        }
-    //}
-
-    /* Old method for drawing categories
-        public static void DrawSideBar()
-        {
-            ImGui.PushID("Categories");
-            float sidebarW = WindowContentRegionWidth / 4;
-            float sidebarH = WindowContentRegionHeight - HeaderFooterHeight;
-            ImGui.SetCursorPosX(WindowPaddingX);
-
-            if (ImGui.BeginChild("SideBarMainWindow", new Vector2(sidebarW, sidebarH), true,
-                ImGuiWindowFlags.NoScrollbar | ImGuiWindowFlags.NoScrollWithMouse))
-            {
-                ImGui.SetCursorPosX(WindowContentRegionWidth / 2);
-                float textwidth = ImGui.CalcTextSize("This is the Sidebar!").X;
-                ImGui.SetCursorPosX((WindowWidth / 2) - (textwidth / 2));
-                ImGui.TextDisabled("This is the Sidebar!");
-
-                foreach (Headers header in Enum.GetValues(typeof(Headers)))
-                {
-                    if (ImGui.CollapsingHeader(header.ToString()))
-                    {
-                        // Add or remove categories here.
-                        IEnumerable<string> categories = GetCategoriesByHeader(header);
-
-                        foreach (var category in categories)
-                        {
-                            if (ImGui.Selectable(category))
-                            {
-                                // Handle the selected category.
-                                ShowChildWindowForCategory(category);
-                            }
-                        }
-                    }
-                }
-            }
-            ImGui.EndChild();
-            ImGui.PopID();
-            ImGui.SameLine();
-
-            float curserCurrentPos = ImGui.GetCursorPos().X;
-            ImGui.SetCursorPosX(curserCurrentPos + 10);
-            ImGui.SameLine();
-        }
-    */
+    #endregion
 
 
+    #region Content
     private static IEnumerable<Enum> GetCategoriesByHeader(CategoryTabHeaders header)
     {
         switch (header)
@@ -290,89 +183,11 @@ internal static class ChildWindow
     {
         selectedCategory = (header, category);
     }
-
-    /*
-        // Define a method to handle category selection.
-        private static void ShowChildWindowForCategory(string category)
-        {
-            // Implement window show logic here based on the selected category.
-            switch (category)
-            {
-                case "Category 1":
-                    //Console.WriteLine("You have selected Category 1");
-                    // Further processing for Category 1 
-                    break;
-                case "Category 2":
-                    //Console.WriteLine("You have selected Category 2");
-                    // Further processing for Category 2
-                    break;
-                case "Category 3":
-                    //Console.WriteLine("You have selected Category 3");
-                    // Further processing for Category 3
-                    break;
-                default:
-                    //Console.WriteLine("Unknown category");
-                    break;
-            }
-        }
-    */
-
-    //public static void DrawContent()
-    //{
-    //    float contentW = WindowContentRegionWidth;
-    //    float contentH = WindowContentRegionHeight - HeaderFooterHeight;
-    //    if (ImGui.BeginChild("ContentMainWindow", new Vector2(contentW, contentH), true, ImGuiWindowFlags.NoScrollbar))
-    //    {
-
-    //        if (selectedCategory.HasValue)
-    //        {
-    //            var (header, category) = selectedCategory.Value;
-    //            // You can add your rendering logic here based on header and category
-    //            ImGuiHelpers.CenteredText($"Currently viewing {category} under {header} header.");
-    //        }
-    //        else
-    //        {
-    //            string defaultText = "Select a category from the sidebar.";
-    //            ImGuiHelpers.CenteredText(defaultText);
-
-    //        }
-    //    }
-    //    ImGui.EndChild();
-    //}
-
-    //public static void DrawContent()
-    //{
-    //    float contentW = WindowContentRegionWidth;
-    //    float contentH = WindowContentRegionHeight - HeaderFooterHeight;
-    //    if (ImGui.BeginChild("ContentMainWindow", new Vector2(contentW, contentH), true, ImGuiWindowFlags.NoScrollbar))
-    //    {
-    //        if (selectedCategory.HasValue)
-    //        {
-    //            var (header, category) = selectedCategory.Value;
-
-    //            if (categoryDrawActions.TryGetValue((header, category), out var drawAction))
-    //            {
-    //                drawAction.Invoke();
-    //            }
-    //            else
-    //            {
-    //                ImGuiHelpers.CenteredText("No content available for this category.");
-    //            }
-    //        }
-    //        else
-    //        {
-    //            string defaultText = "Select a category from the sidebar.";
-    //            ImGuiHelpers.CenteredText(defaultText);
-    //        }
-    //    }
-    //    ImGui.EndChild();
-    //}
-
     public static void DrawContent()
     {
         float contentW = WindowContentRegionWidth;
         float contentH = WindowContentRegionHeight - HeaderFooterHeight;
-        if (ImGui.BeginChild("ContentMainWindow", new Vector2(contentW, contentH), true, ImGuiWindowFlags.NoScrollbar))
+        if (ImGui.BeginChild("ContentMainWindow", new Vector2(contentW, contentH - (5 * ImGuiHelpers.GlobalScale)), true, ImGuiWindowFlags.NoScrollbar))
         {
             if (selectedCategory.HasValue)
             {
@@ -395,7 +210,7 @@ internal static class ChildWindow
         }
         ImGui.EndChild();
     }
-
+    #endregion
 
     #region About Tab
     public static void DrawAboutInfoDetails()
@@ -432,9 +247,6 @@ internal static class ChildWindow
 
     public static void DrawRetainersAutomation()
     {
-
-        ImGui.Text("Automated retainer tasks.");
-    
 
         autoAdjustRetainerListings.DrawConfig();
 
@@ -486,16 +298,53 @@ internal static class ChildWindow
     #region Footer
     public static void DrawFooter()
     {
-        ImGui.Separator();
-        if (ImGui.BeginChild("FooterMainWindow", new Vector2(WindowContentRegionWidth, HeaderFooterHeight), false, ImGuiWindowFlags.NoScrollbar | ImGuiWindowFlags.NoScrollWithMouse))
+
+        var style = ImGui.GetStyle();
+        var windowSize = ImGui.GetWindowSize();
+        //ImGui.SetCursorPosY((windowSize.Y - HeaderFooterHeight) - 2);
+        //ImGui.Separator();
+        ImGui.SetCursorPosY((windowSize.Y - HeaderFooterHeight - style.WindowPadding.Y));
+        ImGui.SetCursorPosX(windowSize.X - windowSize.X + style.WindowPadding.X);
+        using var footerMainWindow = ImRaii.Child("FooterMainWindow", new Vector2(windowSize.X - style.WindowPadding.X * 2, HeaderFooterHeight), false, ImGuiWindowFlags.NoScrollbar | ImGuiWindowFlags.NoScrollWithMouse);
+        if (footerMainWindow)
         {
-            ImGuiHelpers.CenteredText("This is the Footer!");
+            string footerVersionText = "v" + Plugin.P.GetType().Assembly.GetName().Version.ToString();
+            var footerVersionTextSize = ImGui.CalcTextSize(footerVersionText);
+            ImGui.Separator();
+            ImGuiExt.CenterItemVertically(footerVersionTextSize.Y);
+
+            ImGui.TextDisabled(footerVersionText);
+
+            ImGui.SetCursorPosX((ImGui.GetWindowContentRegionMax().X));
+            ImGuiExt.CenterItemVertically(22);
+
+
+            float windowWidth = ImGui.GetWindowWidth();
+            float buttonWidth = ImGui.CalcTextSize("Settings").X + ImGui.GetStyle().FramePadding.X * 2;
+            float buttonPositionX = windowWidth - buttonWidth - ImGui.GetStyle().WindowPadding.X;
+
+            // Set the cursor position to the calculated X position
+            ImGui.SetCursorPosX(buttonPositionX);
+            Buttons.SettingsButton();
+
+            //ImGui.SetCursorPosY(ImGui.GetCursorPosY() - footerVersionTextSize.Y);
+            //ImGui.SetCursorPosX(style.WindowPadding.X * 4);
+
+            //ImGui.SameLine();
+            //ImGui.Dummy(new Vector2(5, 0));
+            //ImGui.SameLine();
+            //ImGuiHelpers.CenteredText(ImGui.GetContentRegionAvail().ToString());
+            //ImGui.SameLine();
+            //ImGuiHelpers.CenteredText(ImGui.GetContentRegionMax().ToString());
+            //ImGui.SameLine();
+            //Buttons.SettingsButton();
         }
-        ImGui.EndChild();
+
     }
     #endregion
 
 
+    #region Tabs & Categories
     internal enum CategoryTabHeaders
     {
         About,
@@ -541,4 +390,5 @@ internal static class ChildWindow
     {
 
     }
+    #endregion
 }

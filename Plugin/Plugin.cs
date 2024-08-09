@@ -79,7 +79,7 @@ public sealed class Plugin : IDalamudPlugin
     private readonly WindowSystem WindowSystem = new("plugin");
     private static ConfigWindow ConfigWindow; // { get; init; }
     private static MainWindow MainWindow; //{ get; init; }
-    private static TestWindow TestWindow;
+    private static DebugWindow TestWindow;
 
 
     internal static AutoAdjustRetainerListings autoAdjustRetainerListings;
