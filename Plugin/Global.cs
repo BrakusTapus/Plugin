@@ -21,7 +21,11 @@ global using System.Numerics;
 //global using System.Threading.Tasks; // TODO: Check later and see if needed
 //global using static ECommons.GenericHelpers; // TODO: Check later and see if needed
 global using static Plugin.Plugin;
-//global using AddressBookFS = OtterGui.Filesystem.FileSystem<Lifestream.Data.AddressBookFolder>; // TODO: Check later and see if needed
+//global using AddressBookFS = OtterGui.Filesystem.FileSystem<Plugin.Data.AddressBookFolder>; // TODO: Check later and see if needed
+global using static ECommons.GenericHelpers;
 global using CSFramework = FFXIVClientStructs.FFXIV.Client.System.Framework.Framework;
 global using S = MyServices.ServiceStatic;
+global using AtkValueType = FFXIVClientStructs.FFXIV.Component.GUI.ValueType;
+global using CSGameObject = FFXIVClientStructs.FFXIV.Client.Game.Object.GameObject;
+global using DGameObject = Dalamud.Game.ClientState.Objects.Types.IGameObject;
 #pragma warning restore S1135 // Track uses of "TODO" tags

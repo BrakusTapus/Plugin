@@ -3,6 +3,7 @@ using ECommons.Configuration;
 using Plugin.Data;
 using Plugin.Features;
 using Plugin.Helpers;
+using Plugin.Utilities;
 using Plugin.Utilities.Enums;
 
 namespace Plugin.Configuration;
@@ -11,6 +12,7 @@ public class Configs : IEzConfig
 {
     public ObservableCollection<string> EnabledTweaks = [];
     public TweakConfigs Tweaks = new();
+    public bool ShowDebug = true;
 
 
     public int Version { get; set; } = 3;
@@ -32,7 +34,6 @@ public class Configs : IEzConfig
     public HashSet<uint> Favorites = [];
     public HashSet<uint> Hidden = [];
     public Dictionary<uint, string> Renames = [];
-    public WorldChangeAetheryte WorldChangeAetheryte = WorldChangeAetheryte.Uldah;
     public bool Firmament = true;
     public bool WalkToAetheryte = true;
     public bool LeavePartyBeforeWorldChange = true;

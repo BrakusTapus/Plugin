@@ -1,14 +1,10 @@
-﻿//Entire file from vnavmesh
 using Dalamud.Hooking;
-using Dalamud.Utility.Signatures;
-using ECommons.DalamudServices;
-using ECommons.GameHelpers;
+using ECommons.EzHookManager;
 using FFXIVClientStructs.FFXIV.Client.System.Framework;
-using System;
-using System.Numerics;
+using Plugin.External;
 using System.Runtime.InteropServices;
 
-namespace Plugin.External;
+namespace Plugin.Utilities.Movement;
 
 [StructLayout(LayoutKind.Explicit, Size = 0x2B0)]
 public unsafe struct CameraEx
@@ -25,23 +21,15 @@ public unsafe struct CameraEx
 
 public unsafe class OverrideCamera : IDisposable
 {
-    internal void Face(Vector3 pos)
-    {
-        Enabled = true;
-        SpeedH = SpeedV = 360.Degrees();
-        DesiredAzimuth = Angle.FromDirectionXZ(pos - Player.Object.Position) + 180.Degrees();
-        DesiredAltitude = -30.Degrees();
-    }
-
     public bool Enabled
     {
-        get => _rmiCameraHook.IsEnabled;
+        get => RMICameraHook.IsEnabled;
         set
         {
             if (value)
-                _rmiCameraHook.Enable();
+                RMICameraHook.Enable();
             else
-                _rmiCameraHook.Disable();
+                RMICameraHook.Disable();
         }
     }
 
@@ -52,23 +40,20 @@ public unsafe class OverrideCamera : IDisposable
     public Angle SpeedV = 360.Degrees(); // per second
 
     private delegate void RMICameraDelegate(CameraEx* self, int inputMode, float speedH, float speedV);
-    [Signature("40 53 48 83 EC 70 44 0F 29 44 24 ?? 48 8B D9")]
-    private Hook<RMICameraDelegate> _rmiCameraHook = null!;
+    [EzHook("40 53 48 83 EC 70 44 0F 29 44 24 ?? 48 8B D9", false)]
+    private readonly Hook<RMICameraDelegate> RMICameraHook = null!;
 
     public OverrideCamera()
     {
-        Svc.Hook.InitializeFromAttributes(this);
-        Svc.Log.Information($"RMICamera address: 0x{_rmiCameraHook.Address:X}");
+        EzSignatureHelper.Initialize(this);
+        Svc.Log.Information($"RMICamera address: 0x{RMICameraHook.Address:X}");
     }
 
-    public void Dispose()
-    {
-        _rmiCameraHook.Dispose();
-    }
+    public void Dispose() => RMICameraHook.Dispose();
 
     private void RMICameraDetour(CameraEx* self, int inputMode, float speedH, float speedV)
     {
-        _rmiCameraHook.Original(self, inputMode, speedH, speedV);
+        RMICameraHook.Original(self, inputMode, speedH, speedV);
         if (IgnoreUserInput || inputMode == 0) // let user override...
         {
             var dt = Framework.Instance()->FrameDeltaTime;
@@ -76,11 +61,8 @@ public unsafe class OverrideCamera : IDisposable
             var deltaV = (DesiredAltitude - self->DirV.Radians()).Normalized();
             var maxH = SpeedH.Rad * dt;
             var maxV = SpeedV.Rad * dt;
-            //self->InputDeltaH = Math.Clamp(deltaH.Rad, -maxH, maxH);
-            //self->InputDeltaV = Math.Clamp(deltaV.Rad, -maxV, maxV);
-            self->InputDeltaH = deltaH.Rad;
-            self->InputDeltaV = deltaV.Rad;
-            Enabled = false;
+            self->InputDeltaH = Math.Clamp(deltaH.Rad, -maxH, maxH);
+            self->InputDeltaV = Math.Clamp(deltaV.Rad, -maxV, maxV);
         }
     }
 }

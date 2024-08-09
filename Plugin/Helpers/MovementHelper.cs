@@ -27,7 +27,7 @@ namespace Plugin.Helpers
             {
                 if (position != Vector3.Zero)
                 {
-                    P.OverrideCamera.Face(position);
+                    //P.OverrideCamera.Face(position);
                     VNavmesh_IPCSubscriber.Path_Stop();
                 }
                 return true;

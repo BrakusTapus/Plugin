@@ -9,6 +9,8 @@ using FFXIVClientStructs.FFXIV.Client.UI;
 using FFXIVClientStructs.FFXIV.Client.UI.Agent;
 using FFXIVClientStructs.FFXIV.Component.GUI;
 using Plugin.Helpers;
+using Plugin.Utilities;
+using Player = Plugin.Utilities.Player;
 
 namespace Plugin.Schedulers;
 
@@ -40,7 +42,7 @@ internal static unsafe class WorldChange
     internal static bool? InteractWithTargetedAetheryte()
     {
         if(!Player.Available) return false;
-        if(Player.IsAnimationLocked) return false;
+        if(ECommons.GameHelpers.Player.IsAnimationLocked) return false;
         if(GenericHelpers.IsOccupied()) return false;
         var a = Utils.GetValidAetheryte();
         if(a != null && Svc.Targets.Target?.Address == a.Address)

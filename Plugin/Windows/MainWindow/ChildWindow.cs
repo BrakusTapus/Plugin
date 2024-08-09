@@ -425,16 +425,19 @@ internal static class ChildWindow
     #endregion
 
     #region Automation
-
     public static void DrawHuntsAutomation()
     {
         ImGui.Text("Automated hunts tasks.");
-        // Add more ImGui rendering calls specific to this category
     }
 
     public static void DrawRetainersAutomation()
     {
+
         ImGui.Text("Automated retainer tasks.");
+    
+
+        autoAdjustRetainerListings.DrawConfig();
+
     }
 
     private static void DrawMarkerBoardAutomationUI()

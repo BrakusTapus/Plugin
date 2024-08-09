@@ -1,5 +1,6 @@
 ﻿using Lumina.Excel.GeneratedSheets;
 using Plugin.Helpers;
+using Plugin.Utilities;
 using Plugin.Utilities.Enums;
 
 namespace Plugin.Data;

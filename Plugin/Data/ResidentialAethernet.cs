@@ -7,6 +7,7 @@ using Lumina.Excel.GeneratedSheets;
 using System.IO;
 using Path = System.IO.Path;
 using Plugin.Helpers;
+using Plugin.Utilities;
 
 namespace Plugin.Data;
 

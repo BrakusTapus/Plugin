@@ -93,7 +93,7 @@ namespace Plugin.Helpers
             return 0;
         }
     }
-    //From Lifestream
+    //From Plugin
     internal unsafe class ReaderTelepotTown(AtkUnitBase* UnitBase, int BeginOffset = 0) : AtkReader(UnitBase, BeginOffset)
     {
         internal uint NumEntries => ReadUInt(0) ?? 0;
