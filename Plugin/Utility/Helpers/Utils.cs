@@ -14,10 +14,10 @@ using ECommons.UIHelpers.AddonMasterImplementations;
 using FFXIVClientStructs.FFXIV.Client.UI;
 using FFXIVClientStructs.FFXIV.Component.GUI;
 // using Plugin.Configurations; //TODO: If migrating to Ecommons EzConfig is succesfol then this can be removed
-using Plugin.Utility.Data;
-using Plugin.Utility.Enums;
+using Plugin.Utilities.Data;
+using Plugin.Utilities.Enums;
 
-namespace Plugin.Utility.Helpers;
+namespace Plugin.Utilities.Helpers;
 internal static unsafe class Utils
 {
     //internal static bool GenericThrottle => Configs.UseFrameDelay ?

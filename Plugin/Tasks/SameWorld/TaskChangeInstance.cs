@@ -45,13 +45,13 @@ public static unsafe class TaskChangeInstance
             new(() => !GenericHelpers.IsOccupied()),
             new(() =>
             {
-                if(Plugin.P.EzConfigs.InstanceSwitcherRepeat && number != S.InstanceHandler.GetInstance())
+                if(Plugin.C.InstanceSwitcherRepeat && number != S.InstanceHandler.GetInstance())
                 {
                     Enqueue(number);
                 }
             })
         };
-        if (P.EzConfigs.EnableFlydownInstance)
+        if (C.EnableFlydownInstance)
         {
             P.TaskManager.Enqueue(() =>
             {

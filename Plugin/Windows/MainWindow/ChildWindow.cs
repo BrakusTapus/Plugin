@@ -435,8 +435,13 @@ internal static class ChildWindow
     public static void DrawRetainersAutomation()
     {
         ImGui.Text("Automated retainer tasks.");
-        // Add more ImGui rendering calls specific to this category
     }
+
+    private static void DrawMarkerBoardAutomationUI()
+    {
+
+    }
+
     public static void DrawOthersAutomation()
     {
         ImGui.Text("Other Automated tasks.");

@@ -1,8 +1,8 @@
 using System.IO;
 using Dalamud.IoC;
 using Dalamud.Plugin.Services;
-using Plugin.Utility.OtherServices;
-using Plugin.Utility.UI;
+using Plugin.Utilities.OtherServices;
+using Plugin.Utilities.UI;
 
 namespace MyServices;
 

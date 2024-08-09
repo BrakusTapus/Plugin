@@ -1,7 +1,7 @@
 ﻿using Dalamud.Interface.Textures;
 using Dalamud.Interface.Textures.TextureWraps;
 
-namespace Plugin.Utility.UI;
+namespace Plugin.Utilities.UI;
 
 //TODO: Add this to the ImGuiEx namespace (ImGui folder) 
 public class ImageLoadingResult

@@ -20,8 +20,22 @@ public static class ColorEx
         return new Vector4((float)bytes[2] / 255f, (float)bytes[1] / 255f, (float)bytes[0] / 255f, alpha);
     }
 
+    //internal static KirboColor Transparent2 { get; } = new(Vector4.Zero);
+    internal static KirboColor White { get; } = new(Vector4.One);
+    internal static KirboColor Black { get; } = new(0, 0, 0);
+    internal static KirboColor Orange2 { get; } = new(1, 0.6f, 0);
+    internal static KirboColor Gold { get; } = new(0.847f, 0.733f, 0.49f);
+    internal static KirboColor Green { get; } = new(0, 1, 0);
+    internal static KirboColor Yellow { get; } = new(1, 1, 0);
+    internal static KirboColor Red { get; } = new(1, 0, 0);
+    internal static KirboColor Grey { get; } = new(0.73f, 0.73f, 0.73f);
+    internal static KirboColor Grey2 { get; } = new(0.87f, 0.87f, 0.87f);
+    internal static KirboColor Grey3 { get; } = new(0.6f, 0.6f, 0.6f);
+    internal static KirboColor Grey4 { get; } = new(0.3f, 0.3f, 0.3f);
+
+
     // Color Collection
-    public readonly static Vector4 Red = Vector4FromRGB(0xAA0000);
+    public readonly static Vector4 Red2 = Vector4FromRGB(0xAA0000);
     public readonly static Vector4 RedBright = Vector4FromRGB(0xFF0000);
     public readonly static Vector4 Peach = Vector4FromRGB(0xFF6E59);
     public readonly static Vector4 Maroon = Vector4FromRGB(0x800000);
@@ -49,17 +63,17 @@ public static class ColorEx
     public readonly static Vector4 CyanBright = Vector4FromRGB(0x00FFFF);
     public readonly static Vector4 LightBlue = Vector4FromRGB(0xADD8E6);
     public readonly static Vector4 Lavender = Vector4FromRGB(0xE6E6FA);
-    public readonly static Vector4 Green = Vector4FromRGB(0x00AA00);
+    public readonly static Vector4 Green2 = Vector4FromRGB(0x00AA00);
     public readonly static Vector4 Olive = Vector4FromRGB(0x808000);
     public readonly static Vector4 GreenBright = Vector4FromRGB(0x00FF00);
     public readonly static Vector4 GreenLight = Vector4FromRGB(0xCCFF99);
-    public readonly static Vector4 Yellow = Vector4FromRGB(0xAAAA00);
-    public readonly static Vector4 Gold = Vector4FromRGB(0xFFD700);
+    public readonly static Vector4 Yellow2 = Vector4FromRGB(0xAAAA00);
+    public readonly static Vector4 Gold2 = Vector4FromRGB(0xFFD700);
     public readonly static Vector4 YellowBright = Vector4FromRGB(0xFFFF00);
     public readonly static Vector4 Lemon = Vector4FromRGB(0xFFFF00);
-    public readonly static Vector4 Black = Vector4FromRGB(0x000000);
+    public readonly static Vector4 Black2 = Vector4FromRGB(0x000000);
     public readonly static Vector4 Silver = Vector4FromRGB(0xC0C0C0);
-    public readonly static Vector4 White = Vector4FromRGB(0xFFFFFF);
+    public readonly static Vector4 White2 = Vector4FromRGB(0xFFFFFF);
 
     // Plugin options
     public readonly static Vector4 TextSelected = Vector4FromRGB(0xFFFFFF);

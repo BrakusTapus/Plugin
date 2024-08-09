@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Plugin.Utility.Enums;
+namespace Plugin.Utilities.Enums;
 
 public enum WorldChangeAetheryte
 {

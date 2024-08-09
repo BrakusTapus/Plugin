@@ -1,8 +1,8 @@
 ﻿using Lumina.Excel.GeneratedSheets;
-using Plugin.Utility.Enums;
-using Plugin.Utility.Helpers;
+using Plugin.Utilities.Enums;
+using Plugin.Utilities.Helpers;
 
-namespace Plugin.Utility.Data;
+namespace Plugin.Utilities.Data;
 public struct ResidentialAetheryte : IEquatable<ResidentialAetheryte>, IAetheryte
 {
     public Vector2 Position { get; set; }

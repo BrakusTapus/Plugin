@@ -9,7 +9,7 @@ using FFXIVClientStructs.FFXIV.Client.Game.UI;
 using Lumina.Excel.GeneratedSheets;
 using Plugin;
 using Plugin.Tasks.SameWorld;
-using Plugin.Utility.Helpers;
+using Plugin.Utilities.Helpers;
 
 namespace MyServices;
 
@@ -19,17 +19,17 @@ public unsafe class InstanceHandler
     {
         Svc.AddonLifecycle.RegisterListener(AddonEvent.PostUpdate, "SelectString", OnPostUpdate);
         var gv = CSFramework.Instance()->GameVersionString;
-        if (gv != null && gv != P.EzConfigs.GameVersion)
+        if (gv != null && gv != C.GameVersion)
         {
-            PluginLog.Information($"New game version detected, new {gv}, old {P.EzConfigs.GameVersion}");
-            P.EzConfigs.GameVersion = gv;
-            P.EzConfigs.PublicInstances = [];
+            PluginLog.Information($"New game version detected, new {gv}, old {C.GameVersion}");
+            C.GameVersion = gv;
+            C.PublicInstances = [];
         }
     }
 
     public bool CanChangeInstance()
     {
-        return P.EzConfigs.ShowInstanceSwitcher && !Utils.IsDisallowedToUseAethernet() && !P.TaskManager.IsBusy && !GenericHelpers.IsOccupied() && S.InstanceHandler.GetInstance() != 0 && TaskChangeInstance.GetAetheryte() != null;
+        return C.ShowInstanceSwitcher && !Utils.IsDisallowedToUseAethernet() && !P.TaskManager.IsBusy && !GenericHelpers.IsOccupied() && S.InstanceHandler.GetInstance() != 0 && TaskChangeInstance.GetAetheryte() != null;
     }
 
     private void OnPostUpdate(AddonEvent type, AddonArgs args)
@@ -50,13 +50,13 @@ public unsafe class InstanceHandler
             }
             else
             {
-                if (P.EzConfigs.PublicInstances.TryGetValue(Player.Territory, out var value) && value == inst)
+                if (C.PublicInstances.TryGetValue(Player.Territory, out var value) && value == inst)
                 {
                     //
                 }
                 else
                 {
-                    P.EzConfigs.PublicInstances[Player.Territory] = inst;
+                    C.PublicInstances[Player.Territory] = inst;
                     EzConfig.Save();
                 }
             }
@@ -70,7 +70,7 @@ public unsafe class InstanceHandler
 
     public bool InstancesInitizliaed(out int maxInstances)
     {
-        return P.EzConfigs.PublicInstances.TryGetValue(Player.Territory, out maxInstances);
+        return C.PublicInstances.TryGetValue(Player.Territory, out maxInstances);
     }
 
     public void Dispose()

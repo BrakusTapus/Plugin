@@ -5,7 +5,7 @@ using System.Runtime.CompilerServices;
 using ECommons.Throttlers;
 
 #nullable disable
-namespace Plugin.Utility.Helpers;
+namespace Plugin.Utilities.Helpers;
 
 public static unsafe partial class GenericHelpersEx
 {

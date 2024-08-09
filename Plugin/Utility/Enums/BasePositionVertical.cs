@@ -1,4 +1,4 @@
-﻿namespace Plugin.Utility.Enums;
+﻿namespace Plugin.Utilities.Enums;
 
 public enum BasePositionVertical
 {

@@ -1,6 +1,6 @@
 ﻿using ECommons.Configuration;
 
-namespace Plugin.Utility.Data;
+namespace Plugin.Utilities.Data;
 
 public class StaticData : IEzConfig
 {

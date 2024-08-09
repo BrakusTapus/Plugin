@@ -10,9 +10,9 @@ using Dalamud.Plugin.Services;
 using ECommons.ImGuiMethods;
 using ImGuiExtensions;
 using ImGuiNET;
-using Plugin.Utility.UI;
+using Plugin.Utilities.UI;
 
-namespace Plugin.Utility.OtherServices;
+namespace Plugin.Utilities.OtherServices;
 
 public class TextureService
 {

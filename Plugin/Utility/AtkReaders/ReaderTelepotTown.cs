@@ -1,7 +1,7 @@
 ﻿using ECommons.UIHelpers;
 using FFXIVClientStructs.FFXIV.Component.GUI;
 
-namespace Plugin.Utility.AtkReaders;
+namespace Plugin.Utilities.AtkReaders;
 
 internal unsafe class ReaderTelepotTown(AtkUnitBase* UnitBase, int BeginOffset = 0) : AtkReader(UnitBase, BeginOffset)
 {

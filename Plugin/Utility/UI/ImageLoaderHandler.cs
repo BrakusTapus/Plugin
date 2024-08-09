@@ -3,9 +3,9 @@ using System.IO;
 using System.Net.Http;
 using System.Threading;
 using Dalamud.Interface.Textures.TextureWraps;
-using Plugin.Utility.Helpers;
+using Plugin.Utilities.Helpers;
 
-namespace Plugin.Utility.UI;
+namespace Plugin.Utilities.UI;
 
 //TODO: Add this to the ImGuiEx namespace (ImGui folder) 
 public class ImageLoaderHandler

@@ -1,7 +1,7 @@
 ﻿using System.IO;
 using MyServices;
 
-namespace Plugin.Utility.UI;
+namespace Plugin.Utilities.UI;
 
 public class UiPaths
 {

@@ -1,4 +1,5 @@
 using Dalamud.Interface.Utility.Raii;
+using ECommons.Configuration;
 
 namespace ImGuiExtensions;
 
@@ -18,6 +19,54 @@ public static class ImGuiExt
         float distanceY = ImGui.GetCursorPosY() - ImGui.GetScrollY();
         return distanceY >= -size.Y && distanceY <= ImGui.GetWindowHeight();
     }
+
+    public static void TextUnformattedColored(uint col, string text)
+    {
+        using (ImRaii.PushColor(ImGuiCol.Text, col))
+            ImGui.TextUnformatted(text);
+    }
+
+    public static void PushCursor(Vector2 vec) => ImGui.SetCursorPos(ImGui.GetCursorPos() + vec);
+    public static void PushCursor(float x, float y) => PushCursor(new Vector2(x, y));
+    public static void PushCursorX(float x) => ImGui.SetCursorPosX(ImGui.GetCursorPosX() + x);
+    public static void PushCursorY(float y) => ImGui.SetCursorPosY(ImGui.GetCursorPosY() + y);
+
+    public static ImRaii.Indent ConfigIndent(bool enabled = true) => ImRaii.PushIndent(ImGui.GetFrameHeight() + ImGui.GetStyle().ItemSpacing.X / 2f, true, enabled);
+
+    public static void Checkbox(string name, ref bool v)
+    {
+        if (ImGui.Checkbox(name, ref v))
+            EzConfig.Save();
+    }
+
+    public static void Icon(FontAwesomeIcon icon, uint? col = null)
+    {
+        using var color = col != null ? ImRaii.PushColor(ImGuiCol.Text, (uint)col) : null;
+        using (ImRaii.PushFont(UiBuilder.IconFont))
+            ImGui.Text(icon.ToIconString());
+    }
+
+    public static void DrawSection(string Label, bool PushDown = true, bool RespectUiTheme = false, uint UIColor = 1, bool drawSeparator = true)
+    {
+        var style = ImGui.GetStyle();
+
+        // push down a bit
+        if (PushDown)
+            PushCursorY(style.ItemSpacing.Y * 2);
+
+        KirboColor color = ColorEx.Gold;
+
+        TextUnformattedColored(color, Label);
+
+        if (drawSeparator)
+        {
+            // pull up the separator
+            PushCursorY(-style.ItemSpacing.Y + 3);
+            ImGui.Separator();
+            PushCursorY(style.ItemSpacing.Y * 2 - 1);
+        }
+    }
+
 
     #region ToolTips
     /// <summary>

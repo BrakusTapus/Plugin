@@ -7,7 +7,7 @@ using ECommons.Configuration;
 using ImGuiExtensions;
 using ImGuiNET;
 // using Plugin.Configurations; //TODO: If migrating to Ecommons EzConfig is succesfol then this can be removed
-using Plugin.Utility.UI;
+using Plugin.Utilities.UI;
 
 namespace Plugin.Windows;
 
@@ -43,7 +43,7 @@ public class ConfigWindow : Window, IDisposable
     public override void PreDraw()
     {
         // Flags must be added or removed before DrawImage() is being called, or they won't apply
-        if (plugin.EzConfigs.IsConfigWindowMovable)
+        if (C.IsConfigWindowMovable)
         {
             Flags &= ~ImGuiWindowFlags.NoMove;
         }
@@ -52,7 +52,7 @@ public class ConfigWindow : Window, IDisposable
             Flags |= ImGuiWindowFlags.NoMove;
         }
 
-        if (plugin.EzConfigs.IsConfigWindowResizeable)
+        if (C.IsConfigWindowResizeable)
         {
             Flags &= ~ImGuiWindowFlags.NoResize;
         }
@@ -61,7 +61,7 @@ public class ConfigWindow : Window, IDisposable
             Flags |= ImGuiWindowFlags.NoResize;
         }
 
-        if (plugin.EzConfigs.IsConfigWindowNoTitleBar)
+        if (C.IsConfigWindowNoTitleBar)
         {
             Flags &= ~ImGuiWindowFlags.NoTitleBar;
         }
@@ -70,7 +70,7 @@ public class ConfigWindow : Window, IDisposable
             Flags |= ImGuiWindowFlags.NoTitleBar;
         }
 
-        if (plugin.EzConfigs.IsConfigNoWindowScrollbar)
+        if (C.IsConfigNoWindowScrollbar)
         {
             Flags &= ~ImGuiWindowFlags.NoScrollbar;
         }
@@ -79,7 +79,7 @@ public class ConfigWindow : Window, IDisposable
             Flags |= ImGuiWindowFlags.NoScrollbar;
         }
 
-        if (plugin.EzConfigs.IsConfigWindowNoScrollWithMouse)
+        if (C.IsConfigWindowNoScrollWithMouse)
         {
             Flags &= ~ImGuiWindowFlags.NoScrollWithMouse;
         }
@@ -88,7 +88,7 @@ public class ConfigWindow : Window, IDisposable
             Flags |= ImGuiWindowFlags.NoScrollWithMouse;
         }
 
-        if (plugin.EzConfigs.IsConfigWindowNoCollapseable)
+        if (C.IsConfigWindowNoCollapseable)
         {
             Flags &= ~ImGuiWindowFlags.NoCollapse;
         }
@@ -97,7 +97,7 @@ public class ConfigWindow : Window, IDisposable
             Flags |= ImGuiWindowFlags.NoCollapse;
         }
 
-        if (plugin.EzConfigs.IsConfigWindowNoBackground)
+        if (C.IsConfigWindowNoBackground)
         {
             Flags &= ~ImGuiWindowFlags.NoBackground;
         }
@@ -137,36 +137,36 @@ public class ConfigWindow : Window, IDisposable
 
     private void DrawConfigGroup()
     {
-        bool configValue = plugin.EzConfigs.SomePropertyToBeSavedAndWithADefault;
+        bool configValue = C.SomePropertyToBeSavedAndWithADefault;
         if (ImGui.Checkbox("Random Configs Bool", ref configValue))
         {
-            plugin.EzConfigs.SomePropertyToBeSavedAndWithADefault = configValue;
+            C.SomePropertyToBeSavedAndWithADefault = configValue;
             EzConfig.Save();
         }
     }
 
     private void DrawMainWindowSettings()
     {
-        bool movable = plugin.EzConfigs.IsMainWindowMovable;
+        bool movable = C.IsMainWindowMovable;
         if (ImGui.Checkbox("Movable Main Window", ref movable))
         {
-            plugin.EzConfigs.IsMainWindowMovable = movable;
+            C.IsMainWindowMovable = movable;
             EzConfig.Save();
             //plugin.Config.Save(); //TODO: If migrating to Ecommons EzConfig is succesfol then this can be removed
         }
 
-        bool resizeable = plugin.EzConfigs.IsMainWindowResizeable;
+        bool resizeable = C.IsMainWindowResizeable;
         if (ImGui.Checkbox("Resizeable Main Window", ref resizeable))
         {
-            plugin.EzConfigs.IsMainWindowResizeable = resizeable;
+            C.IsMainWindowResizeable = resizeable;
             EzConfig.Save();
             //plugin.Config.Save(); //TODO: If migrating to Ecommons EzConfig is succesfol then this can be removed
         }
 
-        bool titleBar = plugin.EzConfigs.IsMainWindowNoTitleBar;
+        bool titleBar = C.IsMainWindowNoTitleBar;
         if (ImGui.Checkbox("Main Window Title bar", ref titleBar))
         {
-            plugin.EzConfigs.IsMainWindowNoTitleBar = titleBar;
+            C.IsMainWindowNoTitleBar = titleBar;
             EzConfig.Save();
             //plugin.Config.Save(); //TODO: If migrating to Ecommons EzConfig is succesfol then this can be removed
         }
@@ -174,19 +174,19 @@ public class ConfigWindow : Window, IDisposable
         if (titleBar)
         {
             ImGui.SameLine();
-            bool collapseable = plugin.EzConfigs.IsMainWindowNoCollapseable;
+            bool collapseable = C.IsMainWindowNoCollapseable;
             if (ImGui.Checkbox("Main Window Collapseable", ref collapseable))
             {
-                plugin.EzConfigs.IsMainWindowNoCollapseable = collapseable;
+                C.IsMainWindowNoCollapseable = collapseable;
                 EzConfig.Save();
                 //plugin.Config.Save(); //TODO: If migrating to Ecommons EzConfig is succesfol then this can be removed
             }
         }
 
-        bool scrollbar = plugin.EzConfigs.IsMainNoWindowScrollbar;
+        bool scrollbar = C.IsMainNoWindowScrollbar;
         if (ImGui.Checkbox("Main Window Scrollbar", ref scrollbar))
         {
-            plugin.EzConfigs.IsMainNoWindowScrollbar = scrollbar;
+            C.IsMainNoWindowScrollbar = scrollbar;
             EzConfig.Save();
             //plugin.Config.Save(); //TODO: If migrating to Ecommons EzConfig is succesfol then this can be removed
         }
@@ -194,19 +194,19 @@ public class ConfigWindow : Window, IDisposable
         if (scrollbar)
         {
             ImGui.SameLine();
-            bool scrollWithMouse = plugin.EzConfigs.IsMainWindowNoScrollWithMouse;
+            bool scrollWithMouse = C.IsMainWindowNoScrollWithMouse;
             if (ImGui.Checkbox("Main Window Scroll With Mouse", ref scrollWithMouse))
             {
-                plugin.EzConfigs.IsMainWindowNoScrollWithMouse = scrollWithMouse;
+                C.IsMainWindowNoScrollWithMouse = scrollWithMouse;
                 EzConfig.Save();
                 //plugin.Config.Save(); //TODO: If migrating to Ecommons EzConfig is succesfol then this can be removed
             }
         }
 
-        bool noBackground = plugin.EzConfigs.IsMainWindowNoBackground;
+        bool noBackground = C.IsMainWindowNoBackground;
         if (ImGui.Checkbox("Background", ref noBackground))
         {
-            plugin.EzConfigs.IsMainWindowNoBackground = noBackground;
+            C.IsMainWindowNoBackground = noBackground;
             EzConfig.Save();
             //plugin.Config.Save(); //TODO: If migrating to Ecommons EzConfig is succesfol then this can be removed
         }
@@ -214,27 +214,27 @@ public class ConfigWindow : Window, IDisposable
 
     private void DrawConfigWindowSettings()
     {
-        bool movable = plugin.EzConfigs.IsConfigWindowMovable;
+        bool movable = C.IsConfigWindowMovable;
         if (ImGui.Checkbox("Movable Configs Window", ref movable))
         {
-            plugin.EzConfigs.IsConfigWindowMovable = movable;
+            C.IsConfigWindowMovable = movable;
             EzConfig.Save();
             //plugin.Config.Save(); //TODO: If migrating to Ecommons EzConfig is succesfol then this can be removed
         }
 
-        bool resizeable = plugin.EzConfigs.IsConfigWindowResizeable;
+        bool resizeable = C.IsConfigWindowResizeable;
         if (ImGui.Checkbox("Resizeable Configs Window", ref resizeable))
         {
-            plugin.EzConfigs.IsConfigWindowResizeable = resizeable;
+            C.IsConfigWindowResizeable = resizeable;
             EzConfig.Save();
             //plugin.Config.Save(); //TODO: If migrating to Ecommons EzConfig is succesfol then this can be removed
         }
 
 
-        bool titleBar = plugin.EzConfigs.IsConfigWindowNoTitleBar;
+        bool titleBar = C.IsConfigWindowNoTitleBar;
         if (ImGui.Checkbox("Title bar", ref titleBar))
         {
-            plugin.EzConfigs.IsConfigWindowNoTitleBar = titleBar;
+            C.IsConfigWindowNoTitleBar = titleBar;
             EzConfig.Save();
             //plugin.Config.Save(); //TODO: If migrating to Ecommons EzConfig is succesfol then this can be removed
 
@@ -244,19 +244,19 @@ public class ConfigWindow : Window, IDisposable
         if (titleBar)
         {
             ImGui.SameLine();
-            bool collapseable = plugin.EzConfigs.IsConfigWindowNoCollapseable;
+            bool collapseable = C.IsConfigWindowNoCollapseable;
             if (ImGui.Checkbox("Collapseable", ref collapseable))
             {
-                plugin.EzConfigs.IsConfigWindowNoCollapseable = collapseable;
+                C.IsConfigWindowNoCollapseable = collapseable;
                 EzConfig.Save();
                 //plugin.Config.Save(); //TODO: If migrating to Ecommons EzConfig is succesfol then this can be removed
             }
         }
 
-        bool scrollbar = plugin.EzConfigs.IsConfigNoWindowScrollbar;
+        bool scrollbar = C.IsConfigNoWindowScrollbar;
         if (ImGui.Checkbox("Scrollbar", ref scrollbar))
         {
-            plugin.EzConfigs.IsConfigNoWindowScrollbar = scrollbar;
+            C.IsConfigNoWindowScrollbar = scrollbar;
             EzConfig.Save();
             //plugin.Config.Save(); //TODO: If migrating to Ecommons EzConfig is succesfol then this can be removed
         }
@@ -264,20 +264,20 @@ public class ConfigWindow : Window, IDisposable
         if (scrollbar)
         {
             ImGui.SameLine();
-            bool scrollWithMouse = plugin.EzConfigs.IsConfigWindowNoScrollWithMouse;
+            bool scrollWithMouse = C.IsConfigWindowNoScrollWithMouse;
             if (ImGui.Checkbox("Scroll With Mouse", ref scrollWithMouse))
             {
-                plugin.EzConfigs.IsConfigWindowNoScrollWithMouse = scrollWithMouse;
+                C.IsConfigWindowNoScrollWithMouse = scrollWithMouse;
                 EzConfig.Save();
                 //plugin.Config.Save(); //TODO: If migrating to Ecommons EzConfig is succesfol then this can be removed
             }
         }
 
 
-        bool background = plugin.EzConfigs.IsConfigWindowNoBackground;
+        bool background = C.IsConfigWindowNoBackground;
         if (ImGui.Checkbox("Background", ref background))
         {
-            plugin.EzConfigs.IsConfigWindowNoBackground = background;
+            C.IsConfigWindowNoBackground = background;
             EzConfig.Save();
             //plugin.Config.Save(); //TODO: If migrating to Ecommons EzConfig is succesfol then this can be removed
         }

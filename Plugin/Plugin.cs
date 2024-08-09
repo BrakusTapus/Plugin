@@ -1,7 +1,7 @@
 using Plugin.Windows;
 using Plugin.Commands;
 using ECommons.Configuration;
-using Plugin.Utility.Data;
+using Plugin.Utilities.Data;
 using ECommons.Automation.NeoTaskManager;
 using ECommons.Singletons;
 using Plugin.Configuration;
@@ -13,8 +13,11 @@ namespace Plugin;
 public sealed class Plugin : IDalamudPlugin
 {
     internal static Plugin P;
-    internal Configs EzConfigs;
     internal Game.Memory Memory;
+
+    private readonly Configs EzConfigs;
+    public static Configs C => P.EzConfigs;
+
 
 
     internal DataStore DataStore; // TODO: LifeSTREAM
@@ -25,14 +28,13 @@ public sealed class Plugin : IDalamudPlugin
 
     public TaskManager TaskManager;
     public ResidentialAethernet ResidentialAethernet; // TODO: LifeSTREAM
-    //internal FollowPath followPath = null;
 
     private readonly WindowSystem WindowSystem = new("plugin");
     private static ConfigWindow ConfigWindow; // { get; init; }
     private static MainWindow MainWindow; //{ get; init; }
     private static TestWindow AlphaMainWindow;
 
-    public Plugin(IDalamudPluginInterface pluginInterface/*, Configs configs*/)
+    public Plugin(IDalamudPluginInterface pluginInterface)
     {
         P = this;
         Services.Initialize(pluginInterface);

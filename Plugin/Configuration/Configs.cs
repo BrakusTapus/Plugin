@@ -1,12 +1,18 @@
-﻿using ECommons.Configuration;
-using Plugin.Utility.Data;
-using Plugin.Utility.Enums;
-using Plugin.Utility.Helpers;
+﻿using System.Collections.ObjectModel;
+using ECommons.Configuration;
+using Plugin.Features;
+using Plugin.Utilities.Data;
+using Plugin.Utilities.Enums;
+using Plugin.Utilities.Helpers;
 
 namespace Plugin.Configuration;
 
 public class Configs : IEzConfig
 {
+    public ObservableCollection<string> EnabledTweaks = [];
+    public TweakConfigs Tweaks = new();
+
+
     public int Version { get; set; } = 3;
 
     public bool Enable = true;
@@ -92,4 +98,26 @@ public class Configs : IEzConfig
     public bool EnableAutoDismount = false;
 
 
+}
+
+public class TweakConfigs
+{
+    //public AchievementTrackerConfiguration AchievementTrackerConfiguration { get; init; } = new();
+    //public AddresBookConfiguration AddresBook { get; init; } = new();
+    //public AddresBookDebugConfiguration AddresBookDebug { get; init; } = new();
+    //public ARTurnInConfiguration ARTurnIn { get; init; } = new();
+    //public ARxMBConfiguration ARxMB { get; init; } = new();
+    //public AutoFollowConfiguration AutoFollow { get; init; } = new();
+    //public AutoSelectGardeningConfiguration AutoSelectGardening { get; init; } = new();
+    //public ClickToMoveConfiguration ClickToMove { get; init; } = new();
+    //public CommandsConfiguration Commands { get; init; } = new();
+    //public DateWithDestinyConfiguration DateWithDestiny { get; init; } = new();
+    //public DebugToolsConfiguration DebugTools { get; init; } = new();
+    //public EnhancedDutyStartEndConfiguration EnhancedDutyStartEnd { get; init; } = new();
+    //public EnhancedTargetingConfiguration EnhancedTargeting { get; init; } = new();
+    //public FcChestTabRenameConfiguration FCChestTabRename { get; init; } = new();
+    //public GettingTooAttachedConfiguration GettingTooAttached { get; init; } = new();
+    //public GMAlertConfiguration GMAlert { get; init; } = new();
+    //public HuntRelayHelperConfiguration HuntRelayHelper { get; init; } = new();
+    public AutoAdjustRetainerListingsConfiguration MarketAdjuster { get; init; } = new();
 }

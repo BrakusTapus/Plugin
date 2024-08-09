@@ -5,11 +5,11 @@ using ECommons.EzHookManager;
 using ECommons.MathHelpers;
 using FFXIVClientStructs.FFXIV.Client.Game;
 using FFXIVClientStructs.FFXIV.Component.GUI;
-using Plugin.Utility.Enums;
+using Plugin.Utilities.Enums;
 using Plugin.Tasks.SameWorld;
 //using PInvoke;
 using System.Windows.Forms;
-using Plugin.Utility.Helpers;
+using Plugin.Utilities.Helpers;
 using PInvoke;
 
 namespace Plugin.Game;

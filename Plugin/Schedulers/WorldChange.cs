@@ -8,8 +8,8 @@ using FFXIVClientStructs.FFXIV.Client.Game.Control;
 using FFXIVClientStructs.FFXIV.Client.UI;
 using FFXIVClientStructs.FFXIV.Client.UI.Agent;
 using FFXIVClientStructs.FFXIV.Component.GUI;
-using Plugin.Utility.AtkReaders;
-using Plugin.Utility.Helpers;
+using Plugin.Utilities.AtkReaders;
+using Plugin.Utilities.Helpers;
 
 namespace Plugin.Schedulers;
 

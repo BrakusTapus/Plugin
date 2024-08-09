@@ -12,7 +12,7 @@ using ECommons.DalamudServices;
 using FFXIVClientStructs.FFXIV.Component.GUI;
 using ECommons.Automation.UIInput;
 using ECommons.Throttlers;
-using Plugin.Utility.Helpers;
+using Plugin.Utilities.Helpers;
 
 namespace Plugin.Features;
 

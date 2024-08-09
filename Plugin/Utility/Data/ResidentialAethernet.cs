@@ -3,13 +3,13 @@ using Dalamud.Game.ClientState.Objects.Types;
 using ECommons.Configuration;
 using ECommons.ExcelServices.TerritoryEnumeration;
 using ECommons.MathHelpers;
-using Plugin.Utility.Data;
+using Plugin.Utilities.Data;
 using Lumina.Excel.GeneratedSheets;
-using Plugin.Utility.Helpers;
+using Plugin.Utilities.Helpers;
 using System.IO;
 using Path = System.IO.Path;
 
-namespace Plugin.Utility.Data;
+namespace Plugin.Utilities.Data;
 
 public sealed class ResidentialAethernet : IDisposable
 {

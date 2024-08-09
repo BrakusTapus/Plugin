@@ -6,7 +6,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Plugin.Utility.Data;
+namespace Plugin.Utilities.Data;
 
 public class HousingData : IEzConfig
 {

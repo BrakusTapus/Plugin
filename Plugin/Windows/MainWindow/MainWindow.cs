@@ -38,7 +38,7 @@ public class MainWindow : Window, IDisposable
     public override void PreDraw()
     {
         // Flags must be added or removed before DrawImage() is being called, or they won't apply
-        if (plugin.EzConfigs.IsMainWindowMovable)
+        if (C.IsMainWindowMovable)
         {
             Flags &= ~ImGuiWindowFlags.NoMove;
         }
@@ -47,7 +47,7 @@ public class MainWindow : Window, IDisposable
             Flags |= ImGuiWindowFlags.NoMove;
         }
 
-        if (plugin.EzConfigs.IsMainWindowResizeable)
+        if (C.IsMainWindowResizeable)
         {
             Flags &= ~ImGuiWindowFlags.NoResize;
         }
@@ -56,7 +56,7 @@ public class MainWindow : Window, IDisposable
             Flags |= ImGuiWindowFlags.NoResize;
         }
 
-        if (plugin.EzConfigs.IsMainWindowNoTitleBar)
+        if (C.IsMainWindowNoTitleBar)
         {
             Flags &= ~ImGuiWindowFlags.NoTitleBar;
         }
@@ -65,7 +65,7 @@ public class MainWindow : Window, IDisposable
             Flags |= ImGuiWindowFlags.NoTitleBar;
         }
 
-        if (plugin.EzConfigs.IsMainNoWindowScrollbar)
+        if (C.IsMainNoWindowScrollbar)
         {
             Flags &= ~ImGuiWindowFlags.NoScrollbar;
         }
@@ -74,7 +74,7 @@ public class MainWindow : Window, IDisposable
             Flags |= ImGuiWindowFlags.NoScrollbar;
         }
 
-        if (plugin.EzConfigs.IsMainWindowNoScrollWithMouse)
+        if (C.IsMainWindowNoScrollWithMouse)
         {
             Flags &= ~ImGuiWindowFlags.NoScrollWithMouse;
         }
@@ -83,7 +83,7 @@ public class MainWindow : Window, IDisposable
             Flags |= ImGuiWindowFlags.NoScrollWithMouse;
         }
 
-        if (plugin.EzConfigs.IsMainWindowNoCollapseable)
+        if (C.IsMainWindowNoCollapseable)
         {
             Flags &= ~ImGuiWindowFlags.NoCollapse;
         }
@@ -92,7 +92,7 @@ public class MainWindow : Window, IDisposable
             Flags |= ImGuiWindowFlags.NoCollapse;
         }
 
-        if (plugin.EzConfigs.IsMainWindowNoBackground)
+        if (C.IsMainWindowNoBackground)
         {
             Flags &= ~ImGuiWindowFlags.NoBackground;
         }
@@ -136,12 +136,4 @@ public class MainWindow : Window, IDisposable
         ChildWindow.DrawContent();
         ChildWindow.DrawFooter();
     }
-
-
-
-
-
-
-
-
 }

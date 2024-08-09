@@ -2,13 +2,13 @@
 using ECommons.Events;
 using ECommons.ExcelServices;
 using ECommons.GameHelpers;
-using Plugin.Utility.Data;
+using Plugin.Utilities.Data;
 using Lumina.Excel.GeneratedSheets;
-using Plugin.Utility.Helpers;
+using Plugin.Utilities.Helpers;
 using System.IO;
 using Path = System.IO.Path;
 
-namespace Plugin.Utility.Data;
+namespace Plugin.Utilities.Data;
 
 internal class DataStore
 {
@@ -73,7 +73,7 @@ internal class DataStore
         {
             ret += x;
         }
-        if(P.EzConfigs.Favorites.Contains(id))
+        if(C.Favorites.Contains(id))
         {
             ret -= 10000u;
         }

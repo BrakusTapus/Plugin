@@ -4,7 +4,7 @@ using Dalamud.Interface.Textures.TextureWraps;
 using ImGuiExtensions;
 using ImGuiNET;
 
-namespace Plugin.Utility.UI;
+namespace Plugin.Utilities.UI;
 
 //TODO: Add this to the ImGuiEx namespace (ImGui folder) 
 public static class ImageLoader

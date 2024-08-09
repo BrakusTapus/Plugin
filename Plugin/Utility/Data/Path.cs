@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Plugin.Utility.Data;
+namespace Plugin.Utilities.Data;
 
 [Serializable]
 public class Path
