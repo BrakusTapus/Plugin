@@ -19,6 +19,7 @@ using FFXIVClientStructs.FFXIV.Client.Game;
 using FFXIVClientStructs.FFXIV.Client.UI;
 using FFXIVClientStructs.FFXIV.Client.UI.Agent;
 using FFXIVClientStructs.FFXIV.Component.GUI;
+using Plugin.Internal;
 using Plugin.Utilities;
 using static ECommons.UIHelpers.AddonMasterImplementations.AddonMaster.RetainerList;
 using static FFXIVClientStructs.FFXIV.Client.Game.RetainerManager;
@@ -43,34 +44,34 @@ public static unsafe partial class AutoMarktTasks
     private static bool IsCurrentItemHQ;
     private static int MarketItemCount;
     private static unsafe RetainerManager.Retainer* CurrentRetainer;
-    public static unsafe RetainerManager* retainerManager;
+    //    public static unsafe retainerManager => GameRetainerManager.;
 
-    public static void Initialize()
-    {
-        if (isInitialized)
-        {
-            MyServices.Services.PluginLog.Warning("RetainerManager instance is already initialized!.");
-            return;
-        }
-        retainerManager = RetainerManager.Instance();         // Get the instance of the RetainerManager and store it in the static property
-        isInitialized = true;
+    //public static void Initialize()
+    //{
+    //    if (isInitialized)
+    //    {
+    //        MyServices.Services.PluginLog.Warning("RetainerManager instance is already initialized!.");
+    //        return;
+    //    }
+    //    retainerManager = RetainerManager.Instance();         // Get the instance of the RetainerManager and store it in the static property
+    //    isInitialized = true;
 
-        if (retainerManager != null)
-        {
-            MyServices.Services.PluginLog.Debug("RetainerManager instance initialized successfully.");
-        }
-        else
-        {
-            MyServices.Services.PluginLog.Error("Failed to initialize RetainerManager instance.");
-        }
-    }
+    //    if (retainerManager != null)
+    //    {
+    //        MyServices.Services.PluginLog.Debug("RetainerManager instance initialized successfully.");
+    //    }
+    //    else
+    //    {
+    //        MyServices.Services.PluginLog.Error("Failed to initialize RetainerManager instance.");
+    //    }
+    //}
 
-    private static unsafe int GetRetainerManagerInstance()
-    {
-        Retainer* activeRetainer = retainerManager->GetActiveRetainer();
-        MarketItemCount = (int)activeRetainer->MarketItemCount; // Casting byte to int
-        return MarketItemCount;
-    }
+    //private static unsafe int GetRetainerManagerInstance()
+    //{
+    //    Retainer* activeRetainer = GameRetainerManager.Instance->GetActiveRetainer();
+    //    MarketItemCount = (int)activeRetainer->MarketItemCount; // Casting byte to int
+    //    return MarketItemCount;
+    //}
 
     public static class Listing
     {
@@ -138,18 +139,18 @@ public static unsafe partial class AutoMarktTasks
 
     public unsafe static bool SelectRetainerByIndex(uint index)
     {
-        if (retainerManager == null)
+        if (GameRetainerManager.Instance == null)
         {
             throw new Exception("RetainerManager instance is null");
         }
 
-        var retainerCount = retainerManager->GetRetainerCount();
+        var retainerCount = GameRetainerManager.Instance->GetRetainerCount();
         if (index >= retainerCount)
         {
             throw new ArgumentOutOfRangeException(nameof(index), "Index is out of range of available retainers.");
         }
 
-        Retainer* retainerSortedByIndex = retainerManager->GetRetainerBySortedIndex(index);
+        Retainer* retainerSortedByIndex = GameRetainerManager.Instance->GetRetainerBySortedIndex(index);
         if (retainerSortedByIndex == null) return false;
 
         if (TryGetAddonByName<AtkUnitBase>("RetainerList", out var retainerList) && IsAddonReady(retainerList))
@@ -185,7 +186,7 @@ public static unsafe partial class AutoMarktTasks
 
     public static unsafe void OnRetainerSellList(AddonEvent type, AddonArgs args)
     {
-        var activeRetainer = retainerManager->GetActiveRetainer();
+        var activeRetainer = GameRetainerManager.Instance->GetActiveRetainer();
 
         if (CurrentRetainer == null || CurrentRetainer != activeRetainer)
             CurrentRetainer = activeRetainer;

@@ -14,12 +14,6 @@ internal static class ChildWindow
 {
     #region WindowSizes
     private static float HeaderFooterHeight => 40;
-    private static float WindowPaddingX => ImGui.GetStyle().WindowPadding.X;
-    private static float WindowPaddingY => ImGui.GetStyle().WindowPadding.Y;
-    private static float WindowWidth => ImGui.GetWindowWidth() - ImGui.GetStyle().WindowPadding.X;
-    private static float WindowHeight => ImGui.GetWindowHeight() - ImGui.GetStyle().WindowPadding.Y;
-    private static float WindowContentWidth => ImGui.GetWindowContentRegionMax().X - ImGui.GetWindowContentRegionMin().X;
-    private static float WindowContentHeight => ImGui.GetWindowContentRegionMax().Y - ImGui.GetWindowContentRegionMin().Y;
     private static float WindowContentRegionWidth => ImGui.GetContentRegionAvail().X;
     private static float WindowContentRegionHeight => ImGui.GetContentRegionAvail().Y;
     #endregion
@@ -125,7 +119,6 @@ internal static class ChildWindow
         }
     }
     #endregion
-
 
     #region Content
     private static IEnumerable<Enum> GetCategoriesByHeader(CategoryTabHeaders header)
@@ -233,16 +226,51 @@ internal static class ChildWindow
         ImGui.Text("Other Automated tasks.");
         // Add more ImGui rendering calls specific to this category
     }
+    #endregion
+
+    #region Teleports
+    public static void DrawTeleports()
+    {
+        ImGui.Text("Various Teleports.");
+        // Add more ImGui rendering calls specific to this category
+    }
+
+    #endregion
+
+    #region Links
+    public static void DrawLinks()
+    {
+        ImGui.Text("Various Useful websites!.");
+    }
+
+    #endregion
+
+    #region Debug
+    private static void DrawDebug()
+    {
+        
+        if (ImGui.BeginTabBar("##DebugTabBar"))
+        {
+            if (ImGui.BeginTabItem("Info"))
+            {
+                DrawDebugRetainers();
+                ImGui.EndTabItem();
+            }
+
+            ImGui.EndTabBar();
+        }
+    }
 
     private static unsafe void DrawDebugRetainers()
     {
         if (!GameRetainerManager.IsReady)
         {
-            //Svc.Log.Warning("GameRetainerManager is not ready.");
+            Svc.Log.Warning("not ready oops");
             return;
         }
 
         var retainerManager = RetainerManager.Instance();
+
         var retainers = GameRetainerManager.GetRetainers();
 
         // Create a dictionary to map retainers to their display order
@@ -375,34 +403,6 @@ internal static class ChildWindow
     }
     #endregion
 
-    #region Teleports
-    public static void DrawTeleports()
-    {
-        ImGui.Text("Various Teleports.");
-        // Add more ImGui rendering calls specific to this category
-    }
-
-    #endregion
-
-    #region Links
-    public static void DrawLinks()
-    {
-        ImGui.Text("Various Useful websites!.");
-    }
-
-    #endregion
-
-    /*
-           if (ThreadLoadImageHandler.TryGetIconTextureWrap(ret.Job == 0 ? 62143 : 062100 + ret.Job, true, out var t))
-           {
-               ImGui.Image(t.ImGuiHandle, new(24, 24));
-           }
-           else
-           {
-               ImGui.Dummy(new(24, 24));
-           }
-   */
-
     private static readonly Dictionary<(CategoryTabHeaders, Enum), Action> categoryDrawActions = new Dictionary<(CategoryTabHeaders, Enum), Action>
     {
         { (CategoryTabHeaders.About, AboutCategories.Info), DrawAboutInfoDetails },
@@ -414,7 +414,7 @@ internal static class ChildWindow
         { (CategoryTabHeaders.Automation, AutomationCategories.Misc), DrawOthersAutomation},
         { (CategoryTabHeaders.Commands, CommandCategories.Teleports), DrawTeleports},
         { (CategoryTabHeaders.Links, LinksCategories.General), DrawLinks},
-        { (CategoryTabHeaders.Debug, DebugCategories.Retainers), DrawDebugRetainers}
+        { (CategoryTabHeaders.Debug, DebugCategories.Retainers), DrawDebug}
     };
 
     #region Footer

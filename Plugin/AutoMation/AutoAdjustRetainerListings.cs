@@ -77,11 +77,11 @@
 //        base.DrawConfig();
 //        //if (ImGui.Button("cancel"))
 //        //    TaskManager.Abort();
-//        DrawConfigUI();
+//        DrawConfigDebug();
 //    }
 
 //    private static bool IsEnAbled = false;
-//    private void DrawConfigUI()
+//    private void DrawConfigDebug()
 //    {
 //        if (ImGui.Checkbox("Enable Auto Adjust Retainer Listings", ref IsEnAbled))
 //        {

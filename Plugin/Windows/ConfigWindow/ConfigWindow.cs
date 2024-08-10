@@ -291,29 +291,15 @@ public class ConfigWindow : Window, IDisposable
 
     private unsafe void DrawTab4()
     {
-
-
-
         RetainerManager* retainerMAnager = RetainerManager.Instance();
         Span<byte> CurrentRetainer = retainerMAnager->DisplayOrder;
         Retainer* activeRetainer = retainerMAnager->GetActiveRetainer();
-
-
 
         string Name =  activeRetainer->NameString;
         string retainerId = retainerMAnager->RetainerObjectId.ToString();
         byte Level =  activeRetainer->Level;
         int MarketItemCount = activeRetainer->MarketItemCount;
         uint Gil = activeRetainer->Gil;
-
-
-
-        ImGui.TextWrapped($"Name: {Name}  ID: {retainerId}  Level: {Level}  MarketItemmCount: {MarketItemCount} Gill: {Gil}");
-        ImGui.NewLine();
-        ImGui.NewLine();
-        ImGui.NewLine();
-
-
 
         if (ImGui.Button(nameof(AutoMarktTasks.CloseRetainerList)))
         {
@@ -345,6 +331,7 @@ public class ConfigWindow : Window, IDisposable
         }
         ImGui.SameLine();
         // Input field for the retainer name
+        ImGui.SetNextItemWidth(130);
         ImGui.InputText("Retainer Name", ref _retainerName, 100);
 
 

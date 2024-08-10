@@ -4,8 +4,23 @@ using Plugin.Utilities;
 namespace Plugin.Internal
 {
     public static unsafe class GameRetainerManager
-    {
-        public static bool IsReady => RetainerManager.Instance()->Ready != 0;
+    {        
+        private static IntPtr _instancePtr; // Singleton instance, using IntPtr to store the pointer safely
+        
+        public static RetainerManager* Instance // Property to access the instance safely
+        {
+            get
+            {
+                if (_instancePtr == IntPtr.Zero)
+                {
+                    
+                    _instancePtr = (IntPtr)RetainerManager.Instance(); // Initialize the pointer to the RetainerManager instance
+                }                
+                return (RetainerManager*)_instancePtr;
+            }
+        }
+
+        public static bool IsReady => Instance != null && Instance->Ready != 0;
 
         public static Retainer[] GetRetainers()
         {
@@ -26,13 +41,21 @@ namespace Plugin.Internal
             { RetainerManager.RetainerTown.Ishgard, "ui/icon/060000/060884.tex" },
             { RetainerManager.RetainerTown.Kugane, "ui/icon/060000/060885.tex" },
             { RetainerManager.RetainerTown.Crystarium, "ui/icon/060000/060886.tex" },
-            { RetainerManager.RetainerTown.OldSharlayan, "ui/icon/060000/060887.tex" }
+            { RetainerManager.RetainerTown.OldSharlayan, "ui/icon/060000/060887.tex" },
             //{ RetainerManager.RetainerTown.Tuliyollal, "ui/icon/060000/060888.tex" }
         };
 
         public static string GetTownIconPath(RetainerManager.RetainerTown town)
         {
-            return TownIconPaths.TryGetValue(town, out var path) ? path : null;
+            if (TownIconPaths.TryGetValue(town, out var path))
+            {
+                return path;
+            }
+            else
+            {
+
+                return "ui/icon/060000/060071.tex";                 // Return a default icon or an empty string if town is not recognized
+            }
         }
 
         public static int GetTownIconID(RetainerManager.RetainerTown town)
@@ -45,7 +68,7 @@ namespace Plugin.Internal
                 RetainerManager.RetainerTown.Kugane => 060885,
                 RetainerManager.RetainerTown.Crystarium => 060886,
                 RetainerManager.RetainerTown.OldSharlayan => 060887,
-              //RetainerManager.RetainerTown.Tuliyollal => 060888,
+                //RetainerManager.RetainerTown.Tuliyollal => 060888,
                 _ => 60071 // Return an question mark icon if the town is not recognized
             };
         }

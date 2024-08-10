@@ -75,16 +75,31 @@ public partial class AutoAdjustRetainerListings : Tweak<AutoAdjustRetainerListin
 
     public override void DrawConfig()
     {
-        DrawConfigUI();
-        ImGui.SameLine();
-        base.DrawConfig();
-        //if (ImGui.Button("cancel"))
+        if (ImGui.BeginTabBar("##Automation"))
+        {
+            if (ImGui.BeginTabItem("Auto Prices"))
+            {
+                base.DrawConfig();
+                ImGui.EndTabItem();
+            }
+
+            if (ImGui.BeginTabItem("Debug"))
+            {
+                DrawConfigDebug();
+                ImGui.EndTabItem();
+            }
+
+            ImGui.EndTabBar();
+        }
+
+
+        //if (ImGui.Button("cancel")) 
         //    TaskManager.Abort();
 
     }
 
     private static bool IsEnAbled = false;
-    private void DrawConfigUI()
+    private void DrawConfigDebug()
     {
         if (ImGui.Checkbox("Enable Auto Adjust Retainer Listings", ref IsEnAbled))
         {

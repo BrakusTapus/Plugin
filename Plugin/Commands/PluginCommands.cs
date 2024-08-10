@@ -2,6 +2,7 @@ using Dalamud.Game.Command;
 using Plugin.Tasks.SameWorld;
 using ECommons.MathHelpers;
 using Plugin.AutoMarkt;
+using Plugin.Internal;
 
 namespace Plugin.Commands;
 
@@ -58,8 +59,6 @@ public static partial class PluginCommands
         }
         else if (int.TryParse(args, out int index) && index >= 0)
         {
-            AutoMarktTasks.Initialize();
-
             bool success = AutoMarktTasks.SelectRetainerByIndex((uint)index);
             if (success)
             {
