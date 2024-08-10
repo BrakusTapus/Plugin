@@ -4,6 +4,7 @@ using ECommons.ExcelServices;
 using FFXIVClientStructs.FFXIV.Client.Game;
 using ImGuiExtensions;
 using Plugin.AutoMarkt;
+using Plugin.Internal;
 using Plugin.Windows;
 using static FFXIVClientStructs.FFXIV.Client.Game.RetainerManager;
 
@@ -235,67 +236,138 @@ internal static class ChildWindow
 
     private static unsafe void DrawDebugRetainers()
     {
-        RetainerManager* retainerManager = RetainerManager.Instance();
-
-        if (retainerManager == null)
+        if (!GameRetainerManager.IsReady)
         {
-            Svc.Log.Error("RetainerManager instance is null, cannot retrieve retainers.");
+            //Svc.Log.Warning("GameRetainerManager is not ready.");
             return;
         }
 
-        Span<byte> displayOrder = retainerManager->DisplayOrder;
-#if DEBUG
-        if (ImGui.BeginTable("RetainersTable", 9, ImGuiTableFlags.Borders | ImGuiTableFlags.RowBg))
-#else
-                if (ImGui.BeginTable("RetainersTable", 7, ImGuiTableFlags.Borders | ImGuiTableFlags.RowBg))
-#endif
+        var retainerManager = RetainerManager.Instance();
+        var retainers = GameRetainerManager.GetRetainers();
+
+        // Create a dictionary to map retainers to their display order
+        var displayOrderMap = new Dictionary<ulong, int>();
+
+        // Use a fixed block to pin the span in memory
+        fixed (byte* displayOrderPtr = retainerManager->DisplayOrder)
         {
-#if DEBUG
+            for (int i = 0; i < retainers.Length; i++)
+            {
+                var retainer = retainers[i];
+                displayOrderMap[retainer.RetainerID] = displayOrderPtr[i];
+            }
+        }
+
+        // Sort retainers by display order
+        GameRetainerManager.Retainer[]? sortedRetainers = retainers
+        .OrderBy(r => displayOrderMap.ContainsKey(r.RetainerID) ? displayOrderMap[r.RetainerID] : int.MaxValue)
+        .ToArray();
+
+        if (ImGui.BeginTable("RetainersTable", 8, ImGuiTableFlags.Borders | ImGuiTableFlags.RowBg))
+        {
+            // Define columns
             ImGui.TableSetupColumn("Display Order Index");
             ImGui.TableSetupColumn("Internal Index");
-#else
-#endif
-            ImGui.TableSetupColumn("ID");
+            ImGui.TableSetupColumn("Retainer ID");
             ImGui.TableSetupColumn("Name");
-            ImGui.TableSetupColumn("Class Job");
-            ImGui.TableSetupColumn("Level");
-            ImGui.TableSetupColumn("Item Count");
-            ImGui.TableSetupColumn("Market Items");
+            ImGui.TableSetupColumn("Class/Job");
+            ImGui.TableSetupColumn("Inventory");
             ImGui.TableSetupColumn("Gil");
+            ImGui.TableSetupColumn("Items for Sale");
 
             ImGui.TableHeadersRow();
 
-            foreach (byte sortedIndex in displayOrder)
+            for (int i = 0; i < sortedRetainers.Length; i++)
             {
-                RetainerManager.Retainer* retainer = retainerManager->GetRetainerBySortedIndex(sortedIndex);
-
-                if (retainer == null || retainer->RetainerId == 0)
-                {
-                    continue;
-                }
+                GameRetainerManager.Retainer? retainer = sortedRetainers[i];
+                var displayOrderIndex = displayOrderMap.ContainsKey(retainer.RetainerID) ? displayOrderMap[retainer.RetainerID] : -1;
 
                 ImGui.TableNextRow();
+
+                // Display columns
                 ImGui.TableSetColumnIndex(0);
-                ImGui.Text(retainer->RetainerId.ToString());
+                ImGui.Text(displayOrderIndex.ToString());
 
                 ImGui.TableSetColumnIndex(1);
-                ImGui.Text(retainer->NameString);
+                ImGui.Text(i.ToString()); // Internal index
+
 
                 ImGui.TableSetColumnIndex(2);
-                string classJobName = ExcelJobHelper.GetJobNameById(retainer->ClassJob);
-                ImGui.Text(classJobName);
+                ImGui.Text(retainer.RetainerID.ToString());
 
                 ImGui.TableSetColumnIndex(3);
-                ImGui.Text(retainer->Level.ToString());
+                ImGui.Text(retainer.Name);
+
+
 
                 ImGui.TableSetColumnIndex(4);
-                ImGui.Text($"{retainer->ItemCount}/175");
+                if (ThreadLoadImageHandler.TryGetIconTextureWrap(retainer.ClassJob == 0 ? 62143 : 062100 + retainer.ClassJob, true, out var t))
+                {
+                    ImGui.Image(t.ImGuiHandle, new(24, 24));
+                }
+                else
+                {
+                    ImGui.Dummy(new(24, 24));
+                }
+                ImGui.SameLine();
+                string classJobName = ExcelJobHelper.GetJobNameById(retainer.ClassJob);
+                ImGui.Text("" + retainer.Level.ToString());
+
+
+
+
 
                 ImGui.TableSetColumnIndex(5);
-                ImGui.Text($"{retainer->MarketItemCount}/20");
+                if (ThreadLoadImageHandler.TryGetIconTextureWrap(60356, true, out var inv))
+                {
+                    ImGui.Image(inv.ImGuiHandle, new(24, 24));
+                }
+                else
+                {
+                    ImGui.Dummy(new(24, 24));
+                }
+                ImGui.SameLine();
+                ImGui.Text($"{retainer.ItemCount}/175");
+
+
 
                 ImGui.TableSetColumnIndex(6);
-                ImGui.Text($"{retainer->Gil.ToString("N0")}");
+                if (ThreadLoadImageHandler.TryGetIconTextureWrap(065002, true, out var g))
+                {
+                    ImGui.Image(g.ImGuiHandle, new(24, 24));
+                }
+                else
+                {
+                    ImGui.Dummy(new(24, 24));
+                }
+                ImGui.SameLine();
+                ImGui.Text($"{retainer.Gil.ToString("N0")}");
+
+
+
+
+                ImGui.TableSetColumnIndex(7);
+                //if (ThreadLoadImageHandler.TryGetIconTextureWrap(060570, true, out var g))
+                //{
+                //    ImGui.Image(g.ImGuiHandle, new(24, 24));
+                //}
+                //else
+                //{
+                //    ImGui.Dummy(new(24, 24));
+                //}
+
+                if (ThreadLoadImageHandler.TryGetIconTextureWrap(GameRetainerManager.GetTownIconID((retainer.Town)), true, out var town))
+                {
+                    ImGui.Image(town.ImGuiHandle, new System.Numerics.Vector2(24, 24));
+                }
+                else
+                {
+                    ImGui.Dummy(new System.Numerics.Vector2(24, 24));
+                }
+                ImGui.SameLine();
+                ImGui.Text($"Selling {retainer.MarketItemCount} items");
+
+
             }
 
             ImGui.EndTable();
@@ -320,16 +392,16 @@ internal static class ChildWindow
 
     #endregion
 
-     /*
-            if (ThreadLoadImageHandler.TryGetIconTextureWrap(ret.Job == 0 ? 62143 : 062100 + ret.Job, true, out var t))
-            {
-                ImGui.Image(t.ImGuiHandle, new(24, 24));
-            }
-            else
-            {
-                ImGui.Dummy(new(24, 24));
-            }
-    */
+    /*
+           if (ThreadLoadImageHandler.TryGetIconTextureWrap(ret.Job == 0 ? 62143 : 062100 + ret.Job, true, out var t))
+           {
+               ImGui.Image(t.ImGuiHandle, new(24, 24));
+           }
+           else
+           {
+               ImGui.Dummy(new(24, 24));
+           }
+   */
 
     private static readonly Dictionary<(CategoryTabHeaders, Enum), Action> categoryDrawActions = new Dictionary<(CategoryTabHeaders, Enum), Action>
     {
