@@ -61,4 +61,8 @@
         <ProjectReference Include="..\ECommons\ECommons\ECommons.csproj">  
         </ProjectReference>
     </ItemGroup>
+
+    <ItemGroup>
+      <Folder Include="Utilities\Extensions\ImGuiExtKirbo\" />
+    </ItemGroup>
 </Project>

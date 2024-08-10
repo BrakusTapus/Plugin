@@ -3,7 +3,7 @@ using Dalamud.Game.Command;
 using Dalamud.Interface.Utility.Raii;
 using System.Reflection;
 using Plugin.FeaturesSetup.Attributes;
-using ImGuiExtensions;
+using Plugin.Utilities.UI;
 
 namespace Plugin.FeaturesSetup;
 
@@ -38,7 +38,7 @@ public abstract class Tweak<T> : Tweak
         if (!configFields.Any())
             return;
 
-        ImGuiExt.DrawSection("Configuration");
+        ImGuiExtKirbo.DrawSection("Configuration");
 
         foreach (var (field, attr) in configFields)
         {
@@ -46,7 +46,7 @@ public abstract class Tweak<T> : Tweak
             var isDisabled = hasDependency && (bool?)CachedConfigType.GetField(attr.DependsOn)?.GetValue(Config) == false;
 
             using var id = ImRaii.PushId(field.Name);
-            using var indent = ImGuiExt.ConfigIndent(hasDependency);
+            using var indent = ImGuiExtKirbo.ConfigIndent(hasDependency);
             using var disabled = ImRaii.Disabled(isDisabled);
 
             attr.Draw(this, Config!, field);

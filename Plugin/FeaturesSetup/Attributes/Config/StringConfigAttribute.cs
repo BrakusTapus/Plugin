@@ -1,6 +1,6 @@
-using ImGuiExtensions;
 using ImGuiNET;
 using Plugin.Utilities;
+using Plugin.Utilities.UI;
 using System.Reflection;
 
 namespace Plugin.FeaturesSetup.Attributes;

@@ -1,7 +1,7 @@
 using Dalamud.Interface;
 using ECommons.ImGuiMethods;
-using ImGuiExtensions;
 using ImGuiNET;
+using Plugin.Utilities.UI;
 using System.Reflection;
 
 namespace Plugin.FeaturesSetup.Attributes;
@@ -29,7 +29,7 @@ public abstract class BaseConfigAttribute : Attribute
         foreach (var attribute in attributes)
         {
             ImGui.SameLine();
-            ImGuiExt.Icon(attribute.Icon, attribute.Color);
+            ImGuiExtKirbo.Icon(attribute.Icon, attribute.Color);
             if (ImGui.IsItemHovered())
             {
                 ImGui.SetTooltip(attribute.Description);

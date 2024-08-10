@@ -1,5 +1,5 @@
 using Dalamud.Interface;
-using ImGuiExtensions;
+using Plugin.Utilities.UI;
 
 namespace Plugin.FeaturesSetup.Attributes;
 

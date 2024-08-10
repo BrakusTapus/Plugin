@@ -1,6 +1,6 @@
-using ImGuiExtensions;
 using ImGuiNET;
 using Plugin.Utilities;
+using Plugin.Utilities.UI;
 using System.Globalization;
 using System.Reflection;
 
@@ -20,7 +20,7 @@ public class IntConfigAttribute : BaseConfigAttribute
 
         ImGui.TextUnformatted(fieldInfo.Name.SplitWords());
 
-        using var indent = ImGuiExt.ConfigIndent();
+        using var indent = ImGuiExtKirbo.ConfigIndent();
 
         if (ImGui.DragInt("##Input", ref value, 0.01f, Min, Max))
         {

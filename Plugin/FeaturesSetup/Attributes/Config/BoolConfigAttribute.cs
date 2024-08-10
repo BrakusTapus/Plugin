@@ -1,6 +1,6 @@
-using ImGuiExtensions;
 using ImGuiNET;
 using Plugin.Utilities;
+using Plugin.Utilities.UI;
 using System.Reflection;
 
 namespace Plugin.FeaturesSetup.Attributes;
@@ -28,10 +28,10 @@ public class BoolConfigAttribute : BaseConfigAttribute
         var desc = !cmdAttr?.HelpMessage.IsNullOrEmpty() ?? false ? cmdAttr!.HelpMessage : !attr?.Description.IsNullOrEmpty() ?? false ? attr!.Description : null;
         if (desc != null)
         {
-            ImGuiExt.PushCursorY(-3);
-            using var descriptionIndent = ImGuiExt.ConfigIndent();
+            ImGuiExtKirbo.PushCursorY(-3);
+            using var descriptionIndent = ImGuiExtKirbo.ConfigIndent();
             ImGuiHelpers.SafeTextColoredWrapped(ColorEx.Grey, desc);
-            ImGuiExt.PushCursorY(3);
+            ImGuiExtKirbo.PushCursorY(3);
         }
     }
 }

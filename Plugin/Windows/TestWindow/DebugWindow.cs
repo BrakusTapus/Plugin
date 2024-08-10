@@ -1,5 +1,4 @@
 ﻿using ECommons.Configuration;
-using ImGuiExtensions;
 
 using Plugin.Tasks.SameWorld;
 
@@ -29,6 +28,7 @@ using Dalamud.Utility;
 using ImGuiNET;
 using Plugin.Configuration;
 using ECommons.Automation.NeoTaskManager;
+using Plugin.Utilities.UI;
 
 namespace Plugin.Windows.AlphaMainWindow;
 
@@ -281,7 +281,7 @@ public class DebugWindow : Window, IDisposable
             Notify.Info($"Discarding {P.TaskManager.NumQueuedTasks + (P.TaskManager.IsBusy ? 1 : 0)} tasks");
             P.TaskManager.Abort();
         }
-        ImGuiExt.NewTooltip($"Reset the tasks back to 0\nUse This is tasks seems to be stuck");
+        ImGuiExtKirbo.NewTooltip($"Reset the tasks back to 0\nUse This is tasks seems to be stuck");
 
 
         ImGui.Spacing();
@@ -289,7 +289,7 @@ public class DebugWindow : Window, IDisposable
         ImGui.Spacing();
 
         ImGui.Text($"/kirboinstance <number>");
-        ImGuiExt.NewTooltip("Switches your current instance to whatever number you used");
+        ImGuiExtKirbo.NewTooltip("Switches your current instance to whatever number you used");
 
         ImGui.Spacing();
 

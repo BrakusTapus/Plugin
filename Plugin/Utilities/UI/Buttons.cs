@@ -2,7 +2,7 @@
 using ImGuiNET;
 using Dalamud.Interface.Utility.Raii;
 
-namespace ImGuiExtensions;
+namespace Plugin.Utilities.UI;
 
 public static class Buttons
 {
@@ -149,8 +149,8 @@ public static class Buttons
         float num2 = frameHeight * 0.5f;
         ImGui.InvisibleButton(id, new Vector2(num, frameHeight));
         float num3 = 0.5f;
-        windowDrawList.AddRectFilled(cursorScreenPos, new Vector2(cursorScreenPos.X + num, cursorScreenPos.Y + frameHeight), ImGui.GetColorU32(v ? (colors[21] * num3) : (new Vector4(0.55f, 0.55f, 0.55f, 1f) * num3)), frameHeight * 0.5f);
-        windowDrawList.AddCircleFilled(new Vector2(cursorScreenPos.X + num2 + (float)(v ? 1 : 0) * (num - num2 * 2f), cursorScreenPos.Y + num2), num2 - 1.5f, ImGui.ColorConvertFloat4ToU32(new Vector4(1f, 1f, 1f, 1f) * num3));
+        windowDrawList.AddRectFilled(cursorScreenPos, new Vector2(cursorScreenPos.X + num, cursorScreenPos.Y + frameHeight), ImGui.GetColorU32(v ? colors[21] * num3 : new Vector4(0.55f, 0.55f, 0.55f, 1f) * num3), frameHeight * 0.5f);
+        windowDrawList.AddCircleFilled(new Vector2(cursorScreenPos.X + num2 + (v ? 1 : 0) * (num - num2 * 2f), cursorScreenPos.Y + num2), num2 - 1.5f, ImGui.ColorConvertFloat4ToU32(new Vector4(1f, 1f, 1f, 1f) * num3));
     }
 
     public static void SettingsButton()
@@ -158,7 +158,7 @@ public static class Buttons
         ImGui.PushStyleColor(ImGuiCol.Text, ColorEx.Silver);
         if (Dalamud.Interface.Components.ImGuiComponents.IconButtonWithText(FontAwesomeIcon.Cog, "Settings", ColorEx.Transparent, ColorEx.ButtonActive, ColorEx.TextHovered))
         {
-            Plugin.Plugin.ToggleConfigWindow();
+            Plugin.ToggleConfigWindow();
         }
         ImGui.PopStyleColor();
     }
@@ -168,7 +168,7 @@ public static class Buttons
         ImGui.PushStyleColor(ImGuiCol.Text, ColorEx.Silver);
         if (Dalamud.Interface.Components.ImGuiComponents.IconButtonWithText(FontAwesomeIcon.Cog, "Main Menu", ColorEx.Transparent, ColorEx.ButtonActive, ColorEx.TextHovered))
         {
-            Plugin.Plugin.ToggleMainWindow();
+            Plugin.ToggleMainWindow();
         }
         ImGui.PopStyleColor();
     }
@@ -176,9 +176,9 @@ public static class Buttons
     public static void ExitButtonMainWindowWithText()
     {
         ImGui.PushStyleColor(ImGuiCol.Text, ColorEx.RedBright);
-        if (Dalamud.Interface.Components.ImGuiComponents.IconButtonWithText(FontAwesomeIcon.Times,"Close", ColorEx.Transparent, ColorEx.ButtonActive, ColorEx.TextHovered))
+        if (Dalamud.Interface.Components.ImGuiComponents.IconButtonWithText(FontAwesomeIcon.Times, "Close", ColorEx.Transparent, ColorEx.ButtonActive, ColorEx.TextHovered))
         {
-            Plugin.Plugin.CloseMainWindow();
+            Plugin.CloseMainWindow();
         }
         ImGui.PopStyleColor();
     }
@@ -188,7 +188,7 @@ public static class Buttons
         ImGui.PushStyleColor(ImGuiCol.Text, ColorEx.RedBright);
         if (Dalamud.Interface.Components.ImGuiComponents.IconButton(FontAwesomeIcon.Times, ColorEx.Transparent, ColorEx.ButtonActive, ColorEx.TextHovered))
         {
-            Plugin.Plugin.CloseMainWindow();
+            Plugin.CloseMainWindow();
         }
         ImGui.PopStyleColor();
     }
@@ -198,7 +198,7 @@ public static class Buttons
         ImGui.PushStyleColor(ImGuiCol.Text, ColorEx.RedBright);
         if (Dalamud.Interface.Components.ImGuiComponents.IconButton(FontAwesomeIcon.Times, ColorEx.Transparent, ColorEx.ButtonActive, ColorEx.TextHovered))
         {
-            Plugin.Plugin.CloseMainWindow();
+            Plugin.CloseMainWindow();
         }
         ImGui.PopStyleColor();
     }
@@ -208,7 +208,7 @@ public static class Buttons
         ImGui.PushStyleColor(ImGuiCol.Text, ColorEx.RedBright);
         if (Dalamud.Interface.Components.ImGuiComponents.IconButton(FontAwesomeIcon.Times, ColorEx.Transparent, ColorEx.ButtonActive, ColorEx.TextHovered))
         {
-            Plugin.Plugin.CloseMainWindow();
+            Plugin.CloseMainWindow();
         }
         ImGui.PopStyleColor();
     }
@@ -223,7 +223,7 @@ public static class Buttons
             ImGui.PushStyleColor(ImGuiCol.Text, ColorEx.RedBright);
             if (Dalamud.Interface.Components.ImGuiComponents.IconButton(FontAwesomeIcon.Times, ColorEx.Transparent, ColorEx.ButtonActive, ColorEx.TextHovered))
             {
-                Plugin.Plugin.CloseMainWindow();
+                Plugin.CloseMainWindow();
             }
             ImGui.PopStyleColor(2);
             ImGui.PopStyleVar();
@@ -241,9 +241,9 @@ public static class Buttons
             ImGui.PushStyleVar(ImGuiStyleVar.FrameBorderSize, 1);
             ImGui.PushStyleColor(ImGuiCol.Border, ColorEx.Orange);
             ImGui.PushStyleColor(ImGuiCol.Text, ColorEx.RedBright);
-            if (Dalamud.Interface.Components.ImGuiComponents.IconButtonWithText(FontAwesomeIcon.Times,name, ColorEx.Transparent, ColorEx.ButtonActive, ColorEx.TextHovered))
+            if (Dalamud.Interface.Components.ImGuiComponents.IconButtonWithText(FontAwesomeIcon.Times, name, ColorEx.Transparent, ColorEx.ButtonActive, ColorEx.TextHovered))
             {
-                Plugin.Plugin.CloseMainWindow();
+                Plugin.CloseMainWindow();
             }
             ImGui.PopStyleColor(2);
             ImGui.PopStyleVar();
@@ -519,14 +519,14 @@ public static class Buttons
 
         if (ImGui.IsItemHovered())
         {
-            windowDrawList.AddRectFilled(cursorScreenPos, new Vector2(cursorScreenPos.X + num, cursorScreenPos.Y + frameHeight), ImGui.GetColorU32((!v) ? colors[23] : new Vector4(0.78f, 0.78f, 0.78f, 1f)), frameHeight * 0.5f);
+            windowDrawList.AddRectFilled(cursorScreenPos, new Vector2(cursorScreenPos.X + num, cursorScreenPos.Y + frameHeight), ImGui.GetColorU32(!v ? colors[23] : new Vector4(0.78f, 0.78f, 0.78f, 1f)), frameHeight * 0.5f);
         }
         else
         {
-            windowDrawList.AddRectFilled(cursorScreenPos, new Vector2(cursorScreenPos.X + num, cursorScreenPos.Y + frameHeight), ImGui.GetColorU32((!v) ? (colors[21] * 0.6f) : new Vector4(0.35f, 0.35f, 0.35f, 1f)), frameHeight * 0.5f);
+            windowDrawList.AddRectFilled(cursorScreenPos, new Vector2(cursorScreenPos.X + num, cursorScreenPos.Y + frameHeight), ImGui.GetColorU32(!v ? colors[21] * 0.6f : new Vector4(0.35f, 0.35f, 0.35f, 1f)), frameHeight * 0.5f);
         }
 
-        windowDrawList.AddCircleFilled(new Vector2(cursorScreenPos.X + num2 + (float)(v ? 1 : 0) * (num - num2 * 2f), cursorScreenPos.Y + num2), num2 - 1.5f, ImGui.ColorConvertFloat4ToU32(new Vector4(1f, 1f, 1f, 1f)));
+        windowDrawList.AddCircleFilled(new Vector2(cursorScreenPos.X + num2 + (v ? 1 : 0) * (num - num2 * 2f), cursorScreenPos.Y + num2), num2 - 1.5f, ImGui.ColorConvertFloat4ToU32(new Vector4(1f, 1f, 1f, 1f)));
         return result;
     }
 

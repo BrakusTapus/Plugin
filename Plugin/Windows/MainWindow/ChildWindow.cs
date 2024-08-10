@@ -2,9 +2,9 @@
 using Dalamud.Interface.Utility.Raii;
 using ECommons.ExcelServices;
 using FFXIVClientStructs.FFXIV.Client.Game;
-using ImGuiExtensions;
 using Plugin.AutoMarkt;
 using Plugin.Internal;
+using Plugin.Utilities.UI;
 using Plugin.Windows;
 using static FFXIVClientStructs.FFXIV.Client.Game.RetainerManager;
 
@@ -63,7 +63,7 @@ internal static class ChildWindow
                 float buttonPositionX = windowWidth - buttonWidth - 25 - ImGui.GetStyle().WindowPadding.X;
                 ImGui.SetCursorPosX(buttonPositionX);
 
-                ImGuiExt.CenterItemVertically(ImGui.GetFrameHeight());
+                ImGuiExtKirbo.CenterItemVertically(ImGui.GetFrameHeight());
                 Buttons.ExitButtonExitButtonMainWindow(true, "Exit");
 
                 ImGui.Separator();
@@ -433,12 +433,12 @@ internal static class ChildWindow
             string footerVersionText = "v" + Plugin.P.GetType().Assembly.GetName().Version.ToString();
             var footerVersionTextSize = ImGui.CalcTextSize(footerVersionText);
             ImGui.Separator();
-            ImGuiExt.CenterItemVertically(footerVersionTextSize.Y);
+            ImGuiExtKirbo.CenterItemVertically(footerVersionTextSize.Y);
 
             ImGui.TextDisabled(footerVersionText);
 
             ImGui.SetCursorPosX((ImGui.GetWindowContentRegionMax().X));
-            ImGuiExt.CenterItemVertically(22);
+            ImGuiExtKirbo.CenterItemVertically(22);
 
 
             float windowWidth = ImGui.GetWindowWidth();

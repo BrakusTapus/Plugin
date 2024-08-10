@@ -1,7 +1,7 @@
 using System.Numerics;
 using Lumina.Excel.GeneratedSheets;
 
-namespace ImGuiExtensions;
+namespace Plugin.Utilities.UI;
 
 /// <summary>
 /// A set of fancy color for use in plugins.
@@ -17,7 +17,7 @@ public static class ColorEx
     public unsafe static Vector4 Vector4FromRGB(uint col, float alpha = 1.0f)
     {
         byte* bytes = (byte*)&col;
-        return new Vector4((float)bytes[2] / 255f, (float)bytes[1] / 255f, (float)bytes[0] / 255f, alpha);
+        return new Vector4(bytes[2] / 255f, bytes[1] / 255f, bytes[0] / 255f, alpha);
     }
 
     //internal static KirboColor Transparent2 { get; } = new(Vector4.Zero);

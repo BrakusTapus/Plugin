@@ -1,6 +1,6 @@
 ﻿using System.Runtime.InteropServices;
 
-namespace ImGuiExtensions;
+namespace Plugin.Utilities.UI;
 
 [StructLayout(LayoutKind.Explicit)]
 public struct ImGuiWindow

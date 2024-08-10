@@ -8,7 +8,6 @@ using Dalamud.Interface.Textures;
 using Dalamud.Interface.Textures.TextureWraps;
 using Dalamud.Plugin.Services;
 using ECommons.ImGuiMethods;
-using ImGuiExtensions;
 using ImGuiNET;
 using Plugin.Utilities.UI;
 
@@ -65,7 +64,7 @@ public class TextureService
         Vector2 size = drawInfo.DrawSize ?? textureWrap.Size;
         size *= drawInfo.Scale; // Apply scaling
 
-        if (!ImGuiExt.IsInViewport(size))
+        if (!ImGuiExtKirbo.IsInViewport(size))
         {
             ImGui.Dummy(size);
             return;

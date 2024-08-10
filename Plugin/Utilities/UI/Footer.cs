@@ -1,12 +1,12 @@
-﻿namespace ImGuiExtensions;
+﻿namespace Plugin.Utilities.UI;
 
-public static class Header
+public static class Footer
 {
-    public record HeaderOptions
+    public record FooterOptions
     {
         public bool Collapsible { get; init; } = false;
         public uint TextColor { get; init; } = ImGui.GetColorU32(ImGuiCol.Text);
-        public Action TextAction { get; init; } = null;
+        public Action? TextAction { get; init; } = null;
         public uint BorderColor { get; init; } = ImGui.GetColorU32(ImGuiCol.Border);
         public Vector2 BorderPadding { get; init; } = ImGui.GetStyle().WindowPadding;
         public float BorderRounding { get; init; } = ImGui.GetStyle().FrameRounding;
@@ -16,11 +16,11 @@ public static class Header
         public float MaxX { get; set; }
     }
 
-    private static readonly Stack<HeaderOptions> headerOptionsStack = new();
+    private static readonly Stack<FooterOptions> footerOptionsStack = new();
 
-    public unsafe static bool BeginHeader(string? id = null, float minimumWindowPercent = 1.0f, HeaderOptions? options = null)
+    public static bool BeginFooter(string? id = "BeginFooter", float minimumWindowPercent = 1.0f, FooterOptions? options = null)
     {
-        options ??= new HeaderOptions();
+        options ??= new FooterOptions();
         ImGui.BeginGroup();
 
         bool open = true;
@@ -45,8 +45,8 @@ public static class Header
 
         ImGuiStylePtr style = ImGui.GetStyle();
         float spacing = style.ItemSpacing.X * (1 - minimumWindowPercent);
-        float contentRegionWidth = headerOptionsStack.TryPeek(out var parent) ? parent.Width - parent.BorderPadding.X * 2 : ImGui.GetWindowContentRegionMax().X - style.WindowPadding.X;
-        float width = Math.Max((contentRegionWidth * minimumWindowPercent) - spacing, 1);
+        float contentRegionWidth = footerOptionsStack.TryPeek(out var parent) ? parent.Width - parent.BorderPadding.X * 2 : ImGui.GetWindowContentRegionMax().X - style.WindowPadding.X;
+        float width = Math.Max(contentRegionWidth * minimumWindowPercent - spacing, 1);
         options.Width = minimumWindowPercent > 0 ? width : 0;
 
         ImGui.BeginGroup();
@@ -63,26 +63,26 @@ public static class Header
         }
 
         ImGui.Indent(Math.Max(options.BorderPadding.X, 0.01f));
-        ImGui.PushItemWidth(MathF.Floor((width - (options.BorderPadding.X * 2)) * 0.65f));
+        ImGui.PushItemWidth(MathF.Floor((width - options.BorderPadding.X * 2) * 0.65f));
 
-        headerOptionsStack.Push(options);
+        footerOptionsStack.Push(options);
         if (open)
         {
             return true;
         }
 
         ImGui.TextDisabled(". . .");
-        EndHeader();
+        EndFooter();
         return false;
     }
 
-    public static bool BeginHeader(string? text, HeaderOptions? options) => BeginHeader(text, 1.0f, options);
+    public static bool BeginFooter(string text, FooterOptions options) => BeginFooter(text, 1.0f, options);
 
-    public static bool BeginHeader(uint borderColor, float minimumWindowPercent = 1.0f) => BeginHeader(null, minimumWindowPercent, new HeaderOptions { BorderColor = borderColor });
+    public static bool BeginFooter(uint borderColor, float minimumWindowPercent = 1.0f) => BeginFooter(string.Empty, minimumWindowPercent, new FooterOptions { BorderColor = borderColor });
 
-    public unsafe static void EndHeader()
+    public unsafe static void EndFooter()
     {
-        HeaderOptions options = headerOptionsStack.Pop();
+        FooterOptions options = footerOptionsStack.Pop();
         bool autoAdjust = options.Width <= 0;
         ImGui.PopItemWidth();
         ImGui.Unindent(Math.Max(options.BorderPadding.X, 0.01f));

@@ -1,7 +1,6 @@
 ﻿using System.IO;
 using System.Numerics;
 using Dalamud.Interface.Textures.TextureWraps;
-using ImGuiExtensions;
 using ImGuiNET;
 
 namespace Plugin.Utilities.UI;
@@ -120,7 +119,7 @@ public static class ImageLoader
         ImGui.SameLine();
         ImageLoader.DrawImage(UiPaths.OtherPath, "compass.png", 64);
         ImGui.SameLine();
-        ImageLoader.DrawImage(UiPaths.OtherPath, "compass.png", 64, ColorEx.DarkType);
+        ImageLoader.DrawImage(UiPaths.OtherPath, "compass.png", 64, ColorEx.BlueSea);
         ImGui.SameLine();
         ImageLoader.DrawImage(UiPaths.OtherPath, "compass.png", 64, ColorEx.DarkType, ColorEx.Silver);
         ImGui.SameLine();

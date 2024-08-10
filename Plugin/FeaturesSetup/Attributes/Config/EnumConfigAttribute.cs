@@ -1,7 +1,7 @@
 using Dalamud.Interface.Utility.Raii;
-using ImGuiExtensions;
 using ImGuiNET;
 using Plugin.Utilities;
+using Plugin.Utilities.UI;
 using System.Reflection;
 
 namespace Plugin.FeaturesSetup.Attributes;
@@ -23,7 +23,7 @@ public class EnumConfigAttribute : BaseConfigAttribute
             ImGui.TextUnformatted(fieldInfo.Name.SplitWords());
         }
 
-        using var indent = ImGuiExt.ConfigIndent(!NoLabel);
+        using var indent = ImGuiExtKirbo.ConfigIndent(!NoLabel);
 
         var selectedValue = Convert.ToInt32(fieldInfo.GetValue(config) ?? 0);
         using var combo = ImRaii.Combo("##Input", GetOptionLabel(selectedValue));
@@ -47,6 +47,8 @@ public class EnumConfigAttribute : BaseConfigAttribute
         }
         combo?.Dispose();
         if (!attr?.Description.IsNullOrEmpty() ?? false)
+        {
             ImGuiHelpers.SafeTextColoredWrapped(ColorEx.Grey, attr!.Description);
+        }
     }
 }

@@ -1,9 +1,9 @@
 using Dalamud.Interface.Utility.Raii;
 using ECommons.Configuration;
 
-namespace ImGuiExtensions;
+namespace Plugin.Utilities.UI;
 
-public static class ImGuiExt
+public static class ImGuiExtKirbo
 {
     public static float Scale => ImGuiHelpers.GlobalScale;
 
@@ -195,8 +195,8 @@ public static class ImGuiExt
     #region Sliders
     public static bool SliderIntAsFloat(string id, ref int value, int min, int max, float divider = 1)
     {
-        float f = (float)value / divider;
-        bool ret = ImGui.SliderFloat(id, ref f, (float)min / divider, (float)max / divider);
+        float f = value / divider;
+        bool ret = ImGui.SliderFloat(id, ref f, min / divider, max / divider);
         if (ret)
         {
             value = (int)(f * divider);
@@ -210,7 +210,7 @@ public static class ImGuiExt
         bool ret = ImGui.SliderInt(id, ref i, (int)min / divider, (int)max / divider);
         if (ret)
         {
-            value = (float)(i * divider);
+            value = i * divider;
         }
         return ret;
     }
