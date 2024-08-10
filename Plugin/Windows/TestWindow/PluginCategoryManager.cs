@@ -64,7 +64,7 @@ internal class PluginCategoryManager
         Commands,
 
         /// <summary>
-        /// UI group: Features.
+        /// UI group: AutoMation.
         /// </summary>
         Features,
 
@@ -207,7 +207,7 @@ internal class PluginCategoryManager
     //    // rebuild map plugin name -> categoryIds
     //    this.mapPluginCategories.Clear();
 
-    //    var groupAvail = Array.Find(this.groupList, x => x.GroupKind == GroupKind.Features);
+    //    var groupAvail = Array.Find(this.groupList, x => x.GroupKind == GroupKind.AutoMation);
     //    var prevCategoryIds = new List<CategoryKind>();
     //    prevCategoryIds.AddRange(groupAvail.Categories);
 
@@ -290,7 +290,7 @@ internal class PluginCategoryManager
 
     //        var includeAll = this.currentCategoryKind == CategoryKind.All ||
     //                         this.currentCategoryKind == CategoryKind.Hidden ||
-    //                         groupInfo.GroupKind != GroupKind.Features;
+    //                         groupInfo.GroupKind != GroupKind.AutoMation;
 
     //        if (includeAll)
     //        {
@@ -479,7 +479,7 @@ internal class PluginCategoryManager
 
         public static string Group_Commands => Loc.Localize("MainWindowCommands", "Commands");
 
-        public static string Group_Features => Loc.Localize("MainWindowFeatures", "Features");
+        public static string Group_Features => Loc.Localize("MainWindowFeatures", "AutoMation");
 
         public static string Group_Tasks => Loc.Localize("MainWindowTasks", "Tasks");
 

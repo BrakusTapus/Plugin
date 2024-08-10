@@ -7,7 +7,7 @@
 //using static ECommons.GenericHelpers;
 //using Addon = Lumina.Excel.GeneratedSheets.Addon;
 
-//namespace PandorasBox.Features.UI
+//namespace PandorasBox.AutoMation.UI
 //{
 //    public unsafe class AutoCloseMenus : Feature
 //    {

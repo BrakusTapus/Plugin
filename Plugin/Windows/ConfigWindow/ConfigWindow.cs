@@ -1,13 +1,11 @@
-using System;
-using System.Numerics;
-using Dalamud.Interface.Components;
-using Dalamud.Interface.Utility;
-using Dalamud.Interface.Windowing;
+
 using ECommons.Configuration;
-using ImGuiExtensions;
-using ImGuiNET;
-// using Plugin.Configurations; //TODO: If migrating to Ecommons EzConfig is succesfol then this can be removed
-using Plugin.Utilities.UI;
+using ECommons.UIHelpers.AddonMasterImplementations;
+using FFXIVClientStructs.FFXIV.Client.Game;
+using FFXIVClientStructs.FFXIV.Component.GUI;
+using Plugin.AutoMarkt;
+using Plugin.Utilities;
+using static FFXIVClientStructs.FFXIV.Client.Game.RetainerManager;
 
 namespace Plugin.Windows;
 
@@ -128,6 +126,12 @@ public class ConfigWindow : Window, IDisposable
             if (ImGui.BeginTabItem("Config Window Settings"))
             {
                 DrawConfigWindowSettings();
+                ImGui.EndTabItem();
+            }
+
+            if (ImGui.BeginTabItem("Task Buttons"))
+            {
+                DrawTab4();
                 ImGui.EndTabItem();
             }
 
@@ -283,6 +287,118 @@ public class ConfigWindow : Window, IDisposable
         }
     }
 
+    private string _retainerName = string.Empty; // To store the inputted retainer name
+
+    private unsafe void DrawTab4()
+    {
+
+
+
+        RetainerManager* retainerMAnager = RetainerManager.Instance();
+        Span<byte> CurrentRetainer = retainerMAnager->DisplayOrder;
+        Retainer* activeRetainer = retainerMAnager->GetActiveRetainer();
+
+
+
+        string Name =  activeRetainer->NameString;
+        string retainerId = retainerMAnager->RetainerObjectId.ToString();
+        byte Level =  activeRetainer->Level;
+        int MarketItemCount = activeRetainer->MarketItemCount;
+        uint Gil = activeRetainer->Gil;
+
+
+
+        ImGui.TextWrapped($"Name: {Name}  ID: {retainerId}  Level: {Level}  MarketItemmCount: {MarketItemCount} Gill: {Gil}");
+        ImGui.NewLine();
+        ImGui.NewLine();
+        ImGui.NewLine();
+
+
+
+        if (ImGui.Button(nameof(AutoMarktTasks.CloseRetainerList)))
+        {
+            AutoMarktTasks.CloseRetainerList();
+        };
+
+        // Button to trigger retainer selection
+        if (ImGui.Button("Select Retainer"))
+        {
+            try
+            {
+                // Call the SelectRetainerByName method with the inputted name
+                var result = AutoMarktTasks.SelectRetainerByName(_retainerName);
+
+                if (result == true)
+                {
+                    ImGui.Text("Retainer selected successfully.");
+                }
+                else
+                {
+                    ImGui.Text("Failed to select retainer.");
+                }
+            }
+            catch (Exception ex)
+            {
+                // Display error message
+                ImGui.Text($"Error: {ex.Message}");
+            }
+        }
+        ImGui.SameLine();
+        // Input field for the retainer name
+        ImGui.InputText("Retainer Name", ref _retainerName, 100);
+
+
+
+        if (ImGui.Button("Select Sell Item List"))
+        {
+            AutoMarktTasks.SelectSellItemsInIventoryOnTheMarket();
+        }
+
+        if (ImGui.Button("ClickSellingItem 'index'"))
+        {
+
+        }
+
+        if (ImGui.Button("ClickAdjustPrice\n(Context Menu)"))
+        {
+            AutoMarktTasks.ClickAdjustPrice();
+        }
+
+
+
+
+
+        if (ImGui.Button("Step ClickComparePrice"))
+        {
+
+        }
+
+        if (ImGui.Button("Step GetLowestPrice"))
+        {
+
+        }
+
+
+        if (ImGui.Button("Step FillLowestPrice"))
+        {
+
+        }
+
+
+        if (ImGui.Button("Step Return to RetainerSellList"))
+        {
+
+        }
+        if (ImGui.Button("Step Select next Item in list"))
+        {
+
+        }
+        if (ImGui.Button("Step GetLowestPrice"))
+        {
+
+        }
+
+    }
 
 
 }

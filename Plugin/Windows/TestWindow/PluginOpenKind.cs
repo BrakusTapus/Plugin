@@ -22,9 +22,9 @@
 //    Commands,
 
 //    /// <summary>
-//    /// Open to the "Features" page.
+//    /// Open to the "AutoMation" page.
 //    /// </summary>
-//    Features,
+//    AutoMation,
 
 //    /// <summary>
 //    /// Open to the "Tasks" page.

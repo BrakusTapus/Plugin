@@ -1,180 +1,192 @@
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Runtime.InteropServices;
+using System.Text;
+using System.Text.RegularExpressions;
+using System.Threading.Tasks;
 using Dalamud.Game.Addon.Lifecycle;
 using Dalamud.Game.Addon.Lifecycle.AddonArgTypes;
+using Dalamud.Game.Text;
 using Dalamud.Game.Text.SeStringHandling;
 using Dalamud.Game.Text.SeStringHandling.Payloads;
-using Dalamud.Interface;
 using Dalamud.Memory;
-using ECommons;
+using Dalamud.Utility;
 using ECommons.Automation;
-using ECommons.Configuration;
+using ECommons.Throttlers;
+using ECommons.UIHelpers.AddonMasterImplementations;
 using FFXIVClientStructs.FFXIV.Client.Game;
-using FFXIVClientStructs.FFXIV.Client.System.Framework;
 using FFXIVClientStructs.FFXIV.Client.UI;
 using FFXIVClientStructs.FFXIV.Client.UI.Agent;
 using FFXIVClientStructs.FFXIV.Component.GUI;
-using ImGuiNET;
-using Lumina.Excel.GeneratedSheets;
-using Plugin.FeaturesSetup;
-using Plugin.FeaturesSetup.Attributes;
-using System.Runtime.InteropServices;
-using System.Text.RegularExpressions;
+using Plugin.Utilities;
+using static ECommons.UIHelpers.AddonMasterImplementations.AddonMaster.RetainerList;
+using static FFXIVClientStructs.FFXIV.Client.Game.RetainerManager;
 
-namespace Plugin.AutoMation;
-
-public class AutoAdjustRetainerListingsConfiguration
+namespace Plugin.AutoMarkt;
+public static unsafe partial class AutoMarktTasks
 {
-    [IntConfig(DefaultValue = 1)]
-    public int PriceReduction = 1;
+    public static bool isInitialized = false;
 
-    [IntConfig(DefaultValue = 100)]
-    public int LowestAcceptablePrice = 100;
+    public static int PriceReduction = 1;
 
-    [BoolConfig]
-    public bool SeparateNQAndHQ = false;
+    public static int LowestAcceptablePrice = 100;
 
-    [IntConfig(DefaultValue = 0)]
-    public int MaxPriceReduction = 0;
-}
+    public static bool SeparateNQAndHQ = true;
 
-[Tweak]
-public partial class AutoAdjustRetainerListings : Tweak<AutoAdjustRetainerListingsConfiguration>
-{
-    public override string Name => "Auto Adjust Retainer Listings";
-    public override string Description => "This feature is undergoing functionality and configuration renovations and is subject to heavy changes in the future. Do not speak of this feature.";
+    public static int MaxPriceReduction = 5000;
 
-    private static Listing? CurrentItem;
-    private static Listing? LastItem;
-    private static List<Listing>? Listings;
+
     private static int CurrentItemPrice;
     private static int CurrentMarketLowestPrice;
     private static uint CurrentItemSearchItemID;
     private static bool IsCurrentItemHQ;
+    private static int MarketItemCount;
     private static unsafe RetainerManager.Retainer* CurrentRetainer;
+    public static unsafe RetainerManager* retainerManager;
 
-    public class Listing
+    public static void Initialize()
     {
-        public uint ID;
-        public int Price;
-        public int MarketLowest;
-        public string Retainer = "";
-    }
-
-    public override void Enable()
-    {
-        Svc.AddonLifecycle.RegisterListener(AddonEvent.PostSetup, "RetainerSellList", OnRetainerSellList); // List of items
-        Svc.AddonLifecycle.RegisterListener(AddonEvent.PostSetup, "RetainerSell", OnRetainerSell);
-        Svc.AddonLifecycle.RegisterListener(AddonEvent.PreFinalize, "RetainerSell", OnRetainerSell);
-    }
-
-    public override void Disable()
-    {
-        Svc.AddonLifecycle.UnregisterListener(OnRetainerSellList);
-        Svc.AddonLifecycle.UnregisterListener(OnRetainerSell);
-        TaskManager.Abort();
-    }
-
-    public override void DrawConfig()
-    {
-        DrawConfigUI();
-        ImGui.SameLine();
-        base.DrawConfig();
-        //if (ImGui.Button("cancel"))
-        //    TaskManager.Abort();
-
-    }
-
-    private static bool IsEnAbled = false;
-    private void DrawConfigUI()
-    {
-        if (ImGui.Checkbox("Enable Auto Adjust Retainer Listings", ref IsEnAbled))
+        if (isInitialized)
         {
-            // Update logic based on the new state of IsEnAbled
-            if (IsEnAbled)
-            {
-                Enable(); // Call the enable method
-            }
-            else
-            {
-                Disable(); // Call the disable method
-            }
+            MyServices.Services.PluginLog.Warning("RetainerManager instance is already initialized!.");
+            return;
         }
+        retainerManager = RetainerManager.Instance();         // Get the instance of the RetainerManager and store it in the static property
+        isInitialized = true;
 
-        try
+        if (retainerManager != null)
         {
-            bool stepMode = TaskManager.StepMode;
-            if (ImGui.Checkbox("Step Mode", ref stepMode))
+            MyServices.Services.PluginLog.Debug("RetainerManager instance initialized successfully.");
+        }
+        else
+        {
+            MyServices.Services.PluginLog.Error("Failed to initialize RetainerManager instance.");
+        }
+    }
+
+    private static unsafe int GetRetainerManagerInstance()
+    {
+        Retainer* activeRetainer = retainerManager->GetActiveRetainer();
+        MarketItemCount = (int)activeRetainer->MarketItemCount; // Casting byte to int
+        return MarketItemCount;
+    }
+
+    public static class Listing
+    {
+        public static uint ID;
+        public static int Price;
+        public static int MarketLowest;
+        public static string Retainer = "";
+    }
+
+
+
+    // Closes menu with all the retainerSortedByIndex 
+    internal unsafe static bool? CloseRetainerList()
+    {
+        if (TryGetAddonByName<AtkUnitBase>("RetainerList", out var retainerList) && IsAddonReady(retainerList))
+        {
+            if (Utils.GenericThrottle)
             {
-                TaskManager.StepMode = stepMode;
-            }
-            ImGui.SameLine();
-            // Always render the "Advance Task" button
-            if (ImGui.Button("Advance Task"))
-            {
-                if (TaskManager.StepMode)
+                var v = stackalloc AtkValue[1]
                 {
-                    TaskManager.Step(); // Manually advance tasks if StepMode is enabled
-                }
-                else
+                    new()
+                    {
+                        Type = FFXIVClientStructs.FFXIV.Component.GUI.ValueType.Int,
+                        Int = -1
+                    }
+                };
+                C.IsCloseActionAutomatic = true;
+                retainerList->FireCallback(1, v);
+                SimpleLog.DebugLog($"Closing retainerSortedByIndex window");
+                Svc.Toasts.ShowQuest("Closing retainerSortedByIndex window!");
+                return true;
+            }
+        }
+        return false;
+    }
+
+
+    //1 can select a retainerSortedByIndex based on name
+    public unsafe static bool? SelectRetainerByName(string name)
+    {
+        if (name == null)
+        {
+            throw new Exception($"Name can not be null or empty");
+        }
+        if (TryGetAddonByName<AtkUnitBase>("RetainerList", out var retainerList) && IsAddonReady(retainerList))
+        {
+            var list = new AddonMaster.RetainerList(retainerList);
+            foreach (var retainer in list.Retainers)
+            {
+                if (retainer.Name == name)
                 {
-                    // Optionally provide feedback if StepMode is not enabled
-                    ImGui.Text("Step Mode is disabled. Enable it to manually advance tasks.");
+                    if (Utils.GenericThrottle)
+                    {
+                        SimpleLog.DebugLog($"Selecting retainerSortedByIndex {retainer.Name} with index {retainer.Index}");
+                        Svc.Toasts.ShowQuest($"Selecting retainerSortedByIndex {retainer.Name} with index {retainer.Index}");
+                        retainer.Select();
+                        return true;
+                    }
                 }
             }
-            RenderTaskManagerInfo();
         }
-        catch (Exception ex)
+
+        return false;
+    }
+
+    public unsafe static bool SelectRetainerByIndex(uint index)
+    {
+        if (retainerManager == null)
+        {
+            throw new Exception("RetainerManager instance is null");
+        }
+
+        var retainerCount = retainerManager->GetRetainerCount();
+        if (index >= retainerCount)
+        {
+            throw new ArgumentOutOfRangeException(nameof(index), "Index is out of range of available retainers.");
+        }
+
+        Retainer* retainerSortedByIndex = retainerManager->GetRetainerBySortedIndex(index);
+        if (retainerSortedByIndex == null) return false;
+
+        if (TryGetAddonByName<AtkUnitBase>("RetainerList", out var retainerList) && IsAddonReady(retainerList))
         {
 
-            Svc.Log.Error($"{ex}");
+            var list = new AddonMaster.RetainerList(retainerList);
+            foreach (var retainer in list.Retainers)
+            {
+                if (retainer.Index == index)
+                {
+                    if (Utils.GenericThrottle)
+                    {
+                        // Log and select the retainerSortedByIndex
+                        SimpleLog.DebugLog($"Selecting retainerSortedByIndex {retainer.Name} with index {index}");
+                        Svc.Toasts.ShowQuest($"Selecting retainerSortedByIndex {retainer.Name} with index {index}");
+                        retainer.Select();
+                        return true;
+                    }
+                }
+            }
         }
-
+        return false;
     }
 
-    void RenderTaskManagerInfo()
+    //2 
+    public static bool? SelectSellItemsInIventoryOnTheMarket()
     {
-        // Default values for TaskManager properties
-        string currentTask = TaskManager.CurrentTask?.ToString() ?? "No Current Task";
-        bool isBusy = TaskManager.IsBusy;
-        int maxTasks = TaskManager.MaxTasks > 0 ? TaskManager.MaxTasks : 0;
-        int numQueuedTasks = TaskManager.NumQueuedTasks > 0 ? TaskManager.NumQueuedTasks : 0;
-        float progress = TaskManager.Progress >= 0 ? TaskManager.Progress : 0.0f;
-        long remainingTimeMS = TaskManager.RemainingTimeMS >= 0 ? TaskManager.RemainingTimeMS : 0L;
-
-        // Render each property on a separate line
-        ImGui.Text("Current Task: " + currentTask);
-        ImGui.Text("Is Busy: " + isBusy.ToString());
-        ImGui.Text("Max Tasks: " + maxTasks.ToString());
-        ImGui.Text("Queued Tasks: " + numQueuedTasks.ToString());
-        ImGui.Text("Progress: " + progress.ToString("0.00%"));  // Display as percentage
-        ImGui.Text("Remaining Time (ms): " + remainingTimeMS.ToString());
+        // 2381,"<If(Equal(IntegerParameter(1),0))><Else/><Gui(63)/></If>Sell items in your retainerSortedByIndex's inventory on the market."
+        var text = Svc.Data.GetExcelSheet<Lumina.Excel.GeneratedSheets.Addon>().GetRow(2380).Text.ToDalamudString().ExtractText(true);
+        Svc.Toasts.ShowQuest($"Item selected: {text}");
+        return TrySelectSpecificEntry(text);
     }
 
-    //Method to handle the retainer sell event
-    private void OnRetainerSell(AddonEvent eventType, AddonArgs addonInfo)
+    public static unsafe void OnRetainerSellList(AddonEvent type, AddonArgs args)
     {
-        switch (eventType)
-        {
-            case AddonEvent.PostSetup:
-                if (TaskManager.IsBusy) return;
-                TaskManager.Enqueue(ClickComparePrice);
-                TaskManager.DefaultConfiguration.AbortOnTimeout = false;
-                TaskManager.EnqueueDelay(500);
-                TaskManager.Enqueue(GetLowestPrice);
-                TaskManager.DefaultConfiguration.AbortOnTimeout = true;
-                TaskManager.EnqueueDelay(100);
-                TaskManager.Enqueue(FillLowestPrice);
-                break;
-            case AddonEvent.PreFinalize:
-                if (TaskManager.NumQueuedTasks <= 1)
-                    TaskManager.Abort();
-                break;
-        }
-    }
+        var activeRetainer = retainerManager->GetActiveRetainer();
 
-    // Method to handle the retainer sell list event
-    private unsafe void OnRetainerSellList(AddonEvent type, AddonArgs args)
-    {
-        var activeRetainer = RetainerManager.Instance()->GetActiveRetainer();
         if (CurrentRetainer == null || CurrentRetainer != activeRetainer)
             CurrentRetainer = activeRetainer;
         else
@@ -186,26 +198,24 @@ public partial class AutoAdjustRetainerListings : Tweak<AutoAdjustRetainerListin
             CurrentMarketLowestPrice = 0;
         }
     }
-
-    // Enqueues a single item for processing
-    private void EnqueueSingleItem(int index)
+    public static void EnqueueSingleItem(int index)
     {
-        TaskManager.Enqueue(() => ClickSellingItem(index));
-        TaskManager.EnqueueDelay(100);
-        TaskManager.Enqueue(ClickAdjustPrice);
-        TaskManager.EnqueueDelay(100);
-        TaskManager.Enqueue(ClickComparePrice);
-        TaskManager.EnqueueDelay(500);
-        TaskManager.DefaultConfiguration.AbortOnTimeout = false;
-        TaskManager.Enqueue(GetLowestPrice);
-        TaskManager.DefaultConfiguration.AbortOnTimeout = true;
-        TaskManager.EnqueueDelay(100);
-        TaskManager.Enqueue(FillLowestPrice);
-        TaskManager.EnqueueDelay(800);
+        P.TaskManager.Enqueue(() => ClickSellingItem(index));
+        P.TaskManager.EnqueueDelay(100);
+        P.TaskManager.Enqueue(ClickAdjustPrice);
+        P.TaskManager.EnqueueDelay(100);
+        P.TaskManager.Enqueue(ClickComparePrice);
+        P.TaskManager.EnqueueDelay(500);
+        P.TaskManager.DefaultConfiguration.AbortOnTimeout = false;
+        P.TaskManager.Enqueue(GetLowestPrice);
+        P.TaskManager.DefaultConfiguration.AbortOnTimeout = true;
+        P.TaskManager.EnqueueDelay(100);
+        P.TaskManager.Enqueue(FillLowestPrice);
+        P.TaskManager.EnqueueDelay(800);
     }
 
     // Gets listings from the inventory
-    private static unsafe void GetListings()
+    public static unsafe void GetListings()
     {
         var container = InventoryManager.Instance()->GetInventoryContainer(InventoryType.RetainerMarket);
         for (var i = 0; i < container->Size; i++)
@@ -217,14 +227,14 @@ public partial class AutoAdjustRetainerListings : Tweak<AutoAdjustRetainerListin
     }
 
     // Gets the count of listings in the inventory
-    private static unsafe int GetListingsCount()
+    public static unsafe int GetListingsCount()
     {
         var container = InventoryManager.Instance()->GetInventoryContainer(InventoryType.RetainerMarket);
         return container != null ? Enumerable.Range(0, (int)container->Size).Count(i => container->GetInventorySlot(i) != null) : 0;
     }
 
     // Clicks the selling item in the UI
-    private static unsafe bool? ClickSellingItem(int index)
+    public static unsafe bool? ClickSellingItem(int index)
     {
         if (GenericHelpers.TryGetAddonByName<AtkUnitBase>("RetainerSellList", out var addon) && GenericHelpers.IsAddonReady(addon))
         {
@@ -236,7 +246,7 @@ public partial class AutoAdjustRetainerListings : Tweak<AutoAdjustRetainerListin
     }
 
     // Clicks the adjust price button in the UI
-    private static unsafe bool? ClickAdjustPrice()
+    public static unsafe bool? ClickAdjustPrice()
     {
         if (GenericHelpers.TryGetAddonByName<AtkUnitBase>("ContextMenu", out var addon) && GenericHelpers.IsAddonReady(addon))
         {
@@ -248,7 +258,7 @@ public partial class AutoAdjustRetainerListings : Tweak<AutoAdjustRetainerListin
     }
 
     // Clicks the compare price button in the UI
-    private static unsafe bool? ClickComparePrice()
+    public static unsafe bool? ClickComparePrice()
     {
         if (GenericHelpers.TryGetAddonByName<AtkUnitBase>("RetainerSell", out var addon) && GenericHelpers.IsAddonReady(addon))
         {
@@ -263,7 +273,7 @@ public partial class AutoAdjustRetainerListings : Tweak<AutoAdjustRetainerListin
     }
 
     // Gets the lowest price from the market board
-    private unsafe bool? GetLowestPrice()
+    public static unsafe bool? GetLowestPrice()
     {
         if (GenericHelpers.TryGetAddonByName<AtkUnitBase>("ItemSearchResult", out var addon) && GenericHelpers.IsAddonReady(addon))
         {
@@ -278,7 +288,7 @@ public partial class AutoAdjustRetainerListings : Tweak<AutoAdjustRetainerListin
                 return true;
             }
 
-            if (Config.SeparateNQAndHQ && IsCurrentItemHQ)
+            if (SeparateNQAndHQ && IsCurrentItemHQ)
             {
                 var foundHQItem = false;
                 for (var i = 1; i <= 12 && !foundHQItem; i++)
@@ -311,7 +321,7 @@ public partial class AutoAdjustRetainerListings : Tweak<AutoAdjustRetainerListin
     }
 
     // Fills the lowest price into the UI
-    private unsafe bool? FillLowestPrice()
+    public static unsafe bool? FillLowestPrice()
     {
         try
         {
@@ -321,7 +331,7 @@ public partial class AutoAdjustRetainerListings : Tweak<AutoAdjustRetainerListin
                 var priceComponent = addon->AskingPrice;
 
                 // Check if the current market lowest price is below the acceptable price
-                if (CurrentMarketLowestPrice - Config.PriceReduction < Config.LowestAcceptablePrice)
+                if (CurrentMarketLowestPrice - PriceReduction < LowestAcceptablePrice)
                 {
                     var message = GetSeString(
                 "Item is listed lower than minimum price, skipping",
@@ -330,7 +340,7 @@ public partial class AutoAdjustRetainerListings : Tweak<AutoAdjustRetainerListin
                     IsCurrentItemHQ  ? ItemPayload.ItemKind.Hq : ItemPayload.ItemKind.Normal),
                 CurrentMarketLowestPrice,
                 CurrentItemPrice,
-                Config.LowestAcceptablePrice);
+                LowestAcceptablePrice);
 
                     ModuleMessage(message);
                     Callback.Fire((AtkUnitBase*)addon, true, 1);
@@ -340,8 +350,8 @@ public partial class AutoAdjustRetainerListings : Tweak<AutoAdjustRetainerListin
                 }
 
                 // Check if the current item price exceeds the maximum acceptable reduction
-                if (Config.MaxPriceReduction != 0 &&
-                    CurrentItemPrice - CurrentMarketLowestPrice > Config.MaxPriceReduction)
+                if (MaxPriceReduction != 0 &&
+                    CurrentItemPrice - CurrentMarketLowestPrice > MaxPriceReduction)
                 {
                     var message = GetSeString(
                     "Item has exceeded maximum acceptable reduction, skipping",
@@ -350,7 +360,7 @@ public partial class AutoAdjustRetainerListings : Tweak<AutoAdjustRetainerListin
                         IsCurrentItemHQ ? ItemPayload.ItemKind.Hq : ItemPayload.ItemKind.Normal),
                     CurrentMarketLowestPrice,
                     CurrentItemPrice,
-                    Config.MaxPriceReduction);
+                    MaxPriceReduction);
 
                     ModuleMessage(message);
                     Callback.Fire((AtkUnitBase*)addon, true, 1);
@@ -358,7 +368,7 @@ public partial class AutoAdjustRetainerListings : Tweak<AutoAdjustRetainerListin
                     return true;
                 }
 
-                priceComponent->SetValue(CurrentMarketLowestPrice - Config.PriceReduction);
+                priceComponent->SetValue(CurrentMarketLowestPrice - PriceReduction);
                 Callback.Fire((AtkUnitBase*)addon, true, 0);
                 ui->Close(true);
                 return true;
@@ -375,14 +385,14 @@ public partial class AutoAdjustRetainerListings : Tweak<AutoAdjustRetainerListin
     }
 
 
-    private unsafe bool HandleMarketBoardError()
+    public unsafe static bool HandleMarketBoardError()
     {
         try
         {
             // Check if the error message is displayed
             if (IsMarketBoardErrorDisplayed())
             {
-                if (GenericHelpers.TryGetAddonByName<AddonRetainerSell>("RetainerSell", out var addon) && GenericHelpers.IsAddonReady(&addon->AtkUnitBase))
+                if (GenericHelpers.TryGetAddonByName<AddonRetainerSell>("ItemSearchResult", out var addon) && GenericHelpers.IsAddonReady(&addon->AtkUnitBase))
                 {
                     var ui = &addon->AtkUnitBase;
                     var priceComponent = addon->AskingPrice;
@@ -439,11 +449,10 @@ public partial class AutoAdjustRetainerListings : Tweak<AutoAdjustRetainerListin
         }
     }
 
+    private static readonly Dictionary<string, string>? resourceData = new Dictionary<string, string>();
+    private static readonly Dictionary<string, string>? fbResourceData = new Dictionary<string, string>();
 
-    private readonly Dictionary<string, string>? resourceData = new Dictionary<string, string>();
-    private readonly Dictionary<string, string>? fbResourceData = new Dictionary<string, string>();
-
-    public SeString GetSeString(string key, params object[] args)
+    public static SeString GetSeString(string key, params object[] args)
     {
         var format = resourceData.TryGetValue(key, out var resValue) ? resValue : fbResourceData.GetValueOrDefault(key);
         var ssb = new SeStringBuilder();
@@ -477,4 +486,117 @@ public partial class AutoAdjustRetainerListings : Tweak<AutoAdjustRetainerListin
 
     [GeneratedRegex("[^0-9]")]
     private static partial Regex AutoRetainerPriceAdjustRegex();
+
+
+
+
+
+
+    public static void ModuleMessage(SeString messageTemplate) => ModuleMessage(messageTemplate.TextValue);
+    public static void ModuleMessage(string messageTemplate)
+    {
+        var message = new XivChatEntry
+        {
+            Message = new SeStringBuilder()
+                .AddUiForeground($"[{P.Name}] ", 62)
+                .Append(messageTemplate)
+                .Build()
+        };
+
+        Svc.Chat.Print(message);
+    }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    internal static bool GenericThrottle => C.UseFrameDelay ? FrameThrottler.Throttle("AutoRetainerGenericThrottle", C.FrameDelay) : EzThrottler.Throttle("AutoRetainerGenericThrottle", C.Delay);
+    internal static void RethrottleGeneric(int num)
+    {
+        if (C.UseFrameDelay)
+        {
+            FrameThrottler.Throttle("AutoRetainerGenericThrottle", num, true);
+        }
+        else
+        {
+            EzThrottler.Throttle("AutoRetainerGenericThrottle", num, true);
+        }
+    }
+    internal static void RethrottleGeneric()
+    {
+        if (C.UseFrameDelay)
+        {
+            FrameThrottler.Throttle("AutoRetainerGenericThrottle", C.FrameDelay, true);
+        }
+        else
+        {
+            EzThrottler.Throttle("AutoRetainerGenericThrottle", C.Delay, true);
+        }
+    }
+
+    internal static bool TrySelectSpecificEntry(string text, Func<bool> Throttler = null)
+    {
+        return TrySelectSpecificEntry(new string[] { text }, Throttler);
+    }
+    internal static bool TrySelectSpecificEntry(IEnumerable<string> text, Func<bool> Throttler = null)
+    {
+        return TrySelectSpecificEntry((x) => x.StartsWithAny(text), Throttler);
+    }
+
+    internal static bool TrySelectSpecificEntry(Func<string, bool> inputTextTest, Func<bool> Throttler = null)
+    {
+        if (TryGetAddonByName<AddonSelectString>("SelectString", out var addon) && IsAddonReady(&addon->AtkUnitBase))
+        {
+            if (new AddonMaster.SelectString(addon).Entries.TryGetFirst(x => inputTextTest(x.Text), out var entry))
+            {
+                if (IsSelectItemEnabled(addon, entry.Index) && (Throttler?.Invoke() ?? GenericThrottle))
+                {
+                    entry.Select();
+                    SimpleLog.DebugLog($"TrySelectSpecificEntry: selecting {entry}");
+                    return true;
+                }
+            }
+        }
+        else
+        {
+            RethrottleGeneric();
+        }
+        return false;
+    }
+
+    internal static bool IsSelectItemEnabled(AddonSelectString* addon, int index)
+    {
+        var step1 = (AtkTextNode*)addon->AtkUnitBase
+                    .UldManager.NodeList[2]
+                    ->GetComponent()->UldManager.NodeList[index + 1]
+                    ->GetComponent()->UldManager.NodeList[3];
+        return GenericHelpers.IsSelectItemEnabled(step1);
+    }
+
+
+
+
 }

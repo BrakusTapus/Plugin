@@ -97,7 +97,7 @@ public class CategoryManager
             new GroupInfo
             {
                 GroupKind = GroupKind.Features,
-                Name = "Features",
+                Name = "AutoMation",
                 Categories = new List<CategoryKind>
                 {
                     CategoryKind.General,

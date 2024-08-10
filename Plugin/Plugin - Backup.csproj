@@ -1,0 +1,69 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Project Sdk="Microsoft.NET.Sdk">
+    <Import Project="Dalamud.Plugin.Bootstrap.targets" />
+
+    <PropertyGroup>
+        <Version>0.0.0.2</Version>
+        <Description>A plugin.</Description>
+        <PackageProjectUrl>https://github.com/BrakusTapus/Plugin</PackageProjectUrl>
+        <PackageLicenseExpression>AGPL-3.0-or-later</PackageLicenseExpression>
+        <IsPackable>false</IsPackable>
+        <OutputPath>bin\$(Configuration)\</OutputPath>
+        <AppendTargetFrameworkToOutputPath>false</AppendTargetFrameworkToOutputPath>
+        <UseWindowsForms>true</UseWindowsForms>
+        <EnableWindowsTargeting>true</EnableWindowsTargeting>
+    </PropertyGroup>
+
+    <ItemGroup>
+        <!--<Content Include="..\Data\**\**\*.*">
+            <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+            <Visible>false</Visible>
+        </Content>-->
+        
+        <Content Include="Dalamud.Plugin.Bootstrap.targets">
+            <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+            <Visible>false</Visible>
+        </Content>
+        
+        <Content Include="packages.lock.json">
+            <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+            <Visible>false</Visible>
+        </Content>
+        
+        <Content Include="Plugin.json">
+            <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+            <Visible>false</Visible>
+        </Content>
+        
+        <Reference Include="PInvoke.User32">
+            <HintPath>$(DalamudLibPath)PInvoke.User32.dll</HintPath>
+            <Private>False</Private>
+        </Reference>
+
+        <Compile Remove="Features\BaseFeature.cs" />
+        <Compile Remove="Features\Feature.cs" />
+        <Compile Remove="Features\RefreshMarketPrices.cs" />
+        <Compile Remove="..\Data\**\**\*.*" />
+
+    </ItemGroup>
+
+    <ItemGroup>
+      <None Remove="Schedulers\WorldChange.cs~RF471808f.TMP" />
+    </ItemGroup>
+
+    <ItemGroup>
+        <PackageReference Include="CheapLoc" Version="1.1.8" />
+        <PackageReference Include="Microsoft.Extensions.DependencyInjection.Abstractions" Version="8.0.1">          
+        </PackageReference>
+    </ItemGroup>
+
+    <ItemGroup>
+        <ProjectReference Include="..\ECommons\ECommons\ECommons.csproj">  
+        </ProjectReference>
+    </ItemGroup>
+
+    <ItemGroup>
+      <Folder Include="AutoMation\AutoAdjust\Tasks\" />
+      <Folder Include="Schedulers\Tasks\AutoAdjustPrices\" />
+    </ItemGroup>
+</Project>

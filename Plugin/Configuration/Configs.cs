@@ -1,7 +1,7 @@
 ﻿using System.Collections.ObjectModel;
 using ECommons.Configuration;
 using Plugin.Data;
-using Plugin.Features;
+using Plugin.AutoMation;
 using Plugin.Helpers;
 using Plugin.Utilities;
 using Plugin.Utilities.Enums;
@@ -27,6 +27,7 @@ public class Configs : IEzConfig
     public bool UseMapTeleport = true;
     public bool HideAddon = true;
     public HashSet<string> HideAddonList = [.. Utils.DefaultAddons];
+    internal bool IsCloseActionAutomatic = false;
     //public BasePositionHorizontal PosHorizontal = BasePositionHorizontal.Middle;
     //public BasePositionVertical PosVertical = BasePositionVertical.Middle;
     public bool ShowAethernet = true;
@@ -91,7 +92,7 @@ public class Configs : IEzConfig
     // Change Instance Task related
     public bool InstanceSwitcherRepeat = true;
     public bool EnableFlydownInstance = true;
-    public static bool UseFrameDelay = true;
+    public  bool UseFrameDelay = true;
     public int Delay = 200;
     public int FrameDelay = 8;
 

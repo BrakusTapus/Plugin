@@ -14,7 +14,7 @@ using ECommons.Automation.UIInput;
 using ECommons.Throttlers;
 using Plugin.Helpers;
 
-namespace Plugin.Features;
+namespace Plugin.AutoMation;
 
 internal class Selectstring
 {

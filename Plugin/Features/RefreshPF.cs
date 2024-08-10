@@ -5,7 +5,7 @@
 //using System;
 //using static ECommons.GenericHelpers;
 
-//namespace PandorasBox.Features.UI
+//namespace PandorasBox.AutoMation.UI
 //{
 //    internal class RefreshPF : Feature
 //    {

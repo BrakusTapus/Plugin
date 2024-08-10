@@ -18,7 +18,7 @@
 //using System.Runtime.InteropServices;
 //using System.Text.RegularExpressions;
 
-//namespace Plugin.Features;
+//namespace Plugin.AutoMation;
 
 //public class AutoAdjustRetainerListingsConfiguration
 //{

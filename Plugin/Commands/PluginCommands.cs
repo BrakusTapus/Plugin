@@ -1,6 +1,7 @@
 using Dalamud.Game.Command;
 using Plugin.Tasks.SameWorld;
 using ECommons.MathHelpers;
+using Plugin.AutoMarkt;
 
 namespace Plugin.Commands;
 
@@ -54,6 +55,22 @@ public static partial class PluginCommands
             Plugin.ToggleTestWindow();
             MyServices.Services.PluginLog.Debug($"Command: {command} executed with args: {args}");
             Notify.Info($"Command: {command} executed with args: {args}");
+        }
+        else if (int.TryParse(args, out int index) && index >= 0)
+        {
+            AutoMarktTasks.Initialize();
+
+            bool success = AutoMarktTasks.SelectRetainerByIndex((uint)index);
+            if (success)
+            {
+                MyServices.Services.PluginLog.Debug($"Retainer at index {index} selected successfully.");
+                Notify.Info($"Retainer at index {index} selected successfully.");
+            }
+            else
+            {
+                MyServices.Services.PluginLog.Debug($"Failed to select retainer at index {index}.");
+                Notify.Error($"Failed to select retainer at index {index}.");
+            }
         }
         else
         {

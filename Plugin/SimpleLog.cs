@@ -7,6 +7,13 @@ namespace Plugin;
 
 internal sealed class SimpleLog
 {
+    internal static void DebugLog(string message)
+    {
+        //if (LastLogMsg != message)
+        {
+            PluginLog.Debug(message);
+        }
+    }
     public static void Debug(object message, [CallerFilePath] string callerPath = "", [CallerMemberName] string callerName = "", [CallerLineNumber] int lineNumber = -1)
     {
         foreach (var m in SplitMessage(message)) PluginLog.Debug($"{m}");

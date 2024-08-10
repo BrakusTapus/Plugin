@@ -1,7 +1,11 @@
 ﻿using System.Reflection;
 using Dalamud.Interface.Utility.Raii;
+using ECommons.ExcelServices;
+using FFXIVClientStructs.FFXIV.Client.Game;
 using ImGuiExtensions;
+using Plugin.AutoMarkt;
 using Plugin.Windows;
+using static FFXIVClientStructs.FFXIV.Client.Game.RetainerManager;
 
 namespace Plugin.Windows;
 
@@ -53,42 +57,6 @@ internal static class ChildWindow
         {
             if (headerMainWindow)
             {
-
-                //var searchInputWidth = 180 * ImGuiHelpers.GlobalScale;
-                //var searchClearButtonWidth = 25 * ImGuiHelpers.GlobalScale;
-
-
-                //var headerTextLabels = "Menu's";
-
-                //var headerTextLabelWidth = ImGui.CalcTextSize(headerTextLabels).X;
-
-                //var selectableWidth = headerTextLabelWidth + (style.FramePadding.X * 2);  // This does not include the label
-                //var sortSelectWidth = selectableWidth + headerTextLabelWidth + style.ItemInnerSpacing.X;  // Item spacing between the selectable and the label
-
-                //string headerText = "v" + Plugin.P.GetType().Assembly.GetName().Version.ToString();
-                //Vector2 headerTextSize = ImGui.CalcTextSize(headerTextLabels);
-                //ImGui.SetCursorPosX(ImGui.GetCursorPosX() + style.FramePadding.X * 2);
-                //ImGui.SetCursorPosY(ImGui.GetCursorPosY() + style.FramePadding.Y * 2);
-                //ImGui.TextDisabled(headerText);
-
-                //ImGui.SameLine();
-
-                //var downShift = ImGui.GetCursorPosY() + (headerTextSize.Y / 4) - 2;
-                //ImGui.SetCursorPosY(downShift);
-
-                //ImGui.SetCursorPosX(windowSize.X - sortSelectWidth - (style.ItemSpacing.X * 2) - searchInputWidth - searchClearButtonWidth);
-                //ImGui.SameLine();
-                //ImGui.TextDisabled(ImGui.GetContentRegionAvail().ToString());
-                //ImGui.SameLine();
-                //var footerPoS = ImGui.GetContentRegionAvail().Y / 2;
-
-                //var buttonHeight = ImGuiHelpers.GetButtonSize("EXIT").Y /2;
-                //var footerPosFinal = footerPoS - buttonHeight;
-                //ImGui.SetCursorPosY(footerPosFinal); 
-                //ImGui.SameLine();
-                //ImGui.Text(ImGui.GetFrameHeight().ToString());
-                //ImGui.SameLine();
-
                 float windowWidth = ImGui.GetWindowWidth();
                 float buttonWidth = ImGui.CalcTextSize("Exit").X + ImGui.GetStyle().FramePadding.X * 2;
                 float buttonPositionX = windowWidth - buttonWidth - 25 - ImGui.GetStyle().WindowPadding.X;
@@ -173,6 +141,8 @@ internal static class ChildWindow
                 return Enum.GetValues(typeof(CommandCategories)).Cast<Enum>();
             case CategoryTabHeaders.Links:
                 return Enum.GetValues(typeof(LinksCategories)).Cast<Enum>();
+            case CategoryTabHeaders.Debug:
+                return Enum.GetValues(typeof(DebugCategories)).Cast<Enum>();
             default:
                 return Enumerable.Empty<Enum>();
         }
@@ -262,6 +232,75 @@ internal static class ChildWindow
         ImGui.Text("Other Automated tasks.");
         // Add more ImGui rendering calls specific to this category
     }
+
+    private static unsafe void DrawDebugRetainers()
+    {
+        RetainerManager* retainerManager = RetainerManager.Instance();
+
+        if (retainerManager == null)
+        {
+            Svc.Log.Error("RetainerManager instance is null, cannot retrieve retainers.");
+            return;
+        }
+
+        Span<byte> displayOrder = retainerManager->DisplayOrder;
+#if DEBUG
+        if (ImGui.BeginTable("RetainersTable", 9, ImGuiTableFlags.Borders | ImGuiTableFlags.RowBg))
+#else
+                if (ImGui.BeginTable("RetainersTable", 7, ImGuiTableFlags.Borders | ImGuiTableFlags.RowBg))
+#endif
+        {
+#if DEBUG
+            ImGui.TableSetupColumn("Display Order Index");
+            ImGui.TableSetupColumn("Internal Index");
+#else
+#endif
+            ImGui.TableSetupColumn("ID");
+            ImGui.TableSetupColumn("Name");
+            ImGui.TableSetupColumn("Class Job");
+            ImGui.TableSetupColumn("Level");
+            ImGui.TableSetupColumn("Item Count");
+            ImGui.TableSetupColumn("Market Items");
+            ImGui.TableSetupColumn("Gil");
+
+            ImGui.TableHeadersRow();
+
+            foreach (byte sortedIndex in displayOrder)
+            {
+                RetainerManager.Retainer* retainer = retainerManager->GetRetainerBySortedIndex(sortedIndex);
+
+                if (retainer == null || retainer->RetainerId == 0)
+                {
+                    continue;
+                }
+
+                ImGui.TableNextRow();
+                ImGui.TableSetColumnIndex(0);
+                ImGui.Text(retainer->RetainerId.ToString());
+
+                ImGui.TableSetColumnIndex(1);
+                ImGui.Text(retainer->NameString);
+
+                ImGui.TableSetColumnIndex(2);
+                string classJobName = ExcelJobHelper.GetJobNameById(retainer->ClassJob);
+                ImGui.Text(classJobName);
+
+                ImGui.TableSetColumnIndex(3);
+                ImGui.Text(retainer->Level.ToString());
+
+                ImGui.TableSetColumnIndex(4);
+                ImGui.Text($"{retainer->ItemCount}/175");
+
+                ImGui.TableSetColumnIndex(5);
+                ImGui.Text($"{retainer->MarketItemCount}/20");
+
+                ImGui.TableSetColumnIndex(6);
+                ImGui.Text($"{retainer->Gil.ToString("N0")}");
+            }
+
+            ImGui.EndTable();
+        }
+    }
     #endregion
 
     #region Teleports
@@ -281,6 +320,17 @@ internal static class ChildWindow
 
     #endregion
 
+     /*
+            if (ThreadLoadImageHandler.TryGetIconTextureWrap(ret.Job == 0 ? 62143 : 062100 + ret.Job, true, out var t))
+            {
+                ImGui.Image(t.ImGuiHandle, new(24, 24));
+            }
+            else
+            {
+                ImGui.Dummy(new(24, 24));
+            }
+    */
+
     private static readonly Dictionary<(CategoryTabHeaders, Enum), Action> categoryDrawActions = new Dictionary<(CategoryTabHeaders, Enum), Action>
     {
         { (CategoryTabHeaders.About, AboutCategories.Info), DrawAboutInfoDetails },
@@ -292,8 +342,8 @@ internal static class ChildWindow
         { (CategoryTabHeaders.Automation, AutomationCategories.Misc), DrawOthersAutomation},
         { (CategoryTabHeaders.Commands, CommandCategories.Teleports), DrawTeleports},
         { (CategoryTabHeaders.Links, LinksCategories.General), DrawLinks},
+        { (CategoryTabHeaders.Debug, DebugCategories.Retainers), DrawDebugRetainers}
     };
-
 
     #region Footer
     public static void DrawFooter()
@@ -351,7 +401,8 @@ internal static class ChildWindow
         Features,
         Automation,
         Commands,
-        Links
+        Links,
+        Debug
     }
 
     internal enum AboutCategories
@@ -384,6 +435,11 @@ internal static class ChildWindow
         General,
         //Savage,
         //Ultimates
+    }
+
+    internal enum DebugCategories
+    {
+        Retainers,
     }
 
     internal enum NothingFound

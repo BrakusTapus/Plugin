@@ -6,7 +6,7 @@
 //using PandorasBox.FeaturesSetup;
 //using System;
 
-//namespace PandorasBox.Features.Other
+//namespace PandorasBox.AutoMation.Other
 //{
 //    internal class AfkDummyReset : Feature
 //    {

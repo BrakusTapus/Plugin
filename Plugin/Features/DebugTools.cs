@@ -14,7 +14,7 @@ using Plugin.FeaturesSetup;
 using Plugin.FeaturesSetup.Attributes;
 using Plugin.Utilities;
 
-namespace Plugin.Features;
+namespace Plugin.AutoMation;
 
 public class DebugToolsConfiguration
 {

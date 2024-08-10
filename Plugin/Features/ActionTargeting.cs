@@ -8,7 +8,7 @@
 //using System.Linq;
 //using System.Numerics;
 
-//namespace PandorasBox.Features.Targets
+//namespace PandorasBox.AutoMation.Targets
 //{
 //    public unsafe class ActionTargeting : Feature
 //    {

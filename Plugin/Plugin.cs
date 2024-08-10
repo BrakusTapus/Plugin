@@ -10,7 +10,7 @@ using Plugin.Data;
 using Dalamud.Game.ClientState.Objects.SubKinds;
 using Dalamud.Game.ClientState.Objects.Types;
 using Plugin.External;
-using Plugin.Features;
+using Plugin.AutoMation;
 using Plugin.FeaturesSetup;
 using System.Reflection;
 using Plugin.FeaturesSetup.Attributes;
@@ -25,7 +25,6 @@ using Plugin.Tasks.CrossDC;
 using Plugin.Schedulers;
 using ECommons.Automation.NeoTaskManager.Tasks;
 using CharaData = (string Name, ushort World);
-
 
 namespace Plugin;
 
@@ -43,19 +42,7 @@ public sealed class Plugin : IDalamudPlugin
     internal string Action = "";
     internal OverrideCamera OverrideCamera;
 
-
     internal bool InDungeon = false;
-
-    //internal FollowPath followPath = null;
-    //public FollowPath FollowPath
-    //{
-    //    get
-    //    {
-    //        followPath ??= new();
-    //        return followPath;
-    //    }
-    //}
-
 
     internal Game.Memory Memory;
 
@@ -66,11 +53,8 @@ public sealed class Plugin : IDalamudPlugin
     public static readonly HashSet<Tweak> Tweaks = [];
     public TaskManager TaskManager;
 
-
-
     internal DataStore DataStore; // TODO: Plugin
     internal TinyAetheryte? ActiveAetheryte = null;  // TODO: Plugin
-
 
     internal uint Territory => Svc.ClientState.TerritoryType;
 
@@ -81,9 +65,7 @@ public sealed class Plugin : IDalamudPlugin
     private static MainWindow MainWindow; //{ get; init; }
     private static DebugWindow TestWindow;
 
-
     internal static AutoAdjustRetainerListings autoAdjustRetainerListings;
-
 
     public Plugin(IDalamudPluginInterface pluginInterface)
     {
@@ -165,7 +147,7 @@ public sealed class Plugin : IDalamudPlugin
 
     private void InitializeTweaks()
     {
-        foreach (var tweakType in GetType().Assembly.GetTypes().Where(type => type.Namespace == "Automaton.Features" && type.GetCustomAttribute<TweakAttribute>() != null))
+        foreach (var tweakType in GetType().Assembly.GetTypes().Where(type => type.Namespace == "Automaton.AutoMation" && type.GetCustomAttribute<TweakAttribute>() != null))
         {
             Svc.Log.Verbose($"Initializing {tweakType.Name}");
             GenericHelpers.TryExecute(() => Tweaks.Add((Tweak)Activator.CreateInstance(tweakType)!));
@@ -236,6 +218,7 @@ public sealed class Plugin : IDalamudPlugin
     public void Run(uint territoryType = 0, int loops = 0)
     {
         Svc.Log.Debug($"Run: territoryType={territoryType} loops={loops}");
+
         //if (territoryType > 0)
         //{
         //    if (ContentHelper.DictionaryContent.TryGetValue(territoryType, out var content))
@@ -312,6 +295,7 @@ public sealed class Plugin : IDalamudPlugin
     public void StartNavigation(bool startFromZero = true)
     {
         Svc.Log.Debug($"StartNavigation: startFromZero={startFromZero}");
+
         //if (ContentHelper.DictionaryContent.TryGetValue(Svc.ClientState.TerritoryType, out var content))
         //{
         //    CurrentTerritoryContent = content;
@@ -389,8 +373,6 @@ public sealed class Plugin : IDalamudPlugin
         //    VNavmesh_IPCSubscriber.Path_Stop();
         //Action = "";
     }
-
-
 
     internal enum WorldChangeAetheryte
     {
@@ -482,55 +464,22 @@ public sealed class Plugin : IDalamudPlugin
     //                TaskSelectChara.Enqueue(ECommons.GameHelpers.Player.Name, ECommons.GameHelpers.Player.Object.HomeWorld.Id);
     //                TaskWaitUntilInWorld.Enqueue(w);
 
-    //                if (gateway != null && returnToGateway == true) TaskReturnToGateway.Enqueue(gateway.Value);
-    //                if (doNotify == true) TaskDesktopNotification.Enqueue($"Arrived to {w}");
-    //                EnqueueSecondary();
-    //            }
-    //            else if (type == DCVType.GuestToHome)
-    //            {
-    //                TaskLogoutAndRelog.Enqueue(ECommons.GameHelpers.Player.NameWithWorld);
-    //                TaskReturnToHomeDC.Enqueue(ECommons.GameHelpers.Player.Name, ECommons.GameHelpers.Player.Object.HomeWorld.Id);
-    //                TaskSelectChara.Enqueue(ECommons.GameHelpers.Player.Name, ECommons.GameHelpers.Player.Object.HomeWorld.Id);
-    //                if (ECommons.GameHelpers.Player.HomeWorld != w)
-    //                {
-    //                    TaskManager.EnqueueMulti([
-    //                        new(WorldChange.WaitUntilNotBusy, TaskSettings.TimeoutInfinite),
-    //                    new DelayTask(1000),
-    //                    new(() => TaskTPAndChangeWorld.Enqueue(w, gateway.Value, true), $"TpAndChangeWorld {w} at {gateway.Value}"),
-    //                    ]);
-    //                }
-    //                else
-    //                {
-    //                    TaskWaitUntilInWorld.Enqueue(w);
-    //                }
-    //                if (gateway != null && returnToGateway == true) TaskReturnToGateway.Enqueue(gateway.Value);
-    //                if (doNotify == true) TaskDesktopNotification.Enqueue($"Arrived to {w}");
-    //                EnqueueSecondary();
-    //            }
-    //            else if (type == DCVType.GuestToGuest)
-    //            {
-    //                TaskLogoutAndRelog.Enqueue(ECommons.GameHelpers.Player.NameWithWorld);
-    //                TaskReturnToHomeDC.Enqueue(ECommons.GameHelpers.Player.Name, ECommons.GameHelpers.Player.Object.HomeWorld.Id);
-    //                TaskChangeDatacenter.Enqueue(w, ECommons.GameHelpers.Player.Name, ECommons.GameHelpers.Player.Object.HomeWorld.Id);
-    //                TaskSelectChara.Enqueue(ECommons.GameHelpers.Player.Name, ECommons.GameHelpers.Player.Object.HomeWorld.Id);
-    //                TaskWaitUntilInWorld.Enqueue(w);
-    //                if (gateway != null && returnToGateway == true) TaskReturnToGateway.Enqueue(gateway.Value);
-    //                TaskDesktopNotification.Enqueue($"Arrived to {w}");
-    //                EnqueueSecondary();
-    //            }
-    //            else
-    //            {
-    //                DuoLog.Error($"Error - unknown data center visit type");
-    //            }
-    //            PluginLog.Information($"Data center visit: {type}");
-    //        }
-    //        else
-    //        {
-    //            TaskRemoveAfkStatus.Enqueue();
-    //            TaskTPAndChangeWorld.Enqueue(w, gateway.Value, false);
-    //            if (doNotify == true) TaskDesktopNotification.Enqueue($"Arrived to {w}");
-    //            EnqueueSecondary();
-    //        }
+    // if (gateway != null && returnToGateway == true) TaskReturnToGateway.Enqueue(gateway.Value); if (doNotify == true)
+    // TaskDesktopNotification.Enqueue($"Arrived to {w}"); EnqueueSecondary(); } else if (type == DCVType.GuestToHome) {
+    // TaskLogoutAndRelog.Enqueue(ECommons.GameHelpers.Player.NameWithWorld); TaskReturnToHomeDC.Enqueue(ECommons.GameHelpers.Player.Name,
+    // ECommons.GameHelpers.Player.Object.HomeWorld.Id); TaskSelectChara.Enqueue(ECommons.GameHelpers.Player.Name,
+    // ECommons.GameHelpers.Player.Object.HomeWorld.Id); if (ECommons.GameHelpers.Player.HomeWorld != w) { TaskManager.EnqueueMulti([
+    // new(WorldChange.WaitUntilNotBusy, TaskSettings.TimeoutInfinite), new DelayTask(1000), new(() => TaskTPAndChangeWorld.Enqueue(w, gateway.Value,
+    // true), $"TpAndChangeWorld {w} at {gateway.Value}"), ]); } else { TaskWaitUntilInWorld.Enqueue(w); } if (gateway != null && returnToGateway ==
+    // true) TaskReturnToGateway.Enqueue(gateway.Value); if (doNotify == true) TaskDesktopNotification.Enqueue($"Arrived to {w}"); EnqueueSecondary();
+    // } else if (type == DCVType.GuestToGuest) { TaskLogoutAndRelog.Enqueue(ECommons.GameHelpers.Player.NameWithWorld);
+    // TaskReturnToHomeDC.Enqueue(ECommons.GameHelpers.Player.Name, ECommons.GameHelpers.Player.Object.HomeWorld.Id); TaskChangeDatacenter.Enqueue(w,
+    // ECommons.GameHelpers.Player.Name, ECommons.GameHelpers.Player.Object.HomeWorld.Id); TaskSelectChara.Enqueue(ECommons.GameHelpers.Player.Name,
+    // ECommons.GameHelpers.Player.Object.HomeWorld.Id); TaskWaitUntilInWorld.Enqueue(w); if (gateway != null && returnToGateway == true)
+    // TaskReturnToGateway.Enqueue(gateway.Value); TaskDesktopNotification.Enqueue($"Arrived to {w}"); EnqueueSecondary(); } else {
+    // DuoLog.Error($"Error - unknown data center visit type"); } PluginLog.Information($"Data center visit: {type}"); } else {
+    // TaskRemoveAfkStatus.Enqueue(); TaskTPAndChangeWorld.Enqueue(w, gateway.Value, false); if (doNotify == true)
+    // TaskDesktopNotification.Enqueue($"Arrived to {w}"); EnqueueSecondary(); }
 
     //        void EnqueueSecondary()
     //        {
