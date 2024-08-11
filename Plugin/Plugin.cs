@@ -25,6 +25,7 @@ using Plugin.Tasks.CrossDC;
 using Plugin.Schedulers;
 using ECommons.Automation.NeoTaskManager.Tasks;
 using CharaData = (string Name, ushort World);
+using Plugin.Windows.MainWindow;
 
 namespace Plugin;
 
@@ -62,7 +63,7 @@ public sealed class Plugin : IDalamudPlugin
 
     private readonly WindowSystem WindowSystem = new("plugin");
     private static ConfigWindow ConfigWindow; // { get; init; }
-    private static MainWindow MainWindow; //{ get; init; }
+    private static MainMenu MainWindow; //{ get; init; }
     private static DebugWindow TestWindow;
 
     internal static AutoAdjustRetainerListings autoAdjustRetainerListings;
@@ -81,7 +82,7 @@ public sealed class Plugin : IDalamudPlugin
         TaskManager = new();
 
         ConfigWindow = new ConfigWindow(this);
-        MainWindow = new MainWindow(this);
+        MainWindow = new MainMenu(this);
         TestWindow = new(this, EzConfigs);
         WindowSystem.AddWindow(ConfigWindow);
         WindowSystem.AddWindow(MainWindow);
@@ -236,10 +237,10 @@ public sealed class Plugin : IDalamudPlugin
         //if (CurrentTerritoryContent == null)
         //    return;
 
-        ////MainWindow.OpenTab("Mini");
+        ////MainMenu.OpenTab("Mini");
         //if (Configuration.OpenOverlay)
         //{
-        //    MainWindow.IsOpen = false;
+        //    MainMenu.IsOpen = false;
         //    Overlay.IsOpen = true;
         //}
         //Stage = 99;
@@ -306,13 +307,13 @@ public sealed class Plugin : IDalamudPlugin
         //{
         //    CurrentTerritoryContent = null;
         //    PathFile = "";
-        //    MainWindow.ShowPopup("Error", "Unable to load content for Territory");
+        //    MainMenu.ShowPopup("Error", "Unable to load content for Territory");
         //    return;
         //}
-        ////MainWindow.OpenTab("Mini");
+        ////MainMenu.OpenTab("Mini");
         //if (Configuration.OpenOverlay)
         //{
-        //    MainWindow.IsOpen = false;
+        //    MainMenu.IsOpen = false;
         //    Overlay.IsOpen = true;
         //}
         //MainListClicked = false;
@@ -346,7 +347,7 @@ public sealed class Plugin : IDalamudPlugin
         //if (Configuration.OpenOverlay && Configuration.OnlyOpenOverlayWhenRunning)
         //{
         //    Overlay.IsOpen = false;
-        //    MainWindow.IsOpen = true;
+        //    MainMenu.IsOpen = true;
         //}
         //if (VNavmesh_IPCSubscriber.IsEnabled && VNavmesh_IPCSubscriber.Path_GetTolerance() > 0.25F)
         //    VNavmesh_IPCSubscriber.Path_SetTolerance(0.25f);

@@ -9,7 +9,7 @@ using CheapLoc;
 namespace Plugin.Windows.AlphaMainWindow;
 
 /// <summary>
-/// Manage category filters for MainWindow.
+/// Manage category filters for MainMenu.
 /// </summary>
 internal class PluginCategoryManager
 {
@@ -489,7 +489,7 @@ internal class PluginCategoryManager
 
         public static string Category_All => Loc.Localize("MainWindowCategoryAll", "All");
 
-        public static string Category_About => Loc.Localize("MainWindowCategoryAbout", "About");
+        public static string Category_About => Loc.Localize("MainWindowCategoryAbout", "Character");
 
         public static string Category_General => Loc.Localize("MainWindowCategoryGeneral", "General");
 

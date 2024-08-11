@@ -12,6 +12,7 @@
         <AppendTargetFrameworkToOutputPath>false</AppendTargetFrameworkToOutputPath>
         <UseWindowsForms>true</UseWindowsForms>
         <EnableWindowsTargeting>true</EnableWindowsTargeting>
+        <TargetFramework>net8.0-windows7.0</TargetFramework>
     </PropertyGroup>
 
     <ItemGroup>

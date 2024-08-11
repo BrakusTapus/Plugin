@@ -1,13 +1,17 @@
-namespace Plugin.Windows;
+namespace Plugin.Windows.MainWindow;
 
-public class MainWindow : Window, IDisposable
+public class MainMenu : Window, IDisposable
 {
     private readonly Plugin plugin;
+    internal static float HeaderFooterHeight => 40;
+    internal static float WindowContentRegionWidth => ImGui.GetContentRegionAvail().X;
+    internal static float WindowContentRegionHeight => ImGui.GetContentRegionAvail().Y;
+
 
     // We give this window a hidden ID using ##
     // So that the user will see "Main Window" as window title,
     // but for ImGui the ID is "My Amazing Window##MainMenu"
-    public MainWindow(Plugin plugin) : base($"{nameof(Plugin)}-{nameof(MainWindow)}##0001", ImGuiWindowFlags.NoScrollWithMouse | ImGuiWindowFlags.NoScrollbar)
+    public MainMenu(Plugin plugin) : base($"{nameof(Plugin)}-{nameof(MainMenu)}##0001", ImGuiWindowFlags.NoScrollWithMouse | ImGuiWindowFlags.NoScrollbar)
     {
         this.plugin = plugin;
 
@@ -130,10 +134,10 @@ public class MainWindow : Window, IDisposable
 
     public override void Draw()
     {
-        ChildWindow.DrawHeader();        
-        ChildWindow.DrawSideBar();
+        Header.DrawHeader();        
+        Sidebar.DrawSideBar();
         ImGui.SameLine();
-        ChildWindow.DrawContent();       
-        ChildWindow.DrawFooter();// ChildWindow.DrawFooter();
+        Sidebar.DrawContent();       
+        Footer.DrawFooter();// ChildWindow.DrawFooter();
     }
 }
