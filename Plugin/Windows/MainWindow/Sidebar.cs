@@ -1,19 +1,20 @@
 ﻿using Dalamud.Interface.Utility.Raii;
+using Plugin.Windows.MainWindow.Enums;
 
 namespace Plugin.Windows.MainWindow;
 
 internal class Sidebar
 {
-    public static CategoryTabHeaders? selectedHeader = null;
+    public static (CollapsingHeaders header, Enum category)? selectedCategory = null;
 
     public static void DrawSideBar()
     {
-        var useContentHeight = -40f; // button height + spacing
-        var useMenuWidth = 180f;     // works fine as static value, table can be resized by user
-        var useContentWidth = ImGui.GetContentRegionAvail().X;
+        float useContentHeight = -40f; // button height + spacing
+        float useMenuWidth = 180f;
+        float useContentWidth = ImGui.GetContentRegionAvail().X;
 
         // Pick the smaller value between useMenuWidth and useContentWidth
-        var finalWidth = Math.Min(useMenuWidth, useContentWidth);
+        float finalWidth = Math.Min(useMenuWidth, useContentWidth);
 
         using (var sidebarChild = ImRaii.Child("SideBarMainWindow", new Vector2(finalWidth, useContentHeight * ImGuiHelpers.GlobalScale), false, ImGuiWindowFlags.NoScrollbar))
         {
@@ -21,31 +22,41 @@ internal class Sidebar
             {
                 using var style = ImRaii.PushStyle(ImGuiStyleVar.CellPadding, ImGuiHelpers.ScaledVector2(5, 0));
 
-                foreach (CategoryTabHeaders header in Enum.GetValues(typeof(CategoryTabHeaders)))
+                foreach (CollapsingHeaders header in Enum.GetValues(typeof(CollapsingHeaders)))
                 {
-                    bool isOpen = selectedHeader == header;
 
-                    if (ImGui.CollapsingHeader(header.ToString(), ImGuiTreeNodeFlags.Framed))
+                    var isCurrent = selectedHeader == header;
+                    ImGui.SetNextItemOpen(isCurrent);
+                    if (ImGui.CollapsingHeader(header.ToString()))
                     {
-                        // Only change selectedHeader if the header is being opened
-                        if (isOpen && selectedHeader != header)
+                        if (!isCurrent)
                         {
+                            // Set selectedHeader to the newly opened header
                             selectedHeader = header;
+
+                            // Get the first category for the newly opened header
+                            List<Enum> category = GetCategoriesByHeader(header).ToList();
+                            if (category.Count != 0)
+                            {
+                                Enum firstCategory = category.First();
+
+                                // Set the selected category to the first category of the new header
+                                selectedCategory = (header, firstCategory);
+                                ContentWindow.ShowChildWindowForCategory(header, firstCategory);
+                            }
                         }
 
-                        if (!isOpen)
-                        {
-                            IEnumerable<Enum> categories = GetCategoriesByHeader(header);
+                        // Render the categories under the selected header
+                        IEnumerable<Enum> categories = GetCategoriesByHeader(header);
 
-                            foreach (Enum category in categories)
+                        foreach (Enum category in categories)
+                        {
+                            ImGui.Indent();
+                            if (ImGui.Selectable(category.ToString(), Sidebar.selectedCategory?.category.Equals(category) ?? false))
                             {
-                                ImGui.Indent();
-                                if (ImGui.Selectable(category.ToString(), selectedCategory?.category.Equals(category) ?? false))
-                                {
-                                    ShowChildWindowForCategory(header, category);
-                                }
-                                ImGui.Unindent();
+                                ContentWindow.ShowChildWindowForCategory(header, category);
                             }
+                            ImGui.Unindent();
                         }
                     }
                 }
@@ -53,119 +64,24 @@ internal class Sidebar
         }
     }
 
-    private static readonly Dictionary<(CategoryTabHeaders, Enum), Action> categoryDrawActions = new Dictionary<(CategoryTabHeaders, Enum), Action>
-    {
-        { (CategoryTabHeaders.Character, CharacterCategories.Info), CharacterInfo.DrawCharacterInfo },
-        //{ (CategoryTabHeaders.Character, CharacterCategories.Retainers), CharacterInfo.DrawRetainers },
-        //{ (CategoryTabHeaders.Features, FeatureCategories.General), DrawGeneralFeatures },
-        //{ (CategoryTabHeaders.Features, FeatureCategories.Combat), DrawCombatFeatures },
-        //{ (CategoryTabHeaders.Automation, AutomationCategories.Retainer), DrawRetainersAutomation },
-        //{ (CategoryTabHeaders.Commands, CommandCategories.Teleports), DrawTeleports},
-        //{ (CategoryTabHeaders.Links, LinksCategories.General), DrawLinks},
+    // Initialize selectedHeader with the default value
+    internal static CollapsingHeaders selectedHeader = CollapsingHeaders.Character;
 
-    };
-
-
-    private static IEnumerable<Enum> GetCategoriesByHeader(CategoryTabHeaders header)
+    /// <summary> Sets the categories per header </summary>
+    /// <param name="header"> </param>
+    /// <returns> </returns>
+    private static IEnumerable<Enum> GetCategoriesByHeader(CollapsingHeaders header)
     {
         switch (header)
         {
-            case CategoryTabHeaders.Character:
-                return Enum.GetValues(typeof(CharacterCategories)).Cast<Enum>();
-            //case CategoryTabHeaders.Features:
-            //    return Enum.GetValues(typeof(FeatureCategories)).Cast<Enum>();
-            //case CategoryTabHeaders.Automation:
-            //    return Enum.GetValues(typeof(AutomationCategories)).Cast<Enum>();
-            //case CategoryTabHeaders.Commands:
-            //    return Enum.GetValues(typeof(CommandCategories)).Cast<Enum>();
-            //case CategoryTabHeaders.Links:
-            //    return Enum.GetValues(typeof(LinksCategories)).Cast<Enum>();
+            case CollapsingHeaders.Character:
+                return Enum.GetValues(typeof(Character)).Cast<Enum>();
+
+            case CollapsingHeaders.Test:
+                return Enum.GetValues(typeof(Test)).Cast<Enum>();
+
             default:
                 return Enumerable.Empty<Enum>();
         }
     }
-
-    public static (CategoryTabHeaders header, Enum category)? selectedCategory = null;
-    private static void ShowChildWindowForCategory(CategoryTabHeaders header, Enum category)
-    {
-        selectedCategory = (header, category);
-    }
-    public static void DrawContent()
-    {
-        float contentW = MainMenu.WindowContentRegionWidth;
-        float contentH = MainMenu.WindowContentRegionHeight - MainMenu.HeaderFooterHeight;
-        if (ImGui.BeginChild("ContentMainWindow", new Vector2(contentW, contentH - (5 * ImGuiHelpers.GlobalScale)), true, ImGuiWindowFlags.NoScrollbar))
-        {
-            if (selectedCategory.HasValue)
-            {
-                var (header, category) = selectedCategory.Value;
-
-                if (categoryDrawActions.TryGetValue((header, category), out var drawAction))
-                {
-                    drawAction.Invoke();
-                }
-                else
-                {
-                    ImGuiHelpers.CenteredText("No content available for this category.");
-                }
-            }
-            else
-            {
-                string defaultText = "Select a category from the sidebar.";
-                ImGuiHelpers.CenteredText(defaultText);
-            }
-        }
-        ImGui.EndChild();
-    }
-
-    /// <summary>
-    /// The collapsing headers on the side.
-    /// </summary>
-    internal enum CategoryTabHeaders
-    {
-        Character,
-        //Features,
-        //Automation,
-        //Commands,
-        //Links,
-        //Debug
-    }
-
-    /// <summary>
-    /// Should be like a character screen/menu
-    /// </summary>
-    internal enum CharacterCategories
-    {
-        Info,
-        //Retainers,
-    }
-
-
-    //internal enum FeatureCategories
-    //{
-    //    General,
-    //    Combat
-    //}
-
-    //internal enum AutomationCategories
-    //{
-    //    //Hunts,
-    //    Retainer,
-    //    //Misc
-    //}
-
-    //internal enum CommandCategories
-    //{
-    //    Teleports,
-    //}
-
-    //internal enum LinksCategories
-    //{
-    //    General,
-    //}
-
-    //internal enum NothingFound
-    //{
-
-    //}
 }

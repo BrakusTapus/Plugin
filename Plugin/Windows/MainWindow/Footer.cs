@@ -11,7 +11,6 @@ internal static class Footer
 
         var style = ImGui.GetStyle();
         var windowSize = ImGui.GetWindowSize();
-        //ImGui.SetCursorPosY((windowSize.Y - HeaderFooterHeight) - 2);
         ImGui.Separator();
         ImGui.SetCursorPosY((windowSize.Y - HeaderFooterHeight - style.WindowPadding.Y));
         ImGui.SetCursorPosX(windowSize.X - windowSize.X + style.WindowPadding.X);

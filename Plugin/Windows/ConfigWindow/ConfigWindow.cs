@@ -1,10 +1,13 @@
 
+using Dalamud.Interface.Utility.Raii;
 using ECommons.Configuration;
 using ECommons.UIHelpers.AddonMasterImplementations;
 using FFXIVClientStructs.FFXIV.Client.Game;
 using FFXIVClientStructs.FFXIV.Component.GUI;
 using Plugin.AutoMarkt;
 using Plugin.Utilities;
+using Plugin.Windows.MainWindow;
+using Plugin.Windows.MainWindow.Enums;
 using static FFXIVClientStructs.FFXIV.Client.Game.RetainerManager;
 
 namespace Plugin.Windows;
@@ -111,7 +114,7 @@ public class ConfigWindow : Window, IDisposable
         {
             if (ImGui.BeginTabItem("General Settings"))
             {
-                // DrawConfigGroup();
+                DrawConfigGroup();
                 ImGui.EndTabItem();
             }
 
@@ -132,6 +135,12 @@ public class ConfigWindow : Window, IDisposable
             if (ImGui.BeginTabItem("Task Buttons"))
             {
                 DrawTab4();
+                ImGui.EndTabItem();
+            }
+
+            if (ImGui.BeginTabItem("Debug"))
+            {
+                DrawTabDebug();
                 ImGui.EndTabItem();
             }
 
@@ -387,5 +396,17 @@ public class ConfigWindow : Window, IDisposable
 
     }
 
+    private unsafe void DrawTabDebug()
+    {
+        // Display debug information here
+        foreach (CollapsingHeaders header in Enum.GetValues(typeof(CollapsingHeaders)))
+        {
+            bool isOpen = Sidebar.selectedHeader == header;
+            ImGui.TextColored(new System.Numerics.Vector4(1.0f, 0.5f, 0.0f, 1.0f), $"Header: {header}, Is Open: {isOpen}");
 
+        }
+        ImGui.TextColored(new System.Numerics.Vector4(1.0f, 0.5f, 0.0f, 1.0f), $"Selected Header: {Sidebar.selectedHeader}");
+
+
+    }
 }

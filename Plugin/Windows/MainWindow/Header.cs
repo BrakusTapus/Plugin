@@ -1,9 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using Dalamud.Interface.Utility.Raii;
+﻿using Dalamud.Interface.Utility.Raii;
 using Plugin.Utilities.UI;
 
 namespace Plugin.Windows.MainWindow;
@@ -21,7 +16,7 @@ internal class Header
             if (headerMainWindow)
             {
                 ImGui.PushStyleVar(ImGuiStyleVar.FrameBorderSize, 1f);
-                ImGui.PushStyleVar(ImGuiStyleVar.FramePadding, new Vector2(5,5));
+                ImGui.PushStyleVar(ImGuiStyleVar.FramePadding, new Vector2(5, 5));
                 ImGui.SetCursorPosY(7);
                 ImGui.SetCursorPosX(windowSize.X - 110);
                 Buttons.SettingsButton();

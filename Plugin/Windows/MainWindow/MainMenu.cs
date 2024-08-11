@@ -137,7 +137,7 @@ public class MainMenu : Window, IDisposable
         Header.DrawHeader();        
         Sidebar.DrawSideBar();
         ImGui.SameLine();
-        Sidebar.DrawContent();       
-        Footer.DrawFooter();// ChildWindow.DrawFooter();
+        ContentWindow.DrawContent();       
+        Footer.DrawFooter();// ContentWindow.DrawFooter();
     }
 }
